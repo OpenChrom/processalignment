@@ -17,13 +17,15 @@ import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.ProcessingInfo;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
+
 public class AlignmentProcessor {
 
-	public IProcessingInfo alignChromatograms(List<String> chromatograms, IProgressMonitor monitor) {
+	public IProcessingInfo alignChromatograms(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, IProgressMonitor monitor) {
 
 		IProcessingInfo processingInfo = new ProcessingInfo();
-		for(String chromatogram : chromatograms) {
-			System.out.println("Process chromatogram: " + chromatogram);
+		for(IDataInputEntry dataInputEntry : dataInputEntries) {
+			System.out.println("Process chromatogram: " + dataInputEntry.getName() + "\t" + dataInputEntry.getInputFile());
 		}
 		//
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");

@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_9eODIFiNEeaVa6pBDMb1PQ"/>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_9eODIFiNEeaVa6pBDMb1PQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_KtRzsFi1EeaVa6pBDMb1PQ" featurename="commands" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_Nyt6oFi1EeaVa6pBDMb1PQ" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.command.chromatogramalignment" commandName="Chromatogram Alignment"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Q0K5cFi1EeaVa6pBDMb1PQ" featurename="handlers" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_TU1fYFi1EeaVa6pBDMb1PQ" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.handler.chromatogramalignment" contributionURI="bundleclass://net.openchrom.chromatogram.xxd.process.supplier.alignment.ui/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.handlers.ChromatogramAlignmentHandler" command="_Nyt6oFi1EeaVa6pBDMb1PQ"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_eGg5QFi1EeaVa6pBDMb1PQ" featurename="children" parentElementId="org.eclipse.chemclipse.ux.extension.ui.menu.process">
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_h-2cwFi1EeaVa6pBDMb1PQ" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.handledmenuitem.chromatogramalignment" label="Chromatogram Alignment" iconURI="platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/chromatogram.gif" command="_Nyt6oFi1EeaVa6pBDMb1PQ"/>
+  </fragments>
+</fragment:ModelFragments>

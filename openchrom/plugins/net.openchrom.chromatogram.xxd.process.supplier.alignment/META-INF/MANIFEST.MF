@@ -29,4 +29,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.chemclipse.chromatogram.csd.peak.detector;bundle-version="0.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: net.openchrom.chromatogram.xxd.process.supplier.alignment.preferences
+Export-Package: net.openchrom.chromatogram.xxd.process.supplier.alignment.core,
+ net.openchrom.chromatogram.xxd.process.supplier.alignment.model,
+ net.openchrom.chromatogram.xxd.process.supplier.alignment.preferences

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2016 Lablicate GmbH.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,29 +11,169 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.part.MultiPageEditorPart;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class EditorAlignment extends MultiPageEditorPart {
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 
-	@Override
-	protected void createPages() {
+import org.eclipse.chemclipse.logging.core.Logger;
+import org.eclipse.chemclipse.support.events.IPerspectiveAndViewIds;
+import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.Persist;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MDirtyable;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable.AlignmentRunnable;
+
+public class EditorAlignment {
+
+	public static final String ID = "net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editorAlignment";
+	public static final String CONTRIBUTION_URI = "bundleclass://net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.ui/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors.EditorAlignment";
+	public static final String ICON_URI = "platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/chromatogram.gif";
+	public static final String TOOLTIP = "Alignment Editor";
+	//
+	private static final Logger logger = Logger.getLogger(EditorAlignment.class);
+	/*
+	 * Injected member in constructor
+	 */
+	@Inject
+	private MPart part;
+	@Inject
+	private MDirtyable dirtyable;
+	@Inject
+	private MApplication application;
+	@Inject
+	private EModelService modelService;
+	/*
+	 * Showing additional info in tabs.
+	 */
+	private TabFolder tabFolder;
+	private FormToolkit formToolkit;
+	/*
+	 * Pages
+	 */
+	private OverviewPage pageOverview;
+	private PageInputFiles pageInputFiles;
+	private PageResults pageResults;
+	private List<Object> pages;
+
+	public EditorAlignment() {
+		//
+		pages = new ArrayList<Object>();
 	}
 
-	@Override
-	public void doSave(IProgressMonitor monitor) {
+	@PostConstruct
+	private void createControl(Composite parent) {
 
+		createPages(parent);
 	}
 
-	@Override
-	public void doSaveAs() {
+	@Focus
+	public void setFocus() {
 
+		tabFolder.setFocus();
 	}
 
-	@Override
-	public boolean isSaveAsAllowed() {
+	@PreDestroy
+	private void preDestroy() {
 
-		return false;
+		/*
+		 * Remove the editor from the listed parts.
+		 */
+		if(modelService != null) {
+			MPartStack partStack = (MPartStack)modelService.find(IPerspectiveAndViewIds.EDITOR_PART_STACK_ID, application);
+			part.setToBeRendered(false);
+			part.setVisible(false);
+			Display.getDefault().asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+
+					partStack.getChildren().remove(part);
+				}
+			});
+		}
+		/*
+		 * Dispose the form toolkit.
+		 */
+		if(formToolkit != null) {
+			formToolkit.dispose();
+		}
+		/*
+		 * Run the garbage collector.
+		 */
+		System.gc();
+	}
+
+	@Persist
+	public void save() {
+
+		System.out.println("Save results to chromatogram files.");
+	}
+
+	public void runAlignment() {
+
+		dirtyable.setDirty(true);
+		/*
+		 * Get the settings.
+		 */
+		int retentionTimeWindow = pageOverview.getRetentionTimeWindow();
+		List<IDataInputEntry> dataInputEntries = pageInputFiles.getDataInputEntries();
+		/*
+		 * Run the process.
+		 */
+		AlignmentRunnable runnable = new AlignmentRunnable(dataInputEntries, retentionTimeWindow);
+		ProgressMonitorDialog monitor = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+		try {
+			/*
+			 * Calculate the results and show the score plot page.
+			 */
+			monitor.run(true, true, runnable);
+			reloadResults();
+		} catch(InvocationTargetException e) {
+			logger.warn(e);
+			logger.warn(e.getCause());
+		} catch(InterruptedException e) {
+			logger.warn(e);
+		}
+	}
+
+	public void showInputFilesPage() {
+
+		int pageIndex = 0;
+		for(int index = 0; index < pages.size(); index++) {
+			if(pages.get(index) == pageInputFiles) {
+				pageIndex = index;
+			}
+		}
+		tabFolder.setSelection(pageIndex);
+	}
+
+	private void createPages(Composite parent) {
+
+		part.setLabel("Alignment");
+		tabFolder = new TabFolder(parent, SWT.BOTTOM);
+		//
+		pages.add(pageOverview = new OverviewPage(this, tabFolder, formToolkit));
+		pages.add(pageInputFiles = new PageInputFiles(this, tabFolder, formToolkit));
+		pages.add(pageResults = new PageResults(this, tabFolder, formToolkit));
+	}
+
+	private void reloadResults() {
+
+		pageResults.update();
 	}
 }
