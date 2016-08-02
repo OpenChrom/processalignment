@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.fragment"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            uri="fragment.e4xmi">
+      </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+      		category="org.eclipse.chemclipse.chromatogram.msd.process.ui.preferences.processPreferencePage"
+            class="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.preferences.PreferencePage"
+            id="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.preferences.preferencePage"
+            name="Chromatogram Alignment">
+      </page>     
+   </extension>
+</plugin>

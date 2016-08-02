@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <!--
+	PARENT
+  -->
+  <parent>
+    <groupId>net.openchrom</groupId>
+    <artifactId>master</artifactId>
+    <version>BUILD-VERSION</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <!--
+	ARTIFACT
+  -->
+  <groupId>net.openchrom</groupId>
+  <artifactId>parent</artifactId>
+  <packaging>pom</packaging>
+  <!--
+	DESCRIPTION
+  --> 
+  <name>OpenChrom Chromatogram Alignment Workflow</name>
+  <description>
+	This processing plugin offers a Chromatogram Alignment workflow. It extends the functionality of the OpenChrom Rich Client Platform (RCP).
+  </description>
+  <!--
+	LICENSES
+  -->
+  <licenses>
+    <license>
+      <name>EPL v1.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+    </license> 
+  </licenses>
+  <!--
+	DEVELOPERS
+  -->
+  <developers>
+    <developer>
+      <id>lgb</id>
+      <name>Lorenz Gerber</name>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>eselmeister</id>
+      <name>Philip Wenig</name>
+      <email>philip.wenig [at] openchrom.net</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <!--
+	MODULES
+  -->
+  <modules>
+    <module>../../plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment</module>
+    <module>../../plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui</module>
+    <module>../../features/net.openchrom.chromatogram.xxd.process.supplier.alignment.feature</module>
+    <!--<module>../../plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.fragment.test</module>-->
+    <module>../../sites/net.openchrom.chromatogram.xxd.process.supplier.alignment.updateSite</module>
+  </modules>
+</project>

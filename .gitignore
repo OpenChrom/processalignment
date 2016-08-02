@@ -1,0 +1,14 @@
+openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.fragment.test/Openchrom.log
+openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.fragment.test/*.log
+openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.fragment.test/bin/*
+openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui/bin/*
+openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment/bin/*
+openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.fragment.test/bin/*
+openchrom/sites/net.openchrom.chromatogram.xxd.process.supplier.alignment.site/artifacts.jar
+openchrom/sites/net.openchrom.chromatogram.xxd.process.supplier.alignment.site/content.jar
+openchrom/sites/net.openchrom.chromatogram.xxd.process.supplier.alignment.site/features/*
+openchrom/sites/net.openchrom.chromatogram.xxd.process.supplier.alignment.site/plugins/*
+openchrom/features/net.openchrom.chromatogram.xxd.process.supplier.alignment.feature/target/
+openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui/target/
+openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment/target/
+openchrom/sites/net.openchrom.chromatogram.xxd.process.supplier.alignment.updateSite/target/
