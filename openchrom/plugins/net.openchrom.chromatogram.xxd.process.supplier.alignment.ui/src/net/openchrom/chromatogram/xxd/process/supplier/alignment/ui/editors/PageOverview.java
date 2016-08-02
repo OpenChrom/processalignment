@@ -32,15 +32,15 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-public class OverviewPage {
+public class PageOverview {
 
-	private static final Logger logger = Logger.getLogger(OverviewPage.class);
+	private static final Logger logger = Logger.getLogger(PageOverview.class);
 	private static final int DEFAULT_RETENTION_TIME_WINDOW = 200;
 	//
 	private EditorAlignment editorAlignment;
 	private Text retentionTimeWindowText;
 
-	public OverviewPage(EditorAlignment pcaEditor, TabFolder tabFolder, FormToolkit formToolkit) {
+	public PageOverview(EditorAlignment pcaEditor, TabFolder tabFolder, FormToolkit formToolkit) {
 		//
 		this.editorAlignment = pcaEditor;
 		initialize(tabFolder, formToolkit);

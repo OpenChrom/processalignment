@@ -40,8 +40,8 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.run
 
 public class EditorAlignment {
 
-	public static final String ID = "net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editorAlignment";
-	public static final String CONTRIBUTION_URI = "bundleclass://net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.ui/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors.EditorAlignment";
+	public static final String ID = "net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors.editorAlignment";
+	public static final String CONTRIBUTION_URI = "bundleclass://net.openchrom.chromatogram.xxd.process.supplier.alignment.ui/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors.EditorAlignment";
 	public static final String ICON_URI = "platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/chromatogram.gif";
 	public static final String TOOLTIP = "Alignment Editor";
 	//
@@ -65,7 +65,7 @@ public class EditorAlignment {
 	/*
 	 * Pages
 	 */
-	private OverviewPage pageOverview;
+	private PageOverview pageOverview;
 	private PageInputFiles pageInputFiles;
 	private PageResults pageResults;
 	private List<Object> pages;
@@ -167,7 +167,7 @@ public class EditorAlignment {
 		part.setLabel("Alignment");
 		tabFolder = new TabFolder(parent, SWT.BOTTOM);
 		//
-		pages.add(pageOverview = new OverviewPage(this, tabFolder, formToolkit));
+		pages.add(pageOverview = new PageOverview(this, tabFolder, formToolkit));
 		pages.add(pageInputFiles = new PageInputFiles(this, tabFolder, formToolkit));
 		pages.add(pageResults = new PageResults(this, tabFolder, formToolkit));
 	}
