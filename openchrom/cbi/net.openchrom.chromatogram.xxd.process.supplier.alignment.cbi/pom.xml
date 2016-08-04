@@ -62,6 +62,5 @@
     <module>../../plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui</module>
     <module>../../features/net.openchrom.chromatogram.xxd.process.supplier.alignment.feature</module>
     <!--<module>../../plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.fragment.test</module>-->
-    <module>../../sites/net.openchrom.chromatogram.xxd.process.supplier.alignment.updateSite</module>
   </modules>
 </project>
