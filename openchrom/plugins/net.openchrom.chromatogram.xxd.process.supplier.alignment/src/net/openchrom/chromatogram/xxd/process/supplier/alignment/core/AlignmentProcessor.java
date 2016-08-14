@@ -132,6 +132,9 @@ public class AlignmentProcessor {
 	private Chromatogram constructRegularChromatogram(int retentionTimeWindow, int lowestRt, int highestRt) {
 
 		Chromatogram standard = new Chromatogram();
+		int deltaRt = highestRt - lowestRt;
+		int numberOfRtPoints = deltaRt / retentionTimeWindow;
+		int moduloTime = deltaRt % retentionTimeWindow;
 		return standard;
 	}
 }
