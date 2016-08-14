@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.core.IScan;
+import org.eclipse.chemclipse.model.implementation.Chromatogram;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.msd.converter.processing.chromatogram.IChromatogramMSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
@@ -39,6 +40,8 @@ public class AlignmentProcessor {
 			System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
 			inputFiles.add(new File(inputEntry.getInputFile()));
 			int highestRetentionTime = findHighestRt(inputFiles, monitor);
+			int lowestRetentionTime = findLowestRt(inputFiles, monitor);
+			Chromatogram standard = constructRegularChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
 		}
 		//
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
@@ -52,7 +55,7 @@ public class AlignmentProcessor {
 			IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(scanFile, monitor);
 			try {
 				IChromatogramMSD chromatogram = processingInfo.getChromatogram();
-				String name = extractNameFromFile(scanFile, "n.a.");
+				// String name = extractNameFromFile(scanFile, "n.a.");
 				if(chromatogram.getStopRetentionTime() > highestRt) {
 					highestRt = chromatogram.getStopRetentionTime();
 				}
@@ -61,6 +64,24 @@ public class AlignmentProcessor {
 			}
 		}
 		return highestRt;
+	}
+
+	public int findLowestRt(List<File> inputFiles, IProgressMonitor monitor) {
+
+		int lowestRt = 0;
+		for(File scanFile : inputFiles) {
+			IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(scanFile, monitor);
+			try {
+				IChromatogramMSD chromatogram = processingInfo.getChromatogram();
+				// String name = extractNameFromFile(scanFile, "n.a.");
+				if(chromatogram.getStopRetentionTime() < lowestRt) {
+					lowestRt = chromatogram.getStopRetentionTime();
+				}
+			} catch(TypeCastException e) {
+				logger.warn(e);
+			}
+		}
+		return lowestRt;
 	}
 
 	/**
@@ -98,5 +119,19 @@ public class AlignmentProcessor {
 			}
 		}
 		return nameDefault;
+	}
+
+	/**
+	 * Create regular template chromatogram
+	 * 
+	 * @param retentionTimeWindow
+	 * @param lowestRt
+	 * @param highestRt
+	 * @return regularChromatogramTemplate
+	 */
+	private Chromatogram constructRegularChromatogram(int retentionTimeWindow, int lowestRt, int highestRt) {
+
+		Chromatogram standard = new Chromatogram();
+		return standard;
 	}
 }
