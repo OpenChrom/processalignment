@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
+import org.eclipse.chemclipse.model.implementation.Scan;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.msd.converter.processing.chromatogram.IChromatogramMSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
@@ -135,6 +136,11 @@ public class AlignmentProcessor {
 		int deltaRt = highestRt - lowestRt;
 		int numberOfRtPoints = deltaRt / retentionTimeWindow;
 		int moduloTime = deltaRt % retentionTimeWindow;
+		for(int xyz = lowestRt; xyz < numberOfRtPoints; xyz = xyz++) {
+			Scan equiSpacedScan = new Scan(0);
+			equiSpacedScan.setRetentionTime(xyz);
+			standard.addScan(equiSpacedScan);
+		}
 		return standard;
 	}
 }
