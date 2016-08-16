@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.chemclipse.logging.core.Logger;
-import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
 import org.eclipse.chemclipse.model.implementation.Scan;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
@@ -26,7 +25,6 @@ import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.ProcessingInfo;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
 public class AlignmentProcessor {
@@ -42,7 +40,7 @@ public class AlignmentProcessor {
 			inputFiles.add(new File(inputEntry.getInputFile()));
 			int highestRetentionTime = findHighestRt(inputFiles, monitor);
 			int lowestRetentionTime = findLowestRt(inputFiles, monitor);
-			Chromatogram standard = constructRegularChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
+			Chromatogram standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
 		}
 		//
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
@@ -130,12 +128,12 @@ public class AlignmentProcessor {
 	 * @param highestRt
 	 * @return regularChromatogramTemplate
 	 */
-	private Chromatogram constructRegularChromatogram(int retentionTimeWindow, int lowestRt, int highestRt) {
+	private Chromatogram constructEquispacedChromatogram(int retentionTimeWindow, int lowestRt, int highestRt) {
 
 		Chromatogram standard = new Chromatogram();
 		int deltaRt = highestRt - lowestRt;
 		int numberOfRtPoints = deltaRt / retentionTimeWindow;
-		int moduloTime = deltaRt % retentionTimeWindow;
+		// int moduloTime = deltaRt % retentionTimeWindow;
 		for(int xyz = lowestRt; xyz < numberOfRtPoints; xyz = xyz++) {
 			Scan equiSpacedScan = new Scan(0);
 			equiSpacedScan.setRetentionTime(xyz);
