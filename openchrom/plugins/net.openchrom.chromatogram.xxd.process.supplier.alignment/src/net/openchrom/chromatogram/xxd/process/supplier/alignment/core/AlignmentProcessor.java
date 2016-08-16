@@ -50,16 +50,21 @@ public class AlignmentProcessor {
 				IChromatogramMSD chromatogram = processingInfo2.getChromatogram();
 				Iterator<IScan> iterator = chromatogram.getScans().iterator();
 				IScan currentScan = iterator.next();
+				float intensityBefore = 0;
 				for(IScan scan : standard.getScans()) {
 					while(iterator.hasNext() && currentScan.getRetentionTime() < scan.getRetentionTime()) {
+						intensityBefore = currentScan.getTotalSignal();
 						currentScan = iterator.next();
 					}
+					// need to check here also if the currentScan is not higher than the standard's retention time.
+					float intensityAfter = currentScan.getTotalSignal();
+					float intensityAverage = (intensityBefore + intensityAfter) / 2;
+					scan.adjustTotalSignal(intensityAverage);
 				}
 			} catch(TypeCastException e) {
 				logger.warn(e);
 			}
 		}
-		//
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
 		return processingInfo;
 	}
@@ -151,7 +156,7 @@ public class AlignmentProcessor {
 		int deltaRt = highestRt - lowestRt;
 		int numberOfRtPoints = deltaRt / retentionTimeWindow;
 		// int moduloTime = deltaRt % retentionTimeWindow;
-		for(int xyz = lowestRt; xyz < numberOfRtPoints; xyz = xyz++) {
+		for(int xyz = lowestRt; xyz < numberOfRtPoints; xyz++) {
 			Scan equiSpacedScan = new Scan(0);
 			equiSpacedScan.setRetentionTime(xyz);
 			standard.addScan(equiSpacedScan);
