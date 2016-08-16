@@ -13,9 +13,11 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.chemclipse.logging.core.Logger;
+import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
 import org.eclipse.chemclipse.model.implementation.Scan;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
@@ -41,6 +43,21 @@ public class AlignmentProcessor {
 			int highestRetentionTime = findHighestRt(inputFiles, monitor);
 			int lowestRetentionTime = findLowestRt(inputFiles, monitor);
 			Chromatogram standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
+			// iterate through the standard chromatogram and fill in intensity values
+			// from interpolating from the currently loaded chromatogram
+			IChromatogramMSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterMSD.convert(new File(inputEntry.getInputFile()), monitor);
+			try {
+				IChromatogramMSD chromatogram = processingInfo2.getChromatogram();
+				Iterator<IScan> iterator = chromatogram.getScans().iterator();
+				IScan currentScan = iterator.next();
+				for(IScan scan : standard.getScans()) {
+					while(iterator.hasNext() && currentScan.getRetentionTime() < scan.getRetentionTime()) {
+						currentScan = iterator.next();
+					}
+				}
+			} catch(TypeCastException e) {
+				logger.warn(e);
+			}
 		}
 		//
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
