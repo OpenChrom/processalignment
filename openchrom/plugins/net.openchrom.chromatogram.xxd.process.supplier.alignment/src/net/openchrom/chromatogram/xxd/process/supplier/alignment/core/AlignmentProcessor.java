@@ -27,6 +27,8 @@ import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.ProcessingInfo;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.ejml.data.DenseMatrix64F;
+
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
 public class AlignmentProcessor {
@@ -37,6 +39,7 @@ public class AlignmentProcessor {
 
 		IProcessingInfo processingInfo = new ProcessingInfo();
 		List<File> inputFiles = new ArrayList<File>();
+		List<Chromatogram> standardizedChromatograms = new ArrayList<Chromatogram>();
 		for(IDataInputEntry inputEntry : dataInputEntries) {
 			System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
 			inputFiles.add(new File(inputEntry.getInputFile()));
@@ -58,17 +61,53 @@ public class AlignmentProcessor {
 					}
 					// need to check here also if the currentScan is not higher than the standard's retention time.
 					float intensityAfter = currentScan.getTotalSignal();
+					
+					// will implement more advanced interpolation later.
 					float intensityAverage = (intensityBefore + intensityAfter) / 2;
 					scan.adjustTotalSignal(intensityAverage);
 				}
 			} catch(TypeCastException e) {
 				logger.warn(e);
 			}
+			//somehow need to store the standard chromatogram here.
+			standardizedChromatograms.add(standard);			
 		}
+		// initially, calculate shifts against first chromatogram, later
+		// make against average, later, several possible choices
+		
+		// create 2D arrays
+		//for (standardizedChromatograms.size() )
+		
+		// create test array
+		double[][] data = {{1,2,3}, {4,5,6}, {7,8,9}};
+		
+		// prepare matrix for shift calculation
+		// target array is (no_of_scans + 2 * max_shift + 1) * (2 * max_shift + 1)
+		// matrix rows = 2 * max_shift + 1
+		// matrix cols = no_of_scans + 2 * max_shift + 1  
+		DenseMatrix64F matrix = new DenseMatrix64F(data);
+		
+		
+		// prepare sample data matrix
+		// array is (no_of_scans + 2 * max_shift + 1) * no_of_samples 
+		
+		// shift calculation
+		
+		// apply shift to chromatograms using rtshifter
+		
+		
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
 		return processingInfo;
 	}
 
+	
+	/**
+	 * Find the highest retention time among a number of input files
+	 * 
+	 * @param inputFiles
+	 * @param monitor
+	 * @return
+	 */
 	public int findHighestRt(List<File> inputFiles, IProgressMonitor monitor) {
 
 		int highestRt = 0;
@@ -87,6 +126,13 @@ public class AlignmentProcessor {
 		return highestRt;
 	}
 
+	/**
+	 * Find the lowest retention time among a number of input files
+	 * 
+	 * @param inputFiles
+	 * @param monitor
+	 * @return
+	 */
 	public int findLowestRt(List<File> inputFiles, IProgressMonitor monitor) {
 
 		int lowestRt = 0;
