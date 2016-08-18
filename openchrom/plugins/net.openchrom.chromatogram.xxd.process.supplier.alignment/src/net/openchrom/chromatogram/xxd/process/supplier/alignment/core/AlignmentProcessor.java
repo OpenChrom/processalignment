@@ -27,7 +27,7 @@ import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.ProcessingInfo;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.ejml.data.DenseMatrix64F;
+import org.ejml.simple.SimpleMatrix;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
@@ -45,9 +45,12 @@ public class AlignmentProcessor {
 			System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
 			inputFiles.add(new File(inputEntry.getInputFile()));
 		}
+		// find values for the whole sample set
 		int highestRetentionTime = findHighestRt(inputFiles, monitor);
 		int lowestRetentionTime = findLowestRt(inputFiles, monitor);
 		int numberOfScans = (highestRetentionTime - lowestRetentionTime) / retentionTimeWindow;
+		int numberOfSamples = dataInputEntries.size();
+		// loop through each sample
 		for(IDataInputEntry inputEntry : dataInputEntries) {
 			// System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
 			// inputFiles.add(new File(inputEntry.getInputFile()));
@@ -80,24 +83,43 @@ public class AlignmentProcessor {
 		}
 		// initially, calculate shifts against first chromatogram, later
 		// make against average, later, several possible choices
-		// create 2D arrays
-		double[][] sampleTics = new double[standardizedChromatograms.size()][numberOfScans + 2 * MAX_SHIFT];
+		// create matrix of samples, not shifted
+		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
 		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
 			Iterator<IScan> scanIterator = standardizedChromatograms.get(currentSample).getScans().iterator();
 			for(int currentScan = 0; currentScan < numberOfScans; currentScan++) {
 				sampleTics[currentSample][currentScan + MAX_SHIFT] = scanIterator.next().getTotalSignal();
 			}
 		}
-		// create test array
-		double[][] data = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-		// prepare matrix for shift calculation
-		// target array is (no_of_scans + 2 * max_shift + 1) * (2 * max_shift + 1)
-		// matrix rows = 2 * max_shift + 1
-		// matrix cols = no_of_scans + 2 * max_shift + 1
-		DenseMatrix64F matrix = new DenseMatrix64F(data);
-		// prepare sample data matrix
-		// array is (no_of_scans + 2 * max_shift + 1) * no_of_samples
+		SimpleMatrix matrixSampleTics = new SimpleMatrix(sampleTics);
+		matrixSampleTics = matrixSampleTics.transpose();
+		// calculate average of all samples
+		double[] averageSample = new double[numberOfScans];
+		int signalSum = 0;
+		for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
+			for(int sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
+				signalSum += sampleTics[sampleIndex][scanIndex];
+			}
+			averageSample[scanIndex] = signalSum / numberOfSamples;
+			signalSum = 0;
+		}
+		// create 2D array of target, shifted
+		double[][] targetTics = new double[2 * MAX_SHIFT + 1][numberOfScans + 2 * MAX_SHIFT + 1];
+		for(int shiftIndex = 0; shiftIndex < 2 * MAX_SHIFT + 1; shiftIndex++) {
+			for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
+				targetTics[shiftIndex][shiftIndex + scanIndex] = averageSample[scanIndex];
+			}
+		}
+		SimpleMatrix matrixTargetTics = new SimpleMatrix(targetTics);
 		// shift calculation
+		SimpleMatrix matrixShiftResults = new SimpleMatrix(matrixTargetTics.mult(matrixSampleTics));
+		// extract max values from each column
+		// double[][] one = new double[][] {{1,2},{3,4},{5,6},{7,8}};
+		double[][] one = new double[][]{{1, 2, 3, 4}, {5, 6, 7, 8}};
+		SimpleMatrix testOne = new SimpleMatrix(one);
+		// double[][] two = new double[][] {{1,2,3,4},{5,6,7,8}};
+		SimpleMatrix testTwo = testOne.transpose();
+		SimpleMatrix testResult = testOne.mult(testTwo);
 		// apply shift to chromatograms using rtshifter
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
 		return processingInfo;
