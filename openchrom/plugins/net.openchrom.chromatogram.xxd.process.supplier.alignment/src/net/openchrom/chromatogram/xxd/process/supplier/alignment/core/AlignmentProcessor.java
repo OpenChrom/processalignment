@@ -98,7 +98,7 @@ public class AlignmentProcessor {
 		int signalSum = 0;
 		for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
 			for(int sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
-				signalSum += sampleTics[sampleIndex][scanIndex];
+				signalSum += sampleTics[sampleIndex][scanIndex + MAX_SHIFT];
 			}
 			averageSample[scanIndex] = signalSum / numberOfSamples;
 			signalSum = 0;
@@ -114,12 +114,20 @@ public class AlignmentProcessor {
 		// shift calculation
 		SimpleMatrix matrixShiftResults = new SimpleMatrix(matrixTargetTics.mult(matrixSampleTics));
 		// extract max values from each column
-		// double[][] one = new double[][] {{1,2},{3,4},{5,6},{7,8}};
-		double[][] one = new double[][]{{1, 2, 3, 4}, {5, 6, 7, 8}};
-		SimpleMatrix testOne = new SimpleMatrix(one);
-		// double[][] two = new double[][] {{1,2,3,4},{5,6,7,8}};
-		SimpleMatrix testTwo = testOne.transpose();
-		SimpleMatrix testResult = testOne.mult(testTwo);
+		int[] largestShifts = new int[numberOfSamples];
+		double[] largestShiftValues = new double[numberOfSamples];
+		for(int sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
+			for(int shiftIndex = 0; shiftIndex < (2 * MAX_SHIFT + 1); shiftIndex++) {
+				if(matrixShiftResults.get(shiftIndex, sampleIndex) > largestShiftValues[sampleIndex]) {
+					largestShiftValues[sampleIndex] = matrixShiftResults.get(shiftIndex, sampleIndex);
+					if((shiftIndex + 1) / (MAX_SHIFT + 1) > 0) {
+						largestShifts[sampleIndex] = (shiftIndex % (MAX_SHIFT + 1));
+					} else {
+						largestShifts[sampleIndex] = shiftIndex - MAX_SHIFT;
+					}
+				}
+			}
+		}
 		// apply shift to chromatograms using rtshifter
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
 		return processingInfo;
