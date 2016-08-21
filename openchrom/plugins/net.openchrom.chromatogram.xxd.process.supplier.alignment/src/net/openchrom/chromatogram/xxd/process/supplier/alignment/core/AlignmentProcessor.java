@@ -40,50 +40,18 @@ public class AlignmentProcessor {
 
 		IProcessingInfo processingInfo = new ProcessingInfo();
 		List<File> inputFiles = new ArrayList<File>();
-		List<Chromatogram> standardizedChromatograms = new ArrayList<Chromatogram>();
+		// List<Chromatogram> standardizedChromatograms = new ArrayList<Chromatogram>();
+		// find values for the whole sample set
 		for(IDataInputEntry inputEntry : dataInputEntries) {
 			System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
 			inputFiles.add(new File(inputEntry.getInputFile()));
 		}
-		// find values for the whole sample set
 		int highestRetentionTime = findHighestRt(inputFiles, monitor);
 		int lowestRetentionTime = findLowestRt(inputFiles, monitor);
 		int numberOfScans = (highestRetentionTime - lowestRetentionTime) / retentionTimeWindow;
 		int numberOfSamples = dataInputEntries.size();
-		// loop through each sample
-		for(IDataInputEntry inputEntry : dataInputEntries) {
-			Chromatogram standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
-			// iterate through the standard chromatogram and fill in intensity values
-			// from interpolating from the currently loaded chromatogram
-			IChromatogramMSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterMSD.convert(new File(inputEntry.getInputFile()), monitor);
-			try {
-				IChromatogramMSD chromatogram = processingInfo2.getChromatogram();
-				Iterator<IScan> iterator = chromatogram.getScans().iterator();
-				IScan currentScan = iterator.next();
-				float intensityBefore = 0;
-				for(IScan scan : standard.getScans()) {
-					while(iterator.hasNext() && currentScan.getRetentionTime() < scan.getRetentionTime()) {
-						intensityBefore = currentScan.getTotalSignal();
-						currentScan = iterator.next();
-					}
-					// need to check here also if the currentScan is not higher than the standard's retention time.
-					float intensityAfter = currentScan.getTotalSignal();
-					// will implement more advanced interpolation later.
-					float intensityAverage = (intensityBefore + intensityAfter) / 2;
-					scan.adjustTotalSignal(intensityAverage);
-					if(iterator.hasNext()) {
-						currentScan = iterator.next();
-					}
-				}
-			} catch(TypeCastException e) {
-				logger.warn(e);
-			}
-			// somehow need to store the standard chromatogram here.
-			standardizedChromatograms.add(standard);
-		}
-		// initially, calculate shifts against average, later,
-		// several possible choices
-		// create matrix of samples, not shifted
+		List<Chromatogram> standardizedChromatograms = standardizeChromatograms(dataInputEntries, retentionTimeWindow, lowestRetentionTime, highestRetentionTime, monitor);
+		// create matrix of samples, not shifted TODO to be removed
 		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
 		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
 			Iterator<IScan> scanIterator = standardizedChromatograms.get(currentSample).getScans().iterator();
@@ -93,7 +61,8 @@ public class AlignmentProcessor {
 		}
 		SimpleMatrix matrixSampleTics = new SimpleMatrix(sampleTics);
 		matrixSampleTics = matrixSampleTics.transpose();
-		// calculate average of all samples
+		// Calculate target:
+		// average of all samples TODO to be removed
 		double[] averageSample = new double[numberOfScans];
 		int signalSum = 0;
 		for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
@@ -103,7 +72,7 @@ public class AlignmentProcessor {
 			averageSample[scanIndex] = signalSum / numberOfSamples;
 			signalSum = 0;
 		}
-		// create 2D array of target, shifted
+		// create 2D array of target, shifted TODO to be removed
 		double[][] targetTics = new double[2 * MAX_SHIFT + 1][numberOfScans + 2 * MAX_SHIFT + 1];
 		for(int shiftIndex = 0; shiftIndex < 2 * MAX_SHIFT + 1; shiftIndex++) {
 			for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
@@ -184,44 +153,7 @@ public class AlignmentProcessor {
 	}
 
 	/**
-	 * Extracts the file name.
-	 * 
-	 * @param file
-	 * @param nameDefault
-	 * @return String
-	 */
-	private String extractNameFromFile(File file, String nameDefault) {
-
-		if(file != null) {
-			String fileName = file.getName();
-			if(fileName != "" && fileName != null) {
-				/*
-				 * Extract the file name.
-				 */
-				String[] parts = fileName.split("\\.");
-				if(parts.length > 2) {
-					StringBuilder builder = new StringBuilder();
-					for(int i = 0; i < parts.length - 1; i++) {
-						builder.append(parts[i]);
-						builder.append(".");
-					}
-					String name = builder.toString();
-					nameDefault = name.substring(0, name.length() - 1);
-				} else {
-					/*
-					 * If there are not 2 parts, it's assumed that the file had no extension.
-					 */
-					if(parts.length == 2) {
-						nameDefault = parts[0];
-					}
-				}
-			}
-		}
-		return nameDefault;
-	}
-
-	/**
-	 * Create regular template chromatogram
+	 * Create equispaced template chromatogram
 	 * 
 	 * @param retentionTimeWindow
 	 * @param lowestRt
@@ -242,6 +174,56 @@ public class AlignmentProcessor {
 		return standard;
 	}
 
+	/**
+	 * Sample Matrix
+	 * 
+	 * @param numberOfSamples
+	 * @param numberOfScans
+	 * @param standardizedChromatograms
+	 * @return
+	 */
+	private SimpleMatrix matrixSampleTics(int numberOfSamples, int numberOfScans, List<Chromatogram> standardizedChromatograms) {
+
+		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
+		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
+			Iterator<IScan> scanIterator = standardizedChromatograms.get(currentSample).getScans().iterator();
+			for(int currentScan = 0; currentScan < numberOfScans; currentScan++) {
+				sampleTics[currentSample][currentScan + MAX_SHIFT] = scanIterator.next().getTotalSignal();
+			}
+		}
+		SimpleMatrix matrixSampleTics = new SimpleMatrix(sampleTics);
+		matrixSampleTics = matrixSampleTics.transpose();
+		return matrixSampleTics;
+	}
+
+	private double[] averageSample(int numberOfScans, int numberOfSamples, List<Chromatogram> standardizedChromatograms) {
+
+		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
+		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
+			Iterator<IScan> scanIterator = standardizedChromatograms.get(currentSample).getScans().iterator();
+			for(int currentScan = 0; currentScan < numberOfScans; currentScan++) {
+				sampleTics[currentSample][currentScan + MAX_SHIFT] = scanIterator.next().getTotalSignal();
+			}
+		}
+		double[] averageSample = new double[numberOfScans];
+		int signalSum = 0;
+		for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
+			for(int sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
+				signalSum += sampleTics[sampleIndex][scanIndex + MAX_SHIFT];
+			}
+			averageSample[scanIndex] = signalSum / numberOfSamples;
+			signalSum = 0;
+		}
+		return averageSample;
+	}
+
+	/**
+	 * Shifted Target Matrix
+	 * 
+	 * @param numberOfScans
+	 * @param averageSample
+	 * @return
+	 */
 	private SimpleMatrix matrixTargetTics(int numberOfScans, double[] averageSample) {
 
 		double[][] targetTics = new double[2 * MAX_SHIFT + 1][numberOfScans + 2 * MAX_SHIFT + 1];
@@ -253,6 +235,50 @@ public class AlignmentProcessor {
 		SimpleMatrix matrixTargetTics = new SimpleMatrix(targetTics);
 		return matrixTargetTics;
 	}
-	// private List<Chromatogram> standardizeChromatogram() {
-	// }
+
+	/**
+	 * standardizeChromatograms
+	 * 
+	 * @param dataInputEntries
+	 * @param retentionTimeWindow
+	 * @param lowestRetentionTime
+	 * @param highestRetentionTime
+	 * @param monitor
+	 * @return
+	 */
+	private List<Chromatogram> standardizeChromatograms(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, int lowestRetentionTime, int highestRetentionTime, IProgressMonitor monitor) {
+
+		List<Chromatogram> standardizedChromatograms = new ArrayList<Chromatogram>();
+		for(IDataInputEntry inputEntry : dataInputEntries) {
+			Chromatogram standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
+			// iterate through the standard chromatogram and fill in intensity values
+			// from interpolating from the currently loaded chromatogram
+			IChromatogramMSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterMSD.convert(new File(inputEntry.getInputFile()), monitor);
+			try {
+				IChromatogramMSD chromatogram = processingInfo2.getChromatogram();
+				Iterator<IScan> iterator = chromatogram.getScans().iterator();
+				IScan currentScan = iterator.next();
+				float intensityBefore = 0;
+				for(IScan scan : standard.getScans()) {
+					while(iterator.hasNext() && currentScan.getRetentionTime() < scan.getRetentionTime()) {
+						intensityBefore = currentScan.getTotalSignal();
+						currentScan = iterator.next();
+					}
+					// need to check here also if the currentScan is not higher than the standard's retention time.
+					float intensityAfter = currentScan.getTotalSignal();
+					// will implement more advanced interpolation later.
+					float intensityAverage = (intensityBefore + intensityAfter) / 2;
+					scan.adjustTotalSignal(intensityAverage);
+					if(iterator.hasNext()) {
+						currentScan = iterator.next();
+					}
+				}
+			} catch(TypeCastException e) {
+				logger.warn(e);
+			}
+			// somehow need to store the standard chromatogram here.
+			standardizedChromatograms.add(standard);
+		}
+		return standardizedChromatograms;
+	}
 }
