@@ -73,7 +73,9 @@ public class AlignmentProcessor {
 					// will implement more advanced interpolation later.
 					float intensityAverage = (intensityBefore + intensityAfter) / 2;
 					scan.adjustTotalSignal(intensityAverage);
-					currentScan = iterator.next();
+					if(iterator.hasNext()) {
+						currentScan = iterator.next();
+					}
 				}
 			} catch(TypeCastException e) {
 				logger.warn(e);
