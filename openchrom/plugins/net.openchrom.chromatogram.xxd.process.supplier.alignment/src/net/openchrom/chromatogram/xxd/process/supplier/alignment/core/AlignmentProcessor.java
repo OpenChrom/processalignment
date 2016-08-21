@@ -52,8 +52,6 @@ public class AlignmentProcessor {
 		int numberOfSamples = dataInputEntries.size();
 		// loop through each sample
 		for(IDataInputEntry inputEntry : dataInputEntries) {
-			// System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
-			// inputFiles.add(new File(inputEntry.getInputFile()));
 			Chromatogram standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
 			// iterate through the standard chromatogram and fill in intensity values
 			// from interpolating from the currently loaded chromatogram
@@ -83,8 +81,8 @@ public class AlignmentProcessor {
 			// somehow need to store the standard chromatogram here.
 			standardizedChromatograms.add(standard);
 		}
-		// initially, calculate shifts against first chromatogram, later
-		// make against average, later, several possible choices
+		// initially, calculate shifts against average, later,
+		// several possible choices
 		// create matrix of samples, not shifted
 		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
 		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
@@ -243,4 +241,18 @@ public class AlignmentProcessor {
 		}
 		return standard;
 	}
+
+	private SimpleMatrix matrixTargetTics(int numberOfScans, double[] averageSample) {
+
+		double[][] targetTics = new double[2 * MAX_SHIFT + 1][numberOfScans + 2 * MAX_SHIFT + 1];
+		for(int shiftIndex = 0; shiftIndex < 2 * MAX_SHIFT + 1; shiftIndex++) {
+			for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
+				targetTics[shiftIndex][shiftIndex + scanIndex] = averageSample[scanIndex];
+			}
+		}
+		SimpleMatrix matrixTargetTics = new SimpleMatrix(targetTics);
+		return matrixTargetTics;
+	}
+	// private List<Chromatogram> standardizeChromatogram() {
+	// }
 }
