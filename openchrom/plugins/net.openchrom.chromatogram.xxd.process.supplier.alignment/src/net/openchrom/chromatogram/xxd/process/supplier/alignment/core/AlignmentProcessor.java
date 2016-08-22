@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.core.ChromatogramFilterShift;
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.settings.SupplierFilterShiftSettings;
+import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
@@ -25,6 +26,7 @@ import org.eclipse.chemclipse.model.implementation.Chromatogram;
 import org.eclipse.chemclipse.model.implementation.Scan;
 import org.eclipse.chemclipse.model.selection.ChromatogramSelection;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
+import org.eclipse.chemclipse.msd.converter.io.IChromatogramMSDWriter;
 import org.eclipse.chemclipse.msd.converter.processing.chromatogram.IChromatogramMSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
@@ -71,6 +73,8 @@ public class AlignmentProcessor {
 				ChromatogramFilterShift shifter = new ChromatogramFilterShift();
 				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(colMaxIndices[counter] * retentionTimeWindow, true);
 				shifter.applyFilter(currentChromatogram, settings, monitor);
+				IChromatogramExportConverterProcessingInfo exporter = ChromatogramConverterMSD.convert(scanFile, (IChromatogramMSD)currentChromatogram.getChromatogram(), currentChromatogram.getChromatogram().getConverterId(), monitor);
+				// ChromatogramWriter writer = new ChromatogramMSDWriter();
 			} catch(TypeCastException | ChromatogramIsNullException e) {
 				logger.warn(e);
 			}
