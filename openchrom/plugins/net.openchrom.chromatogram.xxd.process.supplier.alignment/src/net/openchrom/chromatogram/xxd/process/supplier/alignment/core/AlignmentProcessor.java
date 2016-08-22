@@ -16,10 +16,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.core.ChromatogramFilterShift;
+import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.settings.SupplierFilterShiftSettings;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.core.IScan;
+import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
 import org.eclipse.chemclipse.model.implementation.Scan;
+import org.eclipse.chemclipse.model.selection.ChromatogramSelection;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.msd.converter.processing.chromatogram.IChromatogramMSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
@@ -39,11 +43,12 @@ public class AlignmentProcessor {
 	public IProcessingInfo alignChromatograms(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, IProgressMonitor monitor) {
 
 		IProcessingInfo processingInfo = new ProcessingInfo();
-		List<File> inputFiles = new ArrayList<File>();
-		for(IDataInputEntry inputEntry : dataInputEntries) {
-			System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
-			inputFiles.add(new File(inputEntry.getInputFile()));
-		}
+		// List<File> inputFiles = new ArrayList<File>();
+		// for(IDataInputEntry inputEntry : dataInputEntries) {
+		// System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
+		// inputFiles.add(new File(inputEntry.getInputFile()));
+		// }
+		List<File> inputFiles = getInputFiles(dataInputEntries);
 		int highestRetentionTime = findHighestRt(inputFiles, monitor);
 		int lowestRetentionTime = findLowestRt(inputFiles, monitor);
 		int numberOfScans = (highestRetentionTime - lowestRetentionTime) / retentionTimeWindow;
@@ -58,8 +63,31 @@ public class AlignmentProcessor {
 		SimpleMatrix matrixShiftResults = new SimpleMatrix(targetTicsMatrix.mult(sampleTicsMatrix));
 		int[] colMaxIndices = calcColMaxIndices(numberOfSamples, matrixShiftResults);
 		// apply shift to chromatograms using rtshifter
+		int counter = 0;
+		for(File scanFile : inputFiles) {
+			IChromatogramMSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterMSD.convert(scanFile, monitor);
+			try {
+				ChromatogramSelection currentChromatogram = new ChromatogramSelection(processingInfo2.getChromatogram());
+				ChromatogramFilterShift shifter = new ChromatogramFilterShift();
+				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(colMaxIndices[counter] * retentionTimeWindow, true);
+				shifter.applyFilter(currentChromatogram, settings, monitor);
+			} catch(TypeCastException | ChromatogramIsNullException e) {
+				logger.warn(e);
+			}
+			counter++;
+		}
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
 		return processingInfo;
+	}
+
+	private List<File> getInputFiles(List<IDataInputEntry> dataInputEntries) {
+
+		List<File> inputFiles = new ArrayList<File>();
+		for(IDataInputEntry inputEntry : dataInputEntries) {
+			System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
+			inputFiles.add(new File(inputEntry.getInputFile()));
+		}
+		return inputFiles;
 	}
 
 	/**
