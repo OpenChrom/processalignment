@@ -40,8 +40,6 @@ public class AlignmentProcessor {
 
 		IProcessingInfo processingInfo = new ProcessingInfo();
 		List<File> inputFiles = new ArrayList<File>();
-		// List<Chromatogram> standardizedChromatograms = new ArrayList<Chromatogram>();
-		// find values for the whole sample set
 		for(IDataInputEntry inputEntry : dataInputEntries) {
 			System.out.println("Reading chromatogram: " + inputEntry.getName() + "\t" + inputEntry.getInputFile());
 			inputFiles.add(new File(inputEntry.getInputFile()));
@@ -51,52 +49,14 @@ public class AlignmentProcessor {
 		int numberOfScans = (highestRetentionTime - lowestRetentionTime) / retentionTimeWindow;
 		int numberOfSamples = dataInputEntries.size();
 		List<Chromatogram> standardizedChromatograms = standardizeChromatograms(dataInputEntries, retentionTimeWindow, lowestRetentionTime, highestRetentionTime, monitor);
-		// create matrix of samples, not shifted TODO to be removed
-		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
-		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
-			Iterator<IScan> scanIterator = standardizedChromatograms.get(currentSample).getScans().iterator();
-			for(int currentScan = 0; currentScan < numberOfScans; currentScan++) {
-				sampleTics[currentSample][currentScan + MAX_SHIFT] = scanIterator.next().getTotalSignal();
-			}
-		}
-		SimpleMatrix matrixSampleTics = new SimpleMatrix(sampleTics);
-		matrixSampleTics = matrixSampleTics.transpose();
-		// Calculate target:
-		// average of all samples TODO to be removed
-		double[] averageSample = new double[numberOfScans];
-		int signalSum = 0;
-		for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
-			for(int sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
-				signalSum += sampleTics[sampleIndex][scanIndex + MAX_SHIFT];
-			}
-			averageSample[scanIndex] = signalSum / numberOfSamples;
-			signalSum = 0;
-		}
-		// create 2D array of target, shifted TODO to be removed
-		double[][] targetTics = new double[2 * MAX_SHIFT + 1][numberOfScans + 2 * MAX_SHIFT + 1];
-		for(int shiftIndex = 0; shiftIndex < 2 * MAX_SHIFT + 1; shiftIndex++) {
-			for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
-				targetTics[shiftIndex][shiftIndex + scanIndex] = averageSample[scanIndex];
-			}
-		}
-		SimpleMatrix matrixTargetTics = new SimpleMatrix(targetTics);
-		// shift calculation
-		SimpleMatrix matrixShiftResults = new SimpleMatrix(matrixTargetTics.mult(matrixSampleTics));
-		// extract max values from each column
-		int[] largestShifts = new int[numberOfSamples];
-		double[] largestShiftValues = new double[numberOfSamples];
-		for(int sampleIndex = 0; sampleIndex < numberOfSamples; sampleIndex++) {
-			for(int shiftIndex = 0; shiftIndex < (2 * MAX_SHIFT + 1); shiftIndex++) {
-				if(matrixShiftResults.get(shiftIndex, sampleIndex) > largestShiftValues[sampleIndex]) {
-					largestShiftValues[sampleIndex] = matrixShiftResults.get(shiftIndex, sampleIndex);
-					if((shiftIndex + 1) / (MAX_SHIFT + 1) > 0) {
-						largestShifts[sampleIndex] = (shiftIndex % (MAX_SHIFT + 1));
-					} else {
-						largestShifts[sampleIndex] = shiftIndex - MAX_SHIFT;
-					}
-				}
-			}
-		}
+		double[][] sampleTics = composeSampleTics(numberOfSamples, numberOfScans, standardizedChromatograms);
+		SimpleMatrix sampleTicsMatrix = new SimpleMatrix(sampleTics);
+		sampleTicsMatrix = sampleTicsMatrix.transpose();
+		double[] averageSample = calculateAverageSample(numberOfScans, numberOfSamples, standardizedChromatograms);
+		double[][] targetTics = composeTargetTics(numberOfScans, averageSample);
+		SimpleMatrix targetTicsMatrix = new SimpleMatrix(targetTics);
+		SimpleMatrix matrixShiftResults = new SimpleMatrix(targetTicsMatrix.mult(sampleTicsMatrix));
+		int[] colMaxIndices = calcColMaxIndices(numberOfSamples, matrixShiftResults);
 		// apply shift to chromatograms using rtshifter
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
 		return processingInfo;
@@ -116,7 +76,6 @@ public class AlignmentProcessor {
 			IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(scanFile, monitor);
 			try {
 				IChromatogramMSD chromatogram = processingInfo.getChromatogram();
-				// String name = extractNameFromFile(scanFile, "n.a.");
 				if(chromatogram.getStopRetentionTime() > highestRt) {
 					highestRt = chromatogram.getStopRetentionTime();
 				}
@@ -182,7 +141,7 @@ public class AlignmentProcessor {
 	 * @param standardizedChromatograms
 	 * @return
 	 */
-	private SimpleMatrix matrixSampleTics(int numberOfSamples, int numberOfScans, List<Chromatogram> standardizedChromatograms) {
+	private double[][] composeSampleTics(int numberOfSamples, int numberOfScans, List<Chromatogram> standardizedChromatograms) {
 
 		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
 		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
@@ -191,12 +150,18 @@ public class AlignmentProcessor {
 				sampleTics[currentSample][currentScan + MAX_SHIFT] = scanIterator.next().getTotalSignal();
 			}
 		}
-		SimpleMatrix matrixSampleTics = new SimpleMatrix(sampleTics);
-		matrixSampleTics = matrixSampleTics.transpose();
-		return matrixSampleTics;
+		return sampleTics;
 	}
 
-	private double[] averageSample(int numberOfScans, int numberOfSamples, List<Chromatogram> standardizedChromatograms) {
+	/**
+	 * calculateAverageSample
+	 * 
+	 * @param numberOfScans
+	 * @param numberOfSamples
+	 * @param standardizedChromatograms
+	 * @return
+	 */
+	private double[] calculateAverageSample(int numberOfScans, int numberOfSamples, List<Chromatogram> standardizedChromatograms) {
 
 		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
 		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
@@ -218,13 +183,13 @@ public class AlignmentProcessor {
 	}
 
 	/**
-	 * Shifted Target Matrix
+	 * composeTargetTics
 	 * 
 	 * @param numberOfScans
 	 * @param averageSample
 	 * @return
 	 */
-	private SimpleMatrix matrixTargetTics(int numberOfScans, double[] averageSample) {
+	private double[][] composeTargetTics(int numberOfScans, double[] averageSample) {
 
 		double[][] targetTics = new double[2 * MAX_SHIFT + 1][numberOfScans + 2 * MAX_SHIFT + 1];
 		for(int shiftIndex = 0; shiftIndex < 2 * MAX_SHIFT + 1; shiftIndex++) {
@@ -232,8 +197,7 @@ public class AlignmentProcessor {
 				targetTics[shiftIndex][shiftIndex + scanIndex] = averageSample[scanIndex];
 			}
 		}
-		SimpleMatrix matrixTargetTics = new SimpleMatrix(targetTics);
-		return matrixTargetTics;
+		return targetTics;
 	}
 
 	/**
@@ -280,5 +244,31 @@ public class AlignmentProcessor {
 			standardizedChromatograms.add(standard);
 		}
 		return standardizedChromatograms;
+	}
+
+	/**
+	 * calcColMaxIndicies
+	 * 
+	 * @param numberOfCols
+	 * @param matrix
+	 * @return
+	 */
+	int[] calcColMaxIndices(int numberOfCols, SimpleMatrix matrix) {
+
+		int[] colMaxIndices = new int[numberOfCols];
+		double[] colMax = new double[numberOfCols];
+		for(int sampleIndex = 0; sampleIndex < numberOfCols; sampleIndex++) {
+			for(int shiftIndex = 0; shiftIndex < (2 * MAX_SHIFT + 1); shiftIndex++) {
+				if(matrix.get(shiftIndex, sampleIndex) > colMax[sampleIndex]) {
+					colMax[sampleIndex] = matrix.get(shiftIndex, sampleIndex);
+					if((shiftIndex + 1) / (MAX_SHIFT + 1) > 0) {
+						colMaxIndices[sampleIndex] = (shiftIndex % (MAX_SHIFT + 1));
+					} else {
+						colMaxIndices[sampleIndex] = shiftIndex - MAX_SHIFT;
+					}
+				}
+			}
+		}
+		return colMaxIndices;
 	}
 }
