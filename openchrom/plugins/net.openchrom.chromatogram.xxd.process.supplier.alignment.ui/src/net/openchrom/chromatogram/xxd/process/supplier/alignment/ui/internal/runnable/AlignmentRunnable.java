@@ -24,16 +24,18 @@ public class AlignmentRunnable implements IRunnableWithProgress {
 
 	private List<IDataInputEntry> dataInputEntries;
 	private int retentionTimeWindow;
+	private int chromatogramType;
 
-	public AlignmentRunnable(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow) {
+	public AlignmentRunnable(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, int chromatogramType) {
 		this.dataInputEntries = dataInputEntries;
 		this.retentionTimeWindow = retentionTimeWindow;
+		this.chromatogramType = chromatogramType;
 	}
 
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 		AlignmentProcessor alignmentProcessor = new AlignmentProcessor();
-		alignmentProcessor.alignChromatograms(dataInputEntries, retentionTimeWindow, monitor);
+		alignmentProcessor.alignChromatograms(dataInputEntries, retentionTimeWindow, monitor, chromatogramType);
 	}
 }

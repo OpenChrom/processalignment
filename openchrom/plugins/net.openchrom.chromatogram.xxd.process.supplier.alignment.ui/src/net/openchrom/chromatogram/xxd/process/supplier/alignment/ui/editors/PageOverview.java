@@ -85,7 +85,7 @@ public class PageOverview {
 		}
 		return retentionTimeWindow;
 	}
-	
+
 	public int getChromatogramType() {
 
 		return chromatogramType;
@@ -141,7 +141,7 @@ public class PageOverview {
 		gridData.widthHint = 300;
 		retentionTimeWindowText.setLayoutData(gridData);
 	}
-	
+
 	private void createChromatogramTypeButtons(Composite client, FormToolkit formToolkit) {
 
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -177,7 +177,6 @@ public class PageOverview {
 		radioButtons[1].setLayoutData(gridData);
 		radioButtons[1].addSelectionListener(selectionListener);
 	}
-	
 
 	/**
 	 * Creates the run section.

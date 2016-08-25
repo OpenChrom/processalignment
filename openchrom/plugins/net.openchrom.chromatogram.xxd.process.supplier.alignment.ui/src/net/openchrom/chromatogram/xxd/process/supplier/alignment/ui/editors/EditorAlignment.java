@@ -131,11 +131,12 @@ public class EditorAlignment {
 		 * Get the settings.
 		 */
 		int retentionTimeWindow = pageOverview.getRetentionTimeWindow();
+		int chromatogramType = pageOverview.getChromatogramType();
 		List<IDataInputEntry> dataInputEntries = pageInputFiles.getDataInputEntries();
 		/*
 		 * Run the process.
 		 */
-		AlignmentRunnable runnable = new AlignmentRunnable(dataInputEntries, retentionTimeWindow);
+		AlignmentRunnable runnable = new AlignmentRunnable(dataInputEntries, retentionTimeWindow, chromatogramType);
 		ProgressMonitorDialog monitor = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 		try {
 			/*
