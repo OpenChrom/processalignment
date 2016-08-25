@@ -15,9 +15,13 @@ import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
@@ -39,6 +43,7 @@ public class PageOverview {
 	//
 	private EditorAlignment editorAlignment;
 	private Text retentionTimeWindowText;
+	private int chromatogramType;
 
 	public PageOverview(EditorAlignment pcaEditor, TabFolder tabFolder, FormToolkit formToolkit) {
 		//
@@ -80,6 +85,11 @@ public class PageOverview {
 		}
 		return retentionTimeWindow;
 	}
+	
+	public int getChromatogramType() {
+
+		return chromatogramType;
+	}
 
 	/**
 	 * Creates the properties section.
@@ -113,6 +123,7 @@ public class PageOverview {
 		 * Settings
 		 */
 		createRetentionTimeWindowText(client, formToolkit);
+		createChromatogramTypeButtons(client, formToolkit);
 		/*
 		 * Add the client to the section and paint flat borders.
 		 */
@@ -130,6 +141,43 @@ public class PageOverview {
 		gridData.widthHint = 300;
 		retentionTimeWindowText.setLayoutData(gridData);
 	}
+	
+	private void createChromatogramTypeButtons(Composite client, FormToolkit formToolkit) {
+
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		gridData.heightHint = 30;
+		/*
+		 * Chromatogram type radio buttons.
+		 */
+		Label radioLabels = formToolkit.createLabel(client, "Select the Chromatogram type:");
+		radioLabels.setLayoutData(gridData);
+		SelectionListener selectionListener = new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent event) {
+
+				Button button = ((Button)event.widget);
+				if(button.getText().equals("MSD")) {
+					chromatogramType = 0;
+				} else {
+					chromatogramType = 1;
+				}
+			};
+		};
+		Button[] radioButtons = new Button[2];
+		//
+		radioButtons[0] = new Button(client, SWT.RADIO);
+		radioButtons[0].setSelection(true);
+		radioButtons[0].setText("MSD");
+		radioButtons[0].setLayoutData(gridData);
+		radioButtons[0].addSelectionListener(selectionListener);
+		//
+		radioButtons[1] = new Button(client, SWT.RADIO);
+		radioButtons[1].setText("CSD");
+		radioButtons[1].setLayoutData(gridData);
+		radioButtons[1].addSelectionListener(selectionListener);
+	}
+	
 
 	/**
 	 * Creates the run section.
