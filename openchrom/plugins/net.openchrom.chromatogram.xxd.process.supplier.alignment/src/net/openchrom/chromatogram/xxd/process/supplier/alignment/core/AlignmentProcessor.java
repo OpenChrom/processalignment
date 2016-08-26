@@ -20,6 +20,7 @@ import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.core.Ch
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.settings.SupplierFilterShiftSettings;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.csd.converter.processing.chromatogram.IChromatogramCSDImportConverterProcessingInfo;
+import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
@@ -72,6 +73,14 @@ public class AlignmentProcessor {
 		SimpleMatrix targetTicsMatrix = new SimpleMatrix(targetTics);
 		SimpleMatrix matrixShiftResults = new SimpleMatrix(targetTicsMatrix.mult(sampleTicsMatrix));
 		int[] colMaxIndices = calcColMaxIndices(numberOfSamples, matrixShiftResults);
+		
+		if(chromatogramType == 0){
+			exportMSD(inputFiles, colMaxIndices, retentionTimeWindow, monitor);
+		} else {
+			exportCSD(inputFiles, colMaxIndices, retentionTimeWindow, monitor);
+		}
+		
+		/*
 		int counter = 0;
 		for(File scanFile : inputFiles) {
 			IChromatogramMSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterMSD.convert(scanFile, monitor);
@@ -86,6 +95,7 @@ public class AlignmentProcessor {
 			}
 			counter++;
 		}
+		*/
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
 		return processingInfo;
 	}
@@ -399,4 +409,55 @@ public class AlignmentProcessor {
 		}
 		return colMaxIndices;
 	}
+	
+	/**
+	 * exportMSD - export aligned files to MSD
+	 * 
+	 * @param inputFiles
+	 * @param colMaxIndices
+	 * @param retentionTimeWindow
+	 * @param monitor
+	 */
+	void exportMSD(List<File> inputFiles, int colMaxIndices[], int retentionTimeWindow, IProgressMonitor monitor ){
+		int counter = 0;
+		for(File scanFile : inputFiles) {
+			IChromatogramMSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterMSD.convert(scanFile, monitor);
+			try {
+				ChromatogramSelection currentChromatogram = new ChromatogramSelection(processingInfo2.getChromatogram());
+				ChromatogramFilterShift shifter = new ChromatogramFilterShift();
+				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(colMaxIndices[counter] * retentionTimeWindow, true);
+				shifter.applyFilter(currentChromatogram, settings, monitor);
+				ChromatogramConverterMSD.convert(scanFile, (IChromatogramMSD)currentChromatogram.getChromatogram(), currentChromatogram.getChromatogram().getConverterId(), monitor);
+			} catch(TypeCastException | ChromatogramIsNullException e) {
+				logger.warn(e);
+			}
+			counter++;
+		}		
+	}
+	
+	/**
+	 * exportCSD - export aligned files to CSD
+	 * 
+	 * @param inputFiles
+	 * @param colMaxIndices
+	 * @param retentionTimeWindow
+	 * @param monitor
+	 */
+	void exportCSD(List<File> inputFiles, int colMaxIndices[], int retentionTimeWindow, IProgressMonitor monitor ){
+		int counter = 0;
+		for(File scanFile : inputFiles) {
+			IChromatogramCSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterCSD.convert(scanFile, monitor);
+			try {
+				ChromatogramSelection currentChromatogram = new ChromatogramSelection(processingInfo2.getChromatogram());
+				ChromatogramFilterShift shifter = new ChromatogramFilterShift();
+				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(colMaxIndices[counter] * retentionTimeWindow, true);
+				shifter.applyFilter(currentChromatogram, settings, monitor);
+				ChromatogramConverterCSD.convert(scanFile, (IChromatogramCSD)currentChromatogram.getChromatogram(), currentChromatogram.getChromatogram().getConverterId(), monitor);
+			} catch(TypeCastException | ChromatogramIsNullException e) {
+				logger.warn(e);
+			}
+			counter++;
+		}		
+	}
+	
 }
