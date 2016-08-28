@@ -43,7 +43,7 @@ public class PageOverview {
 	//
 	private EditorAlignment editorAlignment;
 	private Text retentionTimeWindowText;
-	private int chromatogramType;
+	public int chromatogramType;
 
 	public PageOverview(EditorAlignment pcaEditor, TabFolder tabFolder, FormToolkit formToolkit) {
 		//

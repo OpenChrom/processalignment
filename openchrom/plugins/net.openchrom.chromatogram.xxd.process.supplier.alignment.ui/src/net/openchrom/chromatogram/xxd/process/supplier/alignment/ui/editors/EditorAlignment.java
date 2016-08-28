@@ -152,6 +152,11 @@ public class EditorAlignment {
 		}
 	}
 
+	public int getChromatogramType() {
+
+		return pageOverview.getChromatogramType();
+	}
+
 	public void showInputFilesPage() {
 
 		int pageIndex = 0;
