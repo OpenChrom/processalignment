@@ -40,10 +40,14 @@ public class PageOverview {
 
 	private static final Logger logger = Logger.getLogger(PageOverview.class);
 	private static final int DEFAULT_RETENTION_TIME_WINDOW = 200;
+	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION = 0;
+	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION = 1000;
 	//
 	private EditorAlignment editorAlignment;
 	private Text retentionTimeWindowText;
 	private int chromatogramType;
+	private Text lowerRetentionTimeSelectionText;
+	private Text upperRetentionTimeSelectionText;
 
 	public PageOverview(EditorAlignment pcaEditor, TabFolder tabFolder, FormToolkit formToolkit) {
 		//
@@ -91,6 +95,28 @@ public class PageOverview {
 		return chromatogramType;
 	}
 
+	public int getLowerRetentionTimeSelection() {
+
+		int lowerRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION;
+		try {
+			lowerRetentionTimeSelection = Integer.parseInt(lowerRetentionTimeSelectionText.getText().trim());
+		} catch(NumberFormatException e) {
+			logger.warn(e);
+		}
+		return lowerRetentionTimeSelection;
+	}
+
+	public int getUpperRetentionTimeSelection() {
+
+		int upperRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION;
+		try {
+			upperRetentionTimeSelection = Integer.parseInt(upperRetentionTimeSelectionText.getText().trim());
+		} catch(NumberFormatException e) {
+			logger.warn(e);
+		}
+		return upperRetentionTimeSelection;
+	}
+
 	/**
 	 * Creates the properties section.
 	 */
@@ -123,6 +149,8 @@ public class PageOverview {
 		 * Settings
 		 */
 		createRetentionTimeWindowText(client, formToolkit);
+		createLowerRetentionTimeSelectionText(client, formToolkit);
+		createUpperRetentionTimeSelectionText(client, formToolkit);
 		createChromatogramTypeButtons(client, formToolkit);
 		/*
 		 * Add the client to the section and paint flat borders.
@@ -140,6 +168,28 @@ public class PageOverview {
 		GridData gridData = new GridData();
 		gridData.widthHint = 300;
 		retentionTimeWindowText.setLayoutData(gridData);
+	}
+
+	private void createLowerRetentionTimeSelectionText(Composite client, FormToolkit formToolkit) {
+
+		formToolkit.createLabel(client, "Lower Retention Time Bound (milliseconds)");
+		//
+		lowerRetentionTimeSelectionText = formToolkit.createText(client, Integer.toString(DEFAULT_LOWER_RETENTION_TIME_SELECTION), SWT.NONE);
+		//
+		GridData gridData = new GridData();
+		gridData.widthHint = 300;
+		lowerRetentionTimeSelectionText.setLayoutData(gridData);
+	}
+
+	private void createUpperRetentionTimeSelectionText(Composite client, FormToolkit formToolkit) {
+
+		formToolkit.createLabel(client, "Upper Retention Time Bound (milliseconds)");
+		//
+		upperRetentionTimeSelectionText = formToolkit.createText(client, Integer.toString(DEFAULT_UPPER_RETENTION_TIME_SELECTION), SWT.NONE);
+		//
+		GridData gridData = new GridData();
+		gridData.widthHint = 300;
+		upperRetentionTimeSelectionText.setLayoutData(gridData);
 	}
 
 	private void createChromatogramTypeButtons(Composite client, FormToolkit formToolkit) {
