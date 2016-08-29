@@ -18,7 +18,6 @@ import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.chemclipse.support.ui.wizards.ChromatogramWizardElements;
 import org.eclipse.chemclipse.support.ui.wizards.IChromatogramWizardElements;
-import org.eclipse.chemclipse.ux.extension.msd.ui.wizards.ChromatogramInputEntriesWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -183,26 +182,50 @@ public class PageInputFiles {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
+				int chromatogramType = editorAlignment.getChromatogramType();
 				super.widgetSelected(e);
 				IChromatogramWizardElements chromatogramWizardElementsMSD = new ChromatogramWizardElements();
-				ChromatogramInputEntriesWizard chromatogramInputWizard = new ChromatogramInputEntriesWizard(chromatogramWizardElementsMSD);
-				WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), chromatogramInputWizard);
-				wizardDialog.create();
-				int returnCode = wizardDialog.open();
-				/*
-				 * If OK
-				 */
-				if(returnCode == WizardDialog.OK) {
+				if(chromatogramType == 0) {
+					org.eclipse.chemclipse.ux.extension.msd.ui.wizards.ChromatogramInputEntriesWizard chromatogramInputWizard = new org.eclipse.chemclipse.ux.extension.msd.ui.wizards.ChromatogramInputEntriesWizard(chromatogramWizardElementsMSD);
+					WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), chromatogramInputWizard);
+					wizardDialog.create();
+					int returnCode = wizardDialog.open();
 					/*
-					 * Get the list of selected chromatograms.
+					 * If OK
 					 */
-					List<String> selectedChromatograms = chromatogramWizardElementsMSD.getSelectedChromatograms();
-					if(selectedChromatograms.size() > 0) {
+					if(returnCode == WizardDialog.OK) {
 						/*
-						 * If it contains at least 1 element, add it to the input files list.
+						 * Get the list of selected chromatograms.
 						 */
-						addEntries(selectedChromatograms);
-						reloadInputFilesTable();
+						List<String> selectedChromatograms = chromatogramWizardElementsMSD.getSelectedChromatograms();
+						if(selectedChromatograms.size() > 0) {
+							/*
+							 * If it contains at least 1 element, add it to the input files list.
+							 */
+							addEntries(selectedChromatograms);
+							reloadInputFilesTable();
+						}
+					}
+				} else {
+					org.eclipse.chemclipse.ux.extension.csd.ui.wizards.ChromatogramInputEntriesWizard chromatogramInputWizard = new org.eclipse.chemclipse.ux.extension.csd.ui.wizards.ChromatogramInputEntriesWizard(chromatogramWizardElementsMSD);
+					WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), chromatogramInputWizard);
+					wizardDialog.create();
+					int returnCode = wizardDialog.open();
+					/*
+					 * If OK
+					 */
+					if(returnCode == WizardDialog.OK) {
+						/*
+						 * Get the list of selected chromatograms.
+						 */
+						List<String> selectedChromatograms = chromatogramWizardElementsMSD.getSelectedChromatograms();
+						if(selectedChromatograms.size() > 0) {
+							/*
+							 * If it contains at least 1 element, add it to the input files list.
+							 */
+							addEntries(selectedChromatograms);
+							reloadInputFilesTable();
+						}
 					}
 				}
 			}
