@@ -453,7 +453,7 @@ public class AlignmentProcessor {
 				ChromatogramFilterShift shifter = new ChromatogramFilterShift();
 				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(colMaxIndices[counter] * retentionTimeWindow, true);
 				shifter.applyFilter(currentChromatogram, settings, monitor);
-				IChromatogramExportConverterProcessingInfo processingInfo3 = ChromatogramConverterCSD.convert(scanFile, (IChromatogramCSD)currentChromatogram.getChromatogram(), currentChromatogram.getChromatogram().getConverterId(), monitor);
+				ChromatogramConverterCSD.convert(scanFile, (IChromatogramCSD)currentChromatogram.getChromatogram(), currentChromatogram.getChromatogram().getConverterId(), monitor);
 			} catch(TypeCastException | ChromatogramIsNullException e) {
 				logger.warn(e);
 			}
