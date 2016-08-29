@@ -41,7 +41,7 @@ public class PageOverview {
 	private static final Logger logger = Logger.getLogger(PageOverview.class);
 	private static final int DEFAULT_RETENTION_TIME_WINDOW = 200;
 	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION = 0;
-	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION = 1000;
+	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION = 900000;
 	//
 	private EditorAlignment editorAlignment;
 	private Text retentionTimeWindowText;
