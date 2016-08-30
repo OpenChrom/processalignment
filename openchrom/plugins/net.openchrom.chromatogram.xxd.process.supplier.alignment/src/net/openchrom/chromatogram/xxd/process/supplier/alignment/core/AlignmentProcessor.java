@@ -64,7 +64,8 @@ public class AlignmentProcessor {
 		if(upperRetentionTimeSelection > highestRetentionTime) {
 			upperRetentionTimeSelection = highestRetentionTime;
 		}
-		int numberOfScans = (highestRetentionTime - lowestRetentionTime) / retentionTimeWindow;
+		// int numberOfScans = (highestRetentionTime - lowestRetentionTime) / retentionTimeWindow;
+		int numberOfScans = (upperRetentionTimeSelection - lowerRetentionTimeSelection) / retentionTimeWindow;
 		int numberOfSamples = dataInputEntries.size();
 		List<Chromatogram> standardizedChromatograms = null;
 		if(chromatogramType == 0) {
@@ -352,7 +353,6 @@ public class AlignmentProcessor {
 				Iterator<IScan> iterator = chromatogram.getScans().iterator();
 				IScan currentScan = iterator.next();
 				float intensityBefore = 0;
-				int foundStartScan = 0;
 				// currently the average signal from the scans just before and after the equispaced model
 				// scan in question are used. In a more advanced version, interpolation should be done.
 				for(IScan scan : standard.getScans()) {
