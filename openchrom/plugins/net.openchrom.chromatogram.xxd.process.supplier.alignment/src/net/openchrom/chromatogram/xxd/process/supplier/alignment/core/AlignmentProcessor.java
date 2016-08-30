@@ -215,6 +215,7 @@ public class AlignmentProcessor {
 		Chromatogram standard = new Chromatogram();
 		int deltaRt = highestRt - lowestRt;
 		int numberOfRtPoints = deltaRt / retentionTimeWindow;
+		// TODO this does not work yet for ranges that don't start at zero
 		for(int xyz = lowestRt; xyz < numberOfRtPoints; xyz++) {
 			Scan equiSpacedScan = new Scan(0);
 			equiSpacedScan.setRetentionTime(xyz);
