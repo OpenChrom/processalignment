@@ -215,11 +215,13 @@ public class AlignmentProcessor {
 		Chromatogram standard = new Chromatogram();
 		int deltaRt = highestRt - lowestRt;
 		int numberOfRtPoints = deltaRt / retentionTimeWindow;
+		int currentRetentionTime = lowestRt;
 		// TODO this does not work yet for ranges that don't start at zero
-		for(int xyz = lowestRt; xyz < numberOfRtPoints; xyz++) {
+		for(int iii = 0; iii < numberOfRtPoints; iii++) {
 			Scan equiSpacedScan = new Scan(0);
-			equiSpacedScan.setRetentionTime(xyz);
+			equiSpacedScan.setRetentionTime(currentRetentionTime);
 			standard.addScan(equiSpacedScan);
+			currentRetentionTime += deltaRt;
 		}
 		return standard;
 	}
@@ -421,7 +423,7 @@ public class AlignmentProcessor {
 				currentChromatogram.setStartRetentionTime(lowerRetentionTimeSelection);
 				currentChromatogram.setStopRetentionTime(upperRetentionTimeSelection);
 				ChromatogramFilterShift shifter = new ChromatogramFilterShift();
-				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(colMaxIndices[counter] * retentionTimeWindow, true);
+				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(colMaxIndices[counter] * retentionTimeWindow, false);
 				shifter.applyFilter(currentChromatogram, settings, monitor);
 				ChromatogramConverterMSD.convert(scanFile, (IChromatogramMSD)currentChromatogram.getChromatogram(), currentChromatogram.getChromatogram().getConverterId(), monitor);
 			} catch(TypeCastException | ChromatogramIsNullException e) {
