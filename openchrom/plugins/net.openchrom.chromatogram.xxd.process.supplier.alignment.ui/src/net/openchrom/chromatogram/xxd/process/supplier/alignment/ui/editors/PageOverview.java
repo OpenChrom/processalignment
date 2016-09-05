@@ -39,9 +39,9 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 public class PageOverview {
 
 	private static final Logger logger = Logger.getLogger(PageOverview.class);
-	private static final int DEFAULT_RETENTION_TIME_WINDOW = 200;
-	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION = 0;
-	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION = 900000;
+	private static final int DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS = 200;
+	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES = 0;
+	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES = 15;
 	//
 	private EditorAlignment editorAlignment;
 	private Text retentionTimeWindowText;
@@ -81,7 +81,7 @@ public class PageOverview {
 
 	public int getRetentionTimeWindow() {
 
-		int retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW;
+		int retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS;
 		try {
 			retentionTimeWindow = Integer.parseInt(retentionTimeWindowText.getText().trim());
 		} catch(NumberFormatException e) {
@@ -97,7 +97,7 @@ public class PageOverview {
 
 	public int getLowerRetentionTimeSelection() {
 
-		int lowerRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION;
+		int lowerRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES;
 		try {
 			lowerRetentionTimeSelection = Integer.parseInt(lowerRetentionTimeSelectionText.getText().trim());
 		} catch(NumberFormatException e) {
@@ -108,7 +108,7 @@ public class PageOverview {
 
 	public int getUpperRetentionTimeSelection() {
 
-		int upperRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION;
+		int upperRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES;
 		try {
 			upperRetentionTimeSelection = Integer.parseInt(upperRetentionTimeSelectionText.getText().trim());
 		} catch(NumberFormatException e) {
@@ -163,7 +163,7 @@ public class PageOverview {
 
 		formToolkit.createLabel(client, "Retention Time Window (milliseconds)");
 		//
-		retentionTimeWindowText = formToolkit.createText(client, Integer.toString(DEFAULT_RETENTION_TIME_WINDOW), SWT.NONE);
+		retentionTimeWindowText = formToolkit.createText(client, Integer.toString(DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS), SWT.NONE);
 		//
 		GridData gridData = new GridData();
 		gridData.widthHint = 300;
@@ -172,9 +172,9 @@ public class PageOverview {
 
 	private void createLowerRetentionTimeSelectionText(Composite client, FormToolkit formToolkit) {
 
-		formToolkit.createLabel(client, "Lower Retention Time Bound (milliseconds)");
+		formToolkit.createLabel(client, "Lower Retention Time Bound (minutes)");
 		//
-		lowerRetentionTimeSelectionText = formToolkit.createText(client, Integer.toString(DEFAULT_LOWER_RETENTION_TIME_SELECTION), SWT.NONE);
+		lowerRetentionTimeSelectionText = formToolkit.createText(client, Integer.toString(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES), SWT.NONE);
 		//
 		GridData gridData = new GridData();
 		gridData.widthHint = 300;
@@ -183,9 +183,9 @@ public class PageOverview {
 
 	private void createUpperRetentionTimeSelectionText(Composite client, FormToolkit formToolkit) {
 
-		formToolkit.createLabel(client, "Upper Retention Time Bound (milliseconds)");
+		formToolkit.createLabel(client, "Upper Retention Time Bound (minutes)");
 		//
-		upperRetentionTimeSelectionText = formToolkit.createText(client, Integer.toString(DEFAULT_UPPER_RETENTION_TIME_SELECTION), SWT.NONE);
+		upperRetentionTimeSelectionText = formToolkit.createText(client, Integer.toString(DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES), SWT.NONE);
 		//
 		GridData gridData = new GridData();
 		gridData.widthHint = 300;

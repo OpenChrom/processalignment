@@ -47,6 +47,9 @@ public class AlignmentProcessor {
 
 	public IProcessingInfo alignChromatograms(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, IProgressMonitor monitor, int chromatogramType, int lowerRetentionTimeSelection, int upperRetentionTimeSelection) {
 
+		// adjusting user input of processing selection to milliseconds
+		lowerRetentionTimeSelection *= 60000;
+		upperRetentionTimeSelection *= 60000;
 		IProcessingInfo processingInfo = new ProcessingInfo();
 		List<File> inputFiles = getInputFiles(dataInputEntries);
 		int highestRetentionTime = 0;
