@@ -219,7 +219,7 @@ public class AlignmentProcessor {
 		int numberOfRetentionTimePoints = deltaRetentionTime / retentionTimeWindow + 1;
 		int currentRetentionTime = lowestRetentionTime;
 		// TODO this does not work yet for ranges that don't start at zero
-		for(int iii = 0; iii < numberOfRetentionTimePoints; iii++) {
+		for(int i = 0; i < numberOfRetentionTimePoints; i++) {
 			Scan equiSpacedScan = new Scan(0);
 			equiSpacedScan.setRetentionTime(currentRetentionTime);
 			standard.addScan(equiSpacedScan);
