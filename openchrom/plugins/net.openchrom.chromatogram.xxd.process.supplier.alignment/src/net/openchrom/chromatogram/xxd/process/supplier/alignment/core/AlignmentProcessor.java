@@ -67,8 +67,7 @@ public class AlignmentProcessor {
 		if(upperRetentionTimeSelection > highestRetentionTime) {
 			upperRetentionTimeSelection = highestRetentionTime;
 		}
-		// int numberOfScans = (highestRetentionTime - lowestRetentionTime) / retentionTimeWindow;
-		int numberOfScans = (upperRetentionTimeSelection - lowerRetentionTimeSelection) / retentionTimeWindow;
+		int numberOfScans = (upperRetentionTimeSelection - lowerRetentionTimeSelection) / retentionTimeWindow + 1;
 		int numberOfSamples = dataInputEntries.size();
 		List<Chromatogram> standardizedChromatograms = null;
 		if(chromatogramType == 0) {
@@ -217,7 +216,7 @@ public class AlignmentProcessor {
 
 		Chromatogram standard = new Chromatogram();
 		int deltaRetentionTime = highestRetentionTime - lowestRetentionTime;
-		int numberOfRetentionTimePoints = deltaRetentionTime / retentionTimeWindow;
+		int numberOfRetentionTimePoints = deltaRetentionTime / retentionTimeWindow + 1;
 		int currentRetentionTime = lowestRetentionTime;
 		// TODO this does not work yet for ranges that don't start at zero
 		for(int iii = 0; iii < numberOfRetentionTimePoints; iii++) {
