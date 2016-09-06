@@ -67,6 +67,7 @@ public class EditorAlignment {
 	 */
 	private PageOverview pageOverview;
 	private PageInputFiles pageInputFiles;
+	private PageSelectProcessingWindows pageSelectProcessingWindows;
 	private PageResults pageResults;
 	private List<Object> pages;
 
@@ -170,6 +171,10 @@ public class EditorAlignment {
 		tabFolder.setSelection(pageIndex);
 	}
 
+	public void calculateOverlayTicsPriorAlignment() {
+
+	}
+
 	private void createPages(Composite parent) {
 
 		part.setLabel("Alignment");
@@ -177,6 +182,7 @@ public class EditorAlignment {
 		//
 		pages.add(pageOverview = new PageOverview(this, tabFolder, formToolkit));
 		pages.add(pageInputFiles = new PageInputFiles(this, tabFolder, formToolkit));
+		pages.add(pageSelectProcessingWindows = new PageSelectProcessingWindows(this, tabFolder, formToolkit));
 		pages.add(pageResults = new PageResults(this, tabFolder, formToolkit));
 	}
 
