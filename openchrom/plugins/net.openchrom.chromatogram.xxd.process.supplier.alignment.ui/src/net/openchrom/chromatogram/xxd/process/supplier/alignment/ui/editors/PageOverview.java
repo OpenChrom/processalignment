@@ -49,9 +49,9 @@ public class PageOverview {
 	private Text lowerRetentionTimeSelectionText;
 	private Text upperRetentionTimeSelectionText;
 
-	public PageOverview(EditorAlignment pcaEditor, TabFolder tabFolder, FormToolkit formToolkit) {
+	public PageOverview(EditorAlignment editorAlignment, TabFolder tabFolder, FormToolkit formToolkit) {
 		//
-		this.editorAlignment = pcaEditor;
+		this.editorAlignment = editorAlignment;
 		initialize(tabFolder, formToolkit);
 	}
 

@@ -147,6 +147,7 @@ public class EditorAlignment {
 			 */
 			monitor.run(true, true, runnable);
 			reloadResults();
+			reloadProcessingWindows();
 		} catch(InvocationTargetException e) {
 			logger.warn(e);
 			logger.warn(e.getCause());
@@ -189,5 +190,10 @@ public class EditorAlignment {
 	private void reloadResults() {
 
 		pageResults.update();
+	}
+
+	public void reloadProcessingWindows() {
+
+		pageSelectProcessingWindows.update();
 	}
 }
