@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable.AlignmentRunnable;
 
@@ -70,6 +71,7 @@ public class EditorAlignment {
 	private PageSelectProcessingWindows pageSelectProcessingWindows;
 	private PageResults pageResults;
 	private List<Object> pages;
+	private IAlignmentResults alignmentResults; 
 
 	public EditorAlignment() {
 		//
@@ -196,4 +198,9 @@ public class EditorAlignment {
 
 		pageSelectProcessingWindows.update();
 	}
+	
+	public IAlignmentResults getAlignmentResults() {
+		return alignmentResults;
+	}
+	
 }

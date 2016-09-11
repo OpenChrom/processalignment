@@ -11,27 +11,36 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 import org.eclipse.swt.layout.FillLayout;
-
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
+
 public class PageSelectProcessingWindows {
 
 	private EditorAlignment editorAlignment;
+	private Table peakListIntensityTable;
 
 	public PageSelectProcessingWindows(EditorAlignment editorAlignment, TabFolder tabFolder, FormToolkit formToolkit) {
 		//
@@ -87,26 +96,59 @@ public class PageSelectProcessingWindows {
 
 	private void createProcessingTableSection(Composite parent, FormToolkit formToolkit) {
 
+		Section section;
+		Composite client;
+		GridLayout layout;
+		
+		
 		/*
 		 * Section
 		 */
-		Section section = formToolkit.createSection(parent, Section.DESCRIPTION | Section.TITLE_BAR);
+		section = formToolkit.createSection(parent, Section.DESCRIPTION | Section.TITLE_BAR);
 		section.setText("Evaluation");
 		section.setDescription("Run the alignment evaluation after the entries have been edited.");
 		section.marginWidth = 5;
 		section.marginHeight = 5;
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
 		/*
-		 * Button
+		 * Set the layout for the client.
 		 */
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText("Hello Reload Processing Windows");
-		button.addSelectionListener(new SelectionAdapter() {
+		client = formToolkit.createComposite(section, SWT.WRAP);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginWidth = 2;
+		layout.marginHeight = 2;
+		client.setLayout(layout);
+		GridData gridData;
+		peakListIntensityTable = formToolkit.createTable(client, SWT.MULTI | SWT.VIRTUAL | SWT.CHECK);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 300;
+		gridData.widthHint = 100;
+		gridData.verticalSpan = 3;
+		peakListIntensityTable.setLayoutData(gridData);
+		peakListIntensityTable.setHeaderVisible(true);
+		peakListIntensityTable.setLinesVisible(true);
+		peakListIntensityTable.addListener(SWT.MouseDoubleClick, new Listener() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 
-				editorAlignment.reloadProcessingWindows();
+				TableItem[] selection = peakListIntensityTable.getSelection();
+				for(int i = 0; i < selection.length; i++) {
+					selection[i].dispose();
+				}
+			}
+		});
+		peakListIntensityTable.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent event) {
+
+				IAlignmentResults alignmentResults = editorAlignment.getAlignmentResults();
+				
+				//
+				
+				
 			}
 		});
 	}
