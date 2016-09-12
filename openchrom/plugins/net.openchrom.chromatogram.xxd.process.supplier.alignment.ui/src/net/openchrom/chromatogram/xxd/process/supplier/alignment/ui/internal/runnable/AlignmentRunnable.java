@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.core.AlignmentProcessor;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
 public class AlignmentRunnable implements IRunnableWithProgress {
@@ -25,6 +26,7 @@ public class AlignmentRunnable implements IRunnableWithProgress {
 	private List<IDataInputEntry> dataInputEntries;
 	private int retentionTimeWindow;
 	private int chromatogramType;
+	private IAlignmentResults alignmentResults;
 	private int lowerRetentionTimeSelection;
 	private int upperRetentionTimeSelection;
 
@@ -40,6 +42,11 @@ public class AlignmentRunnable implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 		AlignmentProcessor alignmentProcessor = new AlignmentProcessor();
-		alignmentProcessor.alignChromatograms(dataInputEntries, retentionTimeWindow, monitor, chromatogramType, lowerRetentionTimeSelection, upperRetentionTimeSelection);
+		alignmentResults = alignmentProcessor.alignChromatograms(dataInputEntries, retentionTimeWindow, monitor, chromatogramType, lowerRetentionTimeSelection, upperRetentionTimeSelection);
+	}
+
+	public IAlignmentResults getAlignmentResults() {
+
+		return alignmentResults;
 	}
 }

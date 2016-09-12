@@ -99,8 +99,6 @@ public class PageSelectProcessingWindows {
 		Section section;
 		Composite client;
 		GridLayout layout;
-		
-		
 		/*
 		 * Section
 		 */
@@ -110,7 +108,6 @@ public class PageSelectProcessingWindows {
 		section.marginWidth = 5;
 		section.marginHeight = 5;
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		
 		/*
 		 * Set the layout for the client.
 		 */
@@ -145,10 +142,7 @@ public class PageSelectProcessingWindows {
 			public void widgetSelected(SelectionEvent event) {
 
 				IAlignmentResults alignmentResults = editorAlignment.getAlignmentResults();
-				
 				//
-				
-				
 			}
 		});
 	}

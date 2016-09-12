@@ -12,6 +12,7 @@
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IAlignmentResults {
 
@@ -20,4 +21,6 @@ public interface IAlignmentResults {
 	int getRetentionTimeWindow();
 
 	void setRetentionTimeWindow(int retentionTimeWindow);
+
+	public Map<ISample, IAlignmentResult> getAlignmentResultMap();
 }

@@ -71,7 +71,7 @@ public class EditorAlignment {
 	private PageSelectProcessingWindows pageSelectProcessingWindows;
 	private PageResults pageResults;
 	private List<Object> pages;
-	private IAlignmentResults alignmentResults; 
+	private IAlignmentResults alignmentResults;
 
 	public EditorAlignment() {
 		//
@@ -198,9 +198,9 @@ public class EditorAlignment {
 
 		pageSelectProcessingWindows.update();
 	}
-	
+
 	public IAlignmentResults getAlignmentResults() {
+
 		return alignmentResults;
 	}
-	
 }

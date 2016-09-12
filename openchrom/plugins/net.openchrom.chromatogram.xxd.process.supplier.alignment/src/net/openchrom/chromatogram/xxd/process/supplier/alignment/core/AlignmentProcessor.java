@@ -38,6 +38,8 @@ import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.ejml.simple.SimpleMatrix;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
 public class AlignmentProcessor {
@@ -45,8 +47,10 @@ public class AlignmentProcessor {
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
 	private static final int MAX_SHIFT = 20;
 
-	public IProcessingInfo alignChromatograms(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, IProgressMonitor monitor, int chromatogramType, int lowerRetentionTimeSelection, int upperRetentionTimeSelection) {
+	public IAlignmentResults alignChromatograms(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, IProgressMonitor monitor, int chromatogramType, int lowerRetentionTimeSelection, int upperRetentionTimeSelection) {
 
+		IAlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
+		alignmentResults.setRetentionTimeWindow(retentionTimeWindow);
 		// adjusting user input of processing selection to milliseconds
 		lowerRetentionTimeSelection *= 60000;
 		upperRetentionTimeSelection *= 60000;
@@ -89,7 +93,7 @@ public class AlignmentProcessor {
 			exportCSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		}
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
-		return processingInfo;
+		return alignmentResults;
 	}
 
 	/**
