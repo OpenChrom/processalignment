@@ -15,10 +15,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.core.ChromatogramFilterShift;
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.settings.SupplierFilterShiftSettings;
-import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.csd.converter.processing.chromatogram.IChromatogramCSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
@@ -39,7 +39,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.ejml.simple.SimpleMatrix;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.ISample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
 public class AlignmentProcessor {
@@ -49,13 +51,20 @@ public class AlignmentProcessor {
 
 	public IAlignmentResults alignChromatograms(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, IProgressMonitor monitor, int chromatogramType, int lowerRetentionTimeSelection, int upperRetentionTimeSelection) {
 
+		/*
+		 * Initialize ALignment Results
+		 */
 		IAlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
 		alignmentResults.setRetentionTimeWindow(retentionTimeWindow);
+		List<File> inputFiles = getInputFiles(dataInputEntries);
+		prepareAlignmentResults(inputFiles, alignmentResults);
 		// adjusting user input of processing selection to milliseconds
 		lowerRetentionTimeSelection *= 60000;
 		upperRetentionTimeSelection *= 60000;
+		/*
+		 * Find lowest and highest Scans over the whole chromatogram set
+		 */
 		IProcessingInfo processingInfo = new ProcessingInfo();
-		List<File> inputFiles = getInputFiles(dataInputEntries);
 		int highestRetentionTime = 0;
 		int lowestRetentionTime = 0;
 		if(chromatogramType == 0) {
@@ -65,28 +74,49 @@ public class AlignmentProcessor {
 			highestRetentionTime = findHighestRetentionTimeCSD(inputFiles, monitor);
 			lowestRetentionTime = findLowestRetentionTimeCSD(inputFiles, monitor);
 		}
+		/*
+		 * compare user choice of retention time with lowest and highest of the set
+		 */
 		if(lowerRetentionTimeSelection < lowestRetentionTime) {
 			lowerRetentionTimeSelection = lowestRetentionTime;
 		}
 		if(upperRetentionTimeSelection > highestRetentionTime) {
 			upperRetentionTimeSelection = highestRetentionTime;
 		}
-		int numberOfScans = (upperRetentionTimeSelection - lowerRetentionTimeSelection) / retentionTimeWindow + 1;
-		int numberOfSamples = dataInputEntries.size();
+		/*
+		 * Calculate standardized chromatograms
+		 */
 		List<Chromatogram> standardizedChromatograms = null;
 		if(chromatogramType == 0) {
 			standardizedChromatograms = standardizeChromatogramsMSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		} else {
 			standardizedChromatograms = standardizeChromatogramsCSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		}
+		/*
+		 * Calculate sample TIC matrix
+		 */
+		int numberOfScans = (upperRetentionTimeSelection - lowerRetentionTimeSelection) / retentionTimeWindow + 1;
+		int numberOfSamples = dataInputEntries.size();
 		double[][] sampleTics = composeSampleTics(numberOfSamples, numberOfScans, standardizedChromatograms);
 		SimpleMatrix sampleTicsMatrix = new SimpleMatrix(sampleTics);
 		sampleTicsMatrix = sampleTicsMatrix.transpose();
+		/*
+		 * Calculate averaged sample
+		 */
 		double[] averageSample = calculateAverageSample(numberOfScans, numberOfSamples, standardizedChromatograms);
+		/*
+		 * calculate shifted TICs of averaged sample
+		 */
 		double[][] targetTics = composeTargetTics(numberOfScans, averageSample);
+		/*
+		 * calculate shift matrix
+		 */
 		SimpleMatrix targetTicsMatrix = new SimpleMatrix(targetTics);
 		SimpleMatrix matrixShiftResults = new SimpleMatrix(targetTicsMatrix.mult(sampleTicsMatrix));
 		int[] columnMaximumIndices = calculateColumnMaximumIndices(numberOfSamples, matrixShiftResults);
+		/*
+		 * apply shift to files and export
+		 */
 		if(chromatogramType == 0) {
 			exportMSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		} else {
@@ -110,6 +140,17 @@ public class AlignmentProcessor {
 			inputFiles.add(new File(inputEntry.getInputFile()));
 		}
 		return inputFiles;
+	}
+
+	/**
+	 * prepareAlignmentResults
+	 * 
+	 */
+	private void prepareAlignmentResults(List<File> inputFiles, IAlignmentResults alignmentResults) {
+
+		Map<ISample, IAlignmentResult> alignmentResultMap = alignmentResults.getAlignmentResultMap();
+		for(File file : inputFiles) {
+		}
 	}
 
 	/**
