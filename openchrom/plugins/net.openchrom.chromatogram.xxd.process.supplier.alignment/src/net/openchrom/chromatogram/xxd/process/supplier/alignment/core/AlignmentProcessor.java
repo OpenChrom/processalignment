@@ -38,10 +38,12 @@ import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.ejml.simple.SimpleMatrix;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.ISample;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Sample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
 public class AlignmentProcessor {
@@ -150,6 +152,8 @@ public class AlignmentProcessor {
 
 		Map<ISample, IAlignmentResult> alignmentResultMap = alignmentResults.getAlignmentResultMap();
 		for(File file : inputFiles) {
+			AlignmentResult alignmentResult = new AlignmentResult();
+			alignmentResultMap.put(new Sample(file.getName()), alignmentResult);
 		}
 	}
 

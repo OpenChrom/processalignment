@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Lorenz Gerber.
+ * Copyright (c) 2016 loge.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,9 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Lorenz Gerber - initial API and implementation
+ * loge - initial API and implementation
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
-public class AlignmentResult implements IAlignmentResult {
+public class AlignmentRange implements IAlignmentRange {
 }
