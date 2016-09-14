@@ -12,4 +12,8 @@
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
 public interface IAlignmentRange {
+
+	int getStartRetentionTime();
+
+	int getStopRetentionTime();
 }
