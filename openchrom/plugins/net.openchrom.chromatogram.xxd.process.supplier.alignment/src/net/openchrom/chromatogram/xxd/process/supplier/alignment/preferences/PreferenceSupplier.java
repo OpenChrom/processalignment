@@ -20,11 +20,15 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.Activator;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentProcessorSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentProcessorSettings;
 
 public class PreferenceSupplier implements IPreferenceSupplier {
 
 	public static final String P_ALIGNMENT_METHOD = "alignmentMethod";
 	public static final String DEF_ALIGNMENT_METHOD = "linear";
+	public static final String P_RETENTION_TIME_WINDOW = "retentionTimeWindow";
+	public static final int DEF_RETENTION_TIME_WINDOW = 200;
 	//
 	private static IPreferenceSupplier preferenceSupplier;
 
@@ -53,6 +57,7 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 
 		Map<String, String> defaultValues = new HashMap<String, String>();
 		defaultValues.put(P_ALIGNMENT_METHOD, DEF_ALIGNMENT_METHOD);
+		defaultValues.put(P_RETENTION_TIME_WINDOW, Integer.toString(DEF_RETENTION_TIME_WINDOW));
 		return defaultValues;
 	}
 
@@ -60,5 +65,15 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 	public IEclipsePreferences getPreferences() {
 
 		return getScopeContext().getNode(getPreferenceNode());
+	}
+
+	public static IAlignmentProcessorSettings getAlignmentProcessorSettings() {
+
+		return new AlignmentProcessorSettings();
+	}
+
+	private static void setBasePeakSettings(IAlignmentProcessorSettings settings) {
+
+		IEclipsePreferences preferences = INSTANCE().getPreferences();
 	}
 }
