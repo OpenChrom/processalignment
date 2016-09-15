@@ -9,7 +9,7 @@
  * Contributors:
  * Lorenz Gerber - initial API and implementation
  *******************************************************************************/
-package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
+package net.openchrom.chromatogram.xxd.process.supplier.alignment.settings;
 
-public interface IAlignmentResult {
+public interface IAlignmentProcessorSettings {
 }

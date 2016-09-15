@@ -7,9 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Lorenz Gerber - initial API and implementation
+ * Lorenz - initial API and implementation
  *******************************************************************************/
-package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
+package net.openchrom.chromatogram.xxd.process.supplier.alignment.settings;
 
-public interface IAlignmentResult {
+public class AlignmentProcessorSettings implements IAlignmentProcessorSettings {
 }
