@@ -20,8 +20,9 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.Activator;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentProcessorSettings;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentProcessorSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRange;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.SupplierProcessorAlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.ISupplierProcessorAlignmentSettings;
 
 public class PreferenceSupplier implements IPreferenceSupplier {
 
@@ -67,12 +68,12 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 		return getScopeContext().getNode(getPreferenceNode());
 	}
 
-	public static IAlignmentProcessorSettings getAlignmentProcessorSettings() {
+	public static ISupplierProcessorAlignmentSettings getAlignmentProcessorSettings() {
 
-		return new AlignmentProcessorSettings();
+		return new SupplierProcessorAlignmentSettings();
 	}
 
-	private static void setBasePeakSettings(IAlignmentProcessorSettings settings) {
+	private static void setBasePeakSettings(ISupplierProcessorAlignmentSettings settings) {
 
 		IEclipsePreferences preferences = INSTANCE().getPreferences();
 	}

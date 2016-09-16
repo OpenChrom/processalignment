@@ -7,9 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Lorenz - initial API and implementation
+ * Lorenz Gerber - initial API and implementation
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.settings;
 
-public class AlignmentProcessorSettings implements IAlignmentProcessorSettings {
+public interface ISupplierProcessorAlignmentSettings {
+
+	int getRetentionTimeWindow();
+
+	int getUpperRetentionTimeSelection();
+
+	int getLowerRetentionTimeSelection();
 }
