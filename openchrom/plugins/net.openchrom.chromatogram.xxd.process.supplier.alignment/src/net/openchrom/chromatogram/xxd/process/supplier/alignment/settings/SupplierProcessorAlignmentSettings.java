@@ -11,30 +11,29 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.settings;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRange;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRanges;
+
 public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAlignmentSettings {
 
 	private static final int DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS = 200;
 	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES = 0;
 	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES = 15;
-	private int retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS;
-	private int lowerRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES;
-	private int upperRetentionTimeSelection = DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES;
+	private int retentionTimeWindow;
+	private AlignmentRanges ranges = new AlignmentRanges();
 
 	public SupplierProcessorAlignmentSettings() {
+		this.retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS;
+		AlignmentRange range;
+		try {
+			range = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES, DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES);
+			this.ranges.addAlignmentRange(range);
+		} catch(Exception e) {
+		}
 	}
 
 	public int getRetentionTimeWindow() {
 
 		return retentionTimeWindow;
-	}
-
-	public int getLowerRetentionTimeSelection() {
-
-		return lowerRetentionTimeSelection;
-	}
-
-	public int getUpperRetentionTimeSelection() {
-
-		return upperRetentionTimeSelection;
 	}
 }
