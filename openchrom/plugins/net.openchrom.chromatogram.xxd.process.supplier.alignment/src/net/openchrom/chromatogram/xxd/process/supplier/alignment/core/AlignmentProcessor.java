@@ -42,11 +42,10 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Alignment
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.ISample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Sample;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.ISupplierProcessorAlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.SupplierProcessorAlignmentSettings;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
 public class AlignmentProcessor {
 
@@ -91,13 +90,16 @@ public class AlignmentProcessor {
 		 * store chromatograms in results
 		 */
 		Iterator<Chromatogram> chromatogramIterator = standardizedTICs.iterator();
-		while(chromatogramIterator.hasNext())
+		while(chromatogramIterator.hasNext()) {
 			/*
 			 * compare user choice of retention time with lowest and highest of the set
 			 */
+			chromatogramIterator.next();
 			if(lowerRetentionTimeSelection < lowestRetentionTime) {
 				lowerRetentionTimeSelection = lowestRetentionTime;
 			}
+		}
+		//
 		if(upperRetentionTimeSelection > highestRetentionTime) {
 			upperRetentionTimeSelection = highestRetentionTime;
 		}
