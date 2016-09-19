@@ -11,5 +11,11 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
+import org.eclipse.chemclipse.model.implementation.Chromatogram;
+
 public interface IAlignmentResult {
+
+	public void setTicBeforeAlignment(Chromatogram ticChromatogram);
+
+	public Chromatogram getTicBeforeAlignment();
 }

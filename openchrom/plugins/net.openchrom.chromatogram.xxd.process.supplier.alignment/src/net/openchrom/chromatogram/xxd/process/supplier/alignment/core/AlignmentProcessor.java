@@ -79,11 +79,25 @@ public class AlignmentProcessor {
 			lowestRetentionTime = findLowestRetentionTimeCSD(inputFiles, monitor);
 		}
 		/*
-		 * compare user choice of retention time with lowest and highest of the set
+		 * Calculate standardized chromatograms
 		 */
-		if(lowerRetentionTimeSelection < lowestRetentionTime) {
-			lowerRetentionTimeSelection = lowestRetentionTime;
+		List<Chromatogram> standardizedTICs = null;
+		if(chromatogramType == 0) {
+			standardizedTICs = standardizeChromatogramsMSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
+		} else {
+			standardizedTICs = standardizeChromatogramsCSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		}
+		/*
+		 * store chromatograms in results
+		 */
+		Iterator<Chromatogram> chromatogramIterator = standardizedTICs.iterator();
+		while(chromatogramIterator.hasNext())
+			/*
+			 * compare user choice of retention time with lowest and highest of the set
+			 */
+			if(lowerRetentionTimeSelection < lowestRetentionTime) {
+				lowerRetentionTimeSelection = lowestRetentionTime;
+			}
 		if(upperRetentionTimeSelection > highestRetentionTime) {
 			upperRetentionTimeSelection = highestRetentionTime;
 		}
