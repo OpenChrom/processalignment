@@ -13,6 +13,7 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.settings;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRanges;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRanges;
 
 public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAlignmentSettings {
 
@@ -35,5 +36,10 @@ public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAli
 	public int getRetentionTimeWindow() {
 
 		return retentionTimeWindow;
+	}
+
+	public IAlignmentRanges getAlignmentRanges() {
+
+		return this.ranges;
 	}
 }

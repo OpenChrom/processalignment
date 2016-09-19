@@ -44,6 +44,8 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmen
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.ISample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Sample;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.ISupplierProcessorAlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.SupplierProcessorAlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 
 public class AlignmentProcessor {
@@ -51,18 +53,18 @@ public class AlignmentProcessor {
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
 	private static final int MAX_SHIFT = 20;
 
-	public IAlignmentResults alignChromatograms(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, IProgressMonitor monitor, int chromatogramType, int lowerRetentionTimeSelection, int upperRetentionTimeSelection) {
+	public IAlignmentResults alignChromatograms(List<IDataInputEntry> dataInputEntries, SupplierProcessorAlignmentSettings settings, int retentionTimeWindow, IProgressMonitor monitor, int chromatogramType, int lowerRetentionTimeSelection, int upperRetentionTimeSelection) {
 
 		/*
 		 * Initialize ALignment Results
 		 */
 		IAlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
-		alignmentResults.setRetentionTimeWindow(retentionTimeWindow);
+		alignmentResults.setRetentionTimeWindow(settings.getRetentionTimeWindow());
 		List<File> inputFiles = getInputFiles(dataInputEntries);
 		prepareAlignmentResults(inputFiles, alignmentResults);
 		// adjusting user input of processing selection to milliseconds
-		lowerRetentionTimeSelection *= 60000;
-		upperRetentionTimeSelection *= 60000;
+		lowerRetentionTimeSelection = settings.getAlignmentRanges().getLowestStartRetentionTime() * 60000;
+		upperRetentionTimeSelection = settings.getAlignmentRanges().getHighestStopRetentionTime() * 60000;
 		/*
 		 * Find lowest and highest Scans over the whole chromatogram set
 		 */

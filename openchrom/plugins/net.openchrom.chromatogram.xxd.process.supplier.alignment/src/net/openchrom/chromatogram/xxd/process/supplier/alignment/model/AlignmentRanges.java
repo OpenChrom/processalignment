@@ -12,7 +12,9 @@
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 
 public class AlignmentRanges implements IAlignmentRanges {
 
@@ -61,5 +63,29 @@ public class AlignmentRanges implements IAlignmentRanges {
 	public int size() {
 
 		return ranges.size();
+	}
+
+	@Override
+	public int getLowestStartRetentionTime() {
+
+		int lowestRetentionTime = 0;
+		for(IAlignmentRange range : ranges) {
+			if(range.getStartRetentionTime() < lowestRetentionTime) {
+				lowestRetentionTime = range.getStartRetentionTime();
+			}
+		}
+		return lowestRetentionTime;
+	}
+
+	@Override
+	public int getHighestStopRetentionTime() {
+
+		int highestRetentionTime = 0;
+		for(IAlignmentRange range : ranges) {
+			if(range.getStopRetentionTime() > highestRetentionTime) {
+				highestRetentionTime = range.getStopRetentionTime();
+			}
+		}
+		return highestRetentionTime;
 	}
 }

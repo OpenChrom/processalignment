@@ -24,4 +24,8 @@ public interface IAlignmentRanges {
 	List<IAlignmentRange> getAlignmentRanges();
 
 	int size();
+
+	int getLowestStartRetentionTime();
+
+	int getHighestStopRetentionTime();
 }
