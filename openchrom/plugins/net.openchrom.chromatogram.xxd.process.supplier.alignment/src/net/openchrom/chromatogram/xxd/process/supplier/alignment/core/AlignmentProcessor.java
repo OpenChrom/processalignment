@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.core.ChromatogramFilterShift;
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.settings.SupplierFilterShiftSettings;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
@@ -87,21 +86,22 @@ public class AlignmentProcessor {
 			standardizedTICs = standardizeChromatogramsCSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		}
 		/*
-		 * store chromatograms in results
+		 * store standardized TIC chromatograms in results
 		 */
 		Iterator<Chromatogram> chromatogramIterator = standardizedTICs.iterator();
-		while(chromatogramIterator.hasNext()) {
-			/*
-			 * compare user choice of retention time with lowest and highest of the set
-			 */
-			chromatogramIterator.next();
-			if(lowerRetentionTimeSelection < lowestRetentionTime) {
-				lowerRetentionTimeSelection = lowestRetentionTime;
-			}
+		Iterator<File> fileIterator = inputFiles.iterator();
+		while(chromatogramIterator.hasNext() && inputFiles.iterator().hasNext()) {
+			IAlignmentResult currentResult = alignmentResults.getAlignmentResultMap().get(new Sample(fileIterator.next().getName()));
+			currentResult.setTicBeforeAlignment(chromatogramIterator.next());
 		}
-		//
+		/*
+		 * compare user choice of retention time with lowest and highest of the set
+		 */
 		if(upperRetentionTimeSelection > highestRetentionTime) {
 			upperRetentionTimeSelection = highestRetentionTime;
+		}
+		if(lowerRetentionTimeSelection < lowestRetentionTime) {
+			lowerRetentionTimeSelection = lowestRetentionTime;
 		}
 		/*
 		 * Calculate standardized chromatograms
