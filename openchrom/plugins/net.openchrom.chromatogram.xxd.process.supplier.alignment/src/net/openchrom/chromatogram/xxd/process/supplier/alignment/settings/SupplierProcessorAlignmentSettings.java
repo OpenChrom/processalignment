@@ -38,7 +38,7 @@ public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAli
 		return retentionTimeWindow;
 	}
 
-	public IAlignmentRanges getAlignmentRanges() {
+	public IAlignmentRanges getAlignmentRangesList() {
 
 		return this.ranges;
 	}

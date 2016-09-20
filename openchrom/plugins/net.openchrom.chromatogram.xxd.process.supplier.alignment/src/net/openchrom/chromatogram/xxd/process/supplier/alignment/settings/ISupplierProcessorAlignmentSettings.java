@@ -11,7 +11,11 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.settings;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRanges;
+
 public interface ISupplierProcessorAlignmentSettings {
 
 	int getRetentionTimeWindow();
+
+	public IAlignmentRanges getAlignmentRangesList();
 }

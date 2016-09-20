@@ -39,6 +39,7 @@ import org.ejml.simple.SimpleMatrix;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
@@ -61,8 +62,8 @@ public class AlignmentProcessor {
 		List<File> inputFiles = getInputFiles(dataInputEntries);
 		prepareAlignmentResults(inputFiles, alignmentResults);
 		// adjusting user input of processing selection to milliseconds
-		lowerRetentionTimeSelection = settings.getAlignmentRanges().getLowestStartRetentionTime() * 60000;
-		upperRetentionTimeSelection = settings.getAlignmentRanges().getHighestStopRetentionTime() * 60000;
+		lowerRetentionTimeSelection = settings.getAlignmentRangesList().getLowestStartRetentionTime() * 60000;
+		upperRetentionTimeSelection = settings.getAlignmentRangesList().getHighestStopRetentionTime() * 60000;
 		/*
 		 * Find lowest and highest Scans over the whole chromatogram set
 		 */
@@ -93,6 +94,47 @@ public class AlignmentProcessor {
 		while(chromatogramIterator.hasNext() && inputFiles.iterator().hasNext()) {
 			IAlignmentResult currentResult = alignmentResults.getAlignmentResultMap().get(new Sample(fileIterator.next().getName()));
 			currentResult.setTicBeforeAlignment(chromatogramIterator.next());
+		}
+		/*
+		 * Iterate over alignment Ranges
+		 */
+		Iterator<IAlignmentRange> range = settings.getAlignmentRangesList().getAlignmentRanges().iterator();
+		while(range.hasNext()) {
+			// get current Range to calculate
+			IAlignmentRange currentRange = range.next();
+			lowerRetentionTimeSelection = currentRange.getStartRetentionTime();
+			upperRetentionTimeSelection = currentRange.getStopRetentionTime();
+			/*
+			 * Calculate standardized chromatograms
+			 */
+			List<Chromatogram> standardizedChromatograms = null;
+			if(chromatogramType == 0) {
+				standardizedChromatograms = standardizeChromatogramsMSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
+			} else {
+				standardizedChromatograms = standardizeChromatogramsCSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
+			}
+			/*
+			 * Calculate sample TIC matrix
+			 */
+			int numberOfScans = (upperRetentionTimeSelection - lowerRetentionTimeSelection) / retentionTimeWindow + 1;
+			int numberOfSamples = dataInputEntries.size();
+			double[][] sampleTics = composeSampleTics(numberOfSamples, numberOfScans, standardizedChromatograms);
+			SimpleMatrix sampleTicsMatrix = new SimpleMatrix(sampleTics);
+			sampleTicsMatrix = sampleTicsMatrix.transpose();
+			/*
+			 * Calculate averaged sample
+			 */
+			double[] averageSample = calculateAverageSample(numberOfScans, numberOfSamples, standardizedChromatograms);
+			/*
+			 * calculate shifted TICs of averaged sample
+			 */
+			double[][] targetTics = composeTargetTics(numberOfScans, averageSample);
+			/*
+			 * calculate shift matrix
+			 */
+			SimpleMatrix targetTicsMatrix = new SimpleMatrix(targetTics);
+			SimpleMatrix matrixShiftResults = new SimpleMatrix(targetTicsMatrix.mult(sampleTicsMatrix));
+			int[] columnMaximumIndices = calculateColumnMaximumIndices(numberOfSamples, matrixShiftResults);
 		}
 		/*
 		 * compare user choice of retention time with lowest and highest of the set
