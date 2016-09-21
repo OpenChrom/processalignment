@@ -28,9 +28,16 @@ import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
 import org.eclipse.chemclipse.model.implementation.Scan;
 import org.eclipse.chemclipse.model.selection.ChromatogramSelection;
+import org.eclipse.chemclipse.model.signals.ITotalScanSignal;
+import org.eclipse.chemclipse.model.signals.ITotalScanSignalExtractor;
+import org.eclipse.chemclipse.model.signals.ITotalScanSignals;
+import org.eclipse.chemclipse.model.signals.TotalScanSignalExtractor;
+import org.eclipse.chemclipse.model.signals.TotalScanSignals;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.msd.converter.processing.chromatogram.IChromatogramMSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
+import org.eclipse.chemclipse.msd.model.core.selection.ChromatogramSelectionMSD;
+import org.eclipse.chemclipse.msd.model.core.selection.IChromatogramSelectionMSD;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.ProcessingInfo;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
@@ -67,9 +74,27 @@ public class AlignmentProcessor {
 		/*
 		 * Find lowest and highest Scans over the whole chromatogram set
 		 */
-		IProcessingInfo processingInfo = new ProcessingInfo();
+		// IProcessingInfo processingInfo = new ProcessingInfo();
 		int highestRetentionTime = 0;
 		int lowestRetentionTime = 0;
+		/*
+		 * get TIC Data
+		 */
+		List<ITotalScanSignals> alignmentTicsList = new ArrayList<ITotalScanSignals>();
+		for(File scanFile : inputFiles) {
+			IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(scanFile, monitor);
+			try {
+				IChromatogram chromatogram = processingInfo.getChromatogram();
+				ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
+				IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(chromatogram);
+				alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
+			} catch(TypeCastException e) {
+				logger.warn(e);
+			} catch(ChromatogramIsNullException e) {
+				logger.warn(e);
+			}
+		}
+		IProcessingInfo processingInfo = new ProcessingInfo();
 		if(chromatogramType == 0) {
 			highestRetentionTime = findHighestRetentionTimeMSD(inputFiles, monitor);
 			lowestRetentionTime = findLowestRetentionTimeMSD(inputFiles, monitor);
