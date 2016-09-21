@@ -59,18 +59,20 @@ public class AlignmentProcessor {
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
 	private static final int MAX_SHIFT = 20;
 
-	public IAlignmentResults alignChromatograms(List<IDataInputEntry> dataInputEntries, SupplierProcessorAlignmentSettings settings, int retentionTimeWindow, IProgressMonitor monitor, int chromatogramType, int lowerRetentionTimeSelection, int upperRetentionTimeSelection) {
+	public IAlignmentResults alignChromatograms(List<IDataInputEntry> dataInputEntries, SupplierProcessorAlignmentSettings settings, IProgressMonitor monitor) {
 
 		/*
-		 * Initialize ALignment Results
+		 * Preparing evironment
 		 */
 		IAlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
 		alignmentResults.setRetentionTimeWindow(settings.getRetentionTimeWindow());
+		int retentionTimeWindow = settings.getRetentionTimeWindow();
+		int chromatogramType = settings.getChromatogramType();
 		List<File> inputFiles = getInputFiles(dataInputEntries);
 		prepareAlignmentResults(inputFiles, alignmentResults);
 		// adjusting user input of processing selection to milliseconds
-		lowerRetentionTimeSelection = settings.getAlignmentRangesList().getLowestStartRetentionTime() * 60000;
-		upperRetentionTimeSelection = settings.getAlignmentRangesList().getHighestStopRetentionTime() * 60000;
+		int lowerRetentionTimeSelection = settings.getAlignmentRangesList().getLowestStartRetentionTime() * 60000;
+		int upperRetentionTimeSelection = settings.getAlignmentRangesList().getHighestStopRetentionTime() * 60000;
 		/*
 		 * Find lowest and highest Scans over the whole chromatogram set
 		 */

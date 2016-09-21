@@ -17,5 +17,7 @@ public interface ISupplierProcessorAlignmentSettings {
 
 	int getRetentionTimeWindow();
 
+	int getChromatogramType();
+
 	public IAlignmentRanges getAlignmentRangesList();
 }

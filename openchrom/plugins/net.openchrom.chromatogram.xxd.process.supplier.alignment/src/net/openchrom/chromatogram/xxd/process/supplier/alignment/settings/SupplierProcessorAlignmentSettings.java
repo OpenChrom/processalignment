@@ -20,11 +20,14 @@ public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAli
 	private static final int DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS = 200;
 	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES = 0;
 	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES = 15;
+	private static final int DEFAULT_CHROMATOGRAM_TYPE = 0;
 	private int retentionTimeWindow;
 	private AlignmentRanges ranges = new AlignmentRanges();
+	private int chromatogramType;
 
 	public SupplierProcessorAlignmentSettings() {
 		this.retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS;
+		this.chromatogramType = DEFAULT_CHROMATOGRAM_TYPE;
 		AlignmentRange range;
 		try {
 			range = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES, DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES);
@@ -41,5 +44,10 @@ public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAli
 	public IAlignmentRanges getAlignmentRangesList() {
 
 		return this.ranges;
+	}
+
+	public int getChromatogramType() {
+
+		return chromatogramType;
 	}
 }

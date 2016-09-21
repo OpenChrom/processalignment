@@ -44,7 +44,7 @@ public class AlignmentRunnable implements IRunnableWithProgress {
 
 		AlignmentProcessor alignmentProcessor = new AlignmentProcessor();
 		SupplierProcessorAlignmentSettings settings = new SupplierProcessorAlignmentSettings();
-		alignmentResults = alignmentProcessor.alignChromatograms(dataInputEntries, settings, retentionTimeWindow, monitor, chromatogramType, lowerRetentionTimeSelection, upperRetentionTimeSelection);
+		alignmentResults = alignmentProcessor.alignChromatograms(dataInputEntries, settings, monitor);
 	}
 
 	public IAlignmentResults getAlignmentResults() {
