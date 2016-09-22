@@ -30,6 +30,10 @@ public class AlignmentResults implements IAlignmentResults {
 	public AlignmentResults(List<IDataInputEntry> dataInputEntries) {
 		this.dataInputEntries = dataInputEntries;
 		alignmentResultMap = new HashMap<ISample, IAlignmentResult>();
+		for(IDataInputEntry entry : dataInputEntries) {
+			AlignmentResult alignmentResult = new AlignmentResult();
+			alignmentResultMap.put(new Sample(entry.getName()), alignmentResult);
+		}
 	}
 
 	@Override

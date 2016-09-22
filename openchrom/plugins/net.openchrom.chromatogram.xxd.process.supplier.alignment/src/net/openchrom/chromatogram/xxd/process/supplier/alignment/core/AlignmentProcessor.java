@@ -69,7 +69,6 @@ public class AlignmentProcessor {
 		int retentionTimeWindow = settings.getRetentionTimeWindow();
 		int chromatogramType = settings.getChromatogramType();
 		List<File> inputFiles = getInputFiles(dataInputEntries);
-		prepareAlignmentResults(inputFiles, alignmentResults);
 		// adjusting user input of processing selection to milliseconds
 		int lowerRetentionTimeSelection = settings.getAlignmentRangesList().getLowestStartRetentionTime() * 60000;
 		int upperRetentionTimeSelection = settings.getAlignmentRangesList().getHighestStopRetentionTime() * 60000;
@@ -229,19 +228,6 @@ public class AlignmentProcessor {
 			inputFiles.add(new File(inputEntry.getInputFile()));
 		}
 		return inputFiles;
-	}
-
-	/**
-	 * prepareAlignmentResults
-	 * 
-	 */
-	private void prepareAlignmentResults(List<File> inputFiles, IAlignmentResults alignmentResults) {
-
-		Map<ISample, IAlignmentResult> alignmentResultMap = alignmentResults.getAlignmentResultMap();
-		for(File file : inputFiles) {
-			AlignmentResult alignmentResult = new AlignmentResult();
-			alignmentResultMap.put(new Sample(file.getName()), alignmentResult);
-		}
 	}
 
 	/**
