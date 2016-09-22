@@ -15,12 +15,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.core.ChromatogramFilterShift;
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.settings.SupplierFilterShiftSettings;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.csd.converter.processing.chromatogram.IChromatogramCSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
+import org.eclipse.chemclipse.csd.model.core.selection.ChromatogramSelectionCSD;
+import org.eclipse.chemclipse.csd.model.core.selection.IChromatogramSelectionCSD;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
@@ -32,7 +33,6 @@ import org.eclipse.chemclipse.model.signals.ITotalScanSignal;
 import org.eclipse.chemclipse.model.signals.ITotalScanSignalExtractor;
 import org.eclipse.chemclipse.model.signals.ITotalScanSignals;
 import org.eclipse.chemclipse.model.signals.TotalScanSignalExtractor;
-import org.eclipse.chemclipse.model.signals.TotalScanSignals;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.msd.converter.processing.chromatogram.IChromatogramMSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
@@ -44,13 +44,11 @@ import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.ejml.simple.SimpleMatrix;
 
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.ISample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Sample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.SupplierProcessorAlignmentSettings;
 
@@ -82,36 +80,45 @@ public class AlignmentProcessor {
 		 * get TIC Data
 		 */
 		List<ITotalScanSignals> alignmentTicsList = new ArrayList<ITotalScanSignals>();
-		for(File scanFile : inputFiles) {
-			IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(scanFile, monitor);
-			try {
-				IChromatogram chromatogram = processingInfo.getChromatogram();
-				ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
-				IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(chromatogram);
-				alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
-			} catch(TypeCastException e) {
-				logger.warn(e);
-			} catch(ChromatogramIsNullException e) {
-				logger.warn(e);
+		if(chromatogramType == 0) {
+			alignmentTicsList = new ArrayList<ITotalScanSignals>();
+			for(IDataInputEntry entry : dataInputEntries) {
+				IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
+				try {
+					IChromatogram chromatogram = processingInfo.getChromatogram();
+					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
+					IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(chromatogram);
+					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
+				} catch(TypeCastException e) {
+					logger.warn(e);
+				} catch(ChromatogramIsNullException e) {
+					logger.warn(e);
+				}
+			}
+		} else if(chromatogramType == 1) {
+			alignmentTicsList = new ArrayList<ITotalScanSignals>();
+			for(IDataInputEntry entry : dataInputEntries) {
+				IChromatogramCSDImportConverterProcessingInfo processingInfo = ChromatogramConverterCSD.convert(new File(entry.getInputFile()), monitor);
+				try {
+					IChromatogram chromatogram = processingInfo.getChromatogram();
+					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
+					IChromatogramSelectionCSD chromatogramSelection = new ChromatogramSelectionCSD(chromatogram);
+					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
+				} catch(TypeCastException e) {
+					logger.warn(e);
+				} catch(ChromatogramIsNullException e) {
+					logger.warn(e);
+				}
 			}
 		}
 		IProcessingInfo processingInfo = new ProcessingInfo();
-		if(chromatogramType == 0) {
-			highestRetentionTime = findHighestRetentionTimeMSD(inputFiles, monitor);
-			lowestRetentionTime = findLowestRetentionTimeMSD(inputFiles, monitor);
-		} else {
-			highestRetentionTime = findHighestRetentionTimeCSD(inputFiles, monitor);
-			lowestRetentionTime = findLowestRetentionTimeCSD(inputFiles, monitor);
-		}
+		highestRetentionTime = findHighestRetentionTime(alignmentTicsList);
+		lowestRetentionTime = findLowestRetentionTime(alignmentTicsList);
 		/*
 		 * Calculate standardized chromatograms
 		 */
 		List<Chromatogram> standardizedTICs = null;
-		if(chromatogramType == 0) {
-			standardizedTICs = standardizeChromatogramsMSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
-		} else {
-			standardizedTICs = standardizeChromatogramsCSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
-		}
+		standardizedTICs = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection);
 		/*
 		 * store standardized TIC chromatograms in results
 		 */
@@ -134,11 +141,7 @@ public class AlignmentProcessor {
 			 * Calculate standardized chromatograms
 			 */
 			List<Chromatogram> standardizedChromatograms = null;
-			if(chromatogramType == 0) {
-				standardizedChromatograms = standardizeChromatogramsMSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
-			} else {
-				standardizedChromatograms = standardizeChromatogramsCSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
-			}
+			standardizedChromatograms = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection);
 			/*
 			 * Calculate sample TIC matrix
 			 */
@@ -175,11 +178,7 @@ public class AlignmentProcessor {
 		 * Calculate standardized chromatograms
 		 */
 		List<Chromatogram> standardizedChromatograms = null;
-		if(chromatogramType == 0) {
-			standardizedChromatograms = standardizeChromatogramsMSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
-		} else {
-			standardizedChromatograms = standardizeChromatogramsCSD(dataInputEntries, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
-		}
+		standardizedChromatograms = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection);
 		/*
 		 * Calculate sample TIC matrix
 		 */
@@ -237,42 +236,12 @@ public class AlignmentProcessor {
 	 * @param monitor
 	 * @return
 	 */
-	public int findHighestRetentionTimeMSD(List<File> inputFiles, IProgressMonitor monitor) {
+	public int findHighestRetentionTime(List<ITotalScanSignals> totalScanSignals) {
 
 		int highestRetentionTime = 0;
-		for(File scanFile : inputFiles) {
-			IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(scanFile, monitor);
-			try {
-				IChromatogram chromatogram = processingInfo.getChromatogram();
-				if(chromatogram.getStopRetentionTime() > highestRetentionTime) {
-					highestRetentionTime = chromatogram.getStopRetentionTime();
-				}
-			} catch(TypeCastException e) {
-				logger.warn(e);
-			}
-		}
-		return highestRetentionTime;
-	}
-
-	/**
-	 * Find the highest retention time among a number of CSD input files
-	 * 
-	 * @param inputFiles
-	 * @param monitor
-	 * @return
-	 */
-	public int findHighestRetentionTimeCSD(List<File> inputFiles, IProgressMonitor monitor) {
-
-		int highestRetentionTime = 0;
-		for(File scanFile : inputFiles) {
-			IChromatogramCSDImportConverterProcessingInfo processingInfo = ChromatogramConverterCSD.convert(scanFile, monitor);
-			try {
-				IChromatogram chromatogram = processingInfo.getChromatogram();
-				if(chromatogram.getStopRetentionTime() > highestRetentionTime) {
-					highestRetentionTime = chromatogram.getStopRetentionTime();
-				}
-			} catch(TypeCastException e) {
-				logger.warn(e);
+		for(ITotalScanSignals tics : totalScanSignals) {
+			if(tics.getTotalScanSignals().get(tics.getStopScan() - 1).getRetentionTime() > highestRetentionTime) {
+				highestRetentionTime = tics.getTotalScanSignals().get(tics.getStopScan() - 1).getRetentionTime();
 			}
 		}
 		return highestRetentionTime;
@@ -285,42 +254,12 @@ public class AlignmentProcessor {
 	 * @param monitor
 	 * @return
 	 */
-	public int findLowestRetentionTimeMSD(List<File> inputFiles, IProgressMonitor monitor) {
+	public int findLowestRetentionTime(List<ITotalScanSignals> totalScanSignals) {
 
 		int lowestRetentionTime = 0;
-		for(File scanFile : inputFiles) {
-			IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(scanFile, monitor);
-			try {
-				IChromatogramMSD chromatogram = processingInfo.getChromatogram();
-				if(chromatogram.getStopRetentionTime() < lowestRetentionTime) {
-					lowestRetentionTime = chromatogram.getStopRetentionTime();
-				}
-			} catch(TypeCastException e) {
-				logger.warn(e);
-			}
-		}
-		return lowestRetentionTime;
-	}
-
-	/**
-	 * Find the lowest retention time among a number of CSD input files
-	 * 
-	 * @param inputFiles
-	 * @param monitor
-	 * @return
-	 */
-	public int findLowestRetentionTimeCSD(List<File> inputFiles, IProgressMonitor monitor) {
-
-		int lowestRetentionTime = 0;
-		for(File scanFile : inputFiles) {
-			IChromatogramCSDImportConverterProcessingInfo processingInfo = ChromatogramConverterCSD.convert(scanFile, monitor);
-			try {
-				IChromatogram chromatogram = processingInfo.getChromatogram();
-				if(chromatogram.getStopRetentionTime() < lowestRetentionTime) {
-					lowestRetentionTime = chromatogram.getStopRetentionTime();
-				}
-			} catch(TypeCastException e) {
-				logger.warn(e);
+		for(ITotalScanSignals tics : totalScanSignals) {
+			if(tics.getTotalScanSignals().get(tics.getStartScan() - 1).getRetentionTime() < lowestRetentionTime) {
+				lowestRetentionTime = tics.getTotalScanSignals().get(tics.getStartScan() - 1).getRetentionTime();
 			}
 		}
 		return lowestRetentionTime;
@@ -337,8 +276,9 @@ public class AlignmentProcessor {
 	private Chromatogram constructEquispacedChromatogram(int retentionTimeWindow, int lowestRetentionTime, int highestRetentionTime) {
 
 		Chromatogram standard = new Chromatogram();
-		int deltaRetentionTime = highestRetentionTime - lowestRetentionTime;
-		int numberOfRetentionTimePoints = deltaRetentionTime / retentionTimeWindow + 1;
+		int totalDeltaRetentionTime = highestRetentionTime - lowestRetentionTime;
+		int numberOfRetentionTimePoints = totalDeltaRetentionTime / retentionTimeWindow + 1;
+		int deltaRetentionTime = totalDeltaRetentionTime / numberOfRetentionTimePoints;
 		int currentRetentionTime = lowestRetentionTime;
 		// TODO this does not work yet for ranges that don't start at zero
 		for(int i = 0; i < numberOfRetentionTimePoints; i++) {
@@ -418,85 +358,35 @@ public class AlignmentProcessor {
 	}
 
 	/**
-	 * standardizeChromatogramsMSD
+	 * standardizeChromatograms
 	 * 
-	 * @param dataInputEntries
+	 * @param totalScanSignals
 	 * @param retentionTimeWindow
 	 * @param lowestRetentionTime
 	 * @param highestRetentionTime
 	 * @param monitor
 	 * @return
 	 */
-	private List<Chromatogram> standardizeChromatogramsMSD(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, int lowestRetentionTime, int highestRetentionTime, IProgressMonitor monitor) {
+	private List<Chromatogram> standardizeChromatograms(List<ITotalScanSignals> totalScanSignals, int retentionTimeWindow, int lowestRetentionTime, int highestRetentionTime) {
 
 		List<Chromatogram> standardizedChromatograms = new ArrayList<Chromatogram>();
-		for(IDataInputEntry inputEntry : dataInputEntries) {
+		for(ITotalScanSignals tics : totalScanSignals) {
 			Chromatogram standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
-			IChromatogramMSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterMSD.convert(new File(inputEntry.getInputFile()), monitor);
-			try {
-				IChromatogramMSD chromatogram = processingInfo2.getChromatogram();
-				Iterator<IScan> iterator = chromatogram.getScans().iterator();
-				IScan currentScan = iterator.next();
-				float intensityBefore = 0;
-				for(IScan scan : standard.getScans()) {
-					while(iterator.hasNext() && currentScan.getRetentionTime() < scan.getRetentionTime()) {
-						intensityBefore = currentScan.getTotalSignal();
-						currentScan = iterator.next();
-					}
-					// TODO need to check here also if the currentScan is not higher than the standard's retention time.
-					float intensityAfter = currentScan.getTotalSignal();
-					float intensityAverage = (intensityBefore + intensityAfter) / 2;
-					scan.adjustTotalSignal(intensityAverage);
-					if(iterator.hasNext()) {
-						currentScan = iterator.next();
-					}
+			Iterator<ITotalScanSignal> iterator = tics.getTotalScanSignals().iterator();
+			ITotalScanSignal currentScan = iterator.next();
+			float intensityBefore = 0;
+			for(IScan scan : standard.getScans()) {
+				while(iterator.hasNext() && currentScan.getRetentionTime() < scan.getRetentionTime()) {
+					intensityBefore = currentScan.getTotalSignal();
+					currentScan = iterator.next();
 				}
-			} catch(TypeCastException e) {
-				logger.warn(e);
-			}
-			standardizedChromatograms.add(standard);
-		}
-		return standardizedChromatograms;
-	}
-
-	/**
-	 * standardizeChromatogramsCSD
-	 * 
-	 * @param dataInputEntries
-	 * @param retentionTimeWindow
-	 * @param lowestRetentionTime
-	 * @param highestRetentionTime
-	 * @param monitor
-	 * @return
-	 */
-	private List<Chromatogram> standardizeChromatogramsCSD(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, int lowestRetentionTime, int highestRetentionTime, IProgressMonitor monitor) {
-
-		List<Chromatogram> standardizedChromatograms = new ArrayList<Chromatogram>();
-		for(IDataInputEntry inputEntry : dataInputEntries) {
-			Chromatogram standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
-			IChromatogramCSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterCSD.convert(new File(inputEntry.getInputFile()), monitor);
-			try {
-				IChromatogram chromatogram = processingInfo2.getChromatogram();
-				Iterator<IScan> iterator = chromatogram.getScans().iterator();
-				IScan currentScan = iterator.next();
-				float intensityBefore = 0;
-				// currently the average signal from the scans just before and after the equispaced model
-				// scan in question are used. In a more advanced version, interpolation should be done.
-				for(IScan scan : standard.getScans()) {
-					while(iterator.hasNext() && currentScan.getRetentionTime() < scan.getRetentionTime()) {
-						intensityBefore = currentScan.getTotalSignal();
-						currentScan = iterator.next();
-					}
-					// TODO need to check here also if the currentScan is not higher than the standard's retention time.
-					float intensityAfter = currentScan.getTotalSignal();
-					float intensityAverage = (intensityBefore + intensityAfter) / 2;
-					scan.adjustTotalSignal(intensityAverage);
-					if(iterator.hasNext()) {
-						currentScan = iterator.next();
-					}
+				// TODO need to check here also if the currentScan is not higher than the standard's retention time.
+				float intensityAfter = currentScan.getTotalSignal();
+				float intensityAverage = (intensityBefore + intensityAfter) / 2;
+				scan.adjustTotalSignal(intensityAverage);
+				if(iterator.hasNext()) {
+					currentScan = iterator.next();
 				}
-			} catch(TypeCastException e) {
-				logger.warn(e);
 			}
 			standardizedChromatograms.add(standard);
 		}
