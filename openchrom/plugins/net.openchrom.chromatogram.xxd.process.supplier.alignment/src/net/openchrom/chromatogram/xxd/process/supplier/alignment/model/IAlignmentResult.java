@@ -11,11 +11,21 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
+import java.util.List;
+
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
 
 public interface IAlignmentResult {
 
-	public void setTicBeforeAlignment(Chromatogram ticChromatogram);
+	void setTicBeforeAlignment(Chromatogram ticChromatogram);
 
-	public Chromatogram getTicBeforeAlignment();
+	Chromatogram getTicBeforeAlignment();
+
+	void setTicAfterAlignment(Chromatogram ticChromatogram);
+
+	Chromatogram getTicAfterAlignment();
+
+	void addShift(Integer shift);
+
+	List<Integer> getShifts();
 }

@@ -13,14 +13,18 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.chemclipse.model.implementation.Chromatogram;
 
 public class AlignmentResults implements IAlignmentResults {
 
 	private List<IDataInputEntry> dataInputEntries;
 	private int retentionTimeWindow;
 	private Map<ISample, IAlignmentResult> alignmentResultMap;
+	private IAlignmentRanges ranges;
 	//
 
 	public AlignmentResults() {
@@ -58,5 +62,26 @@ public class AlignmentResults implements IAlignmentResults {
 	public Map<ISample, IAlignmentResult> getAlignmentResultMap() {
 
 		return alignmentResultMap;
+	}
+
+	@Override
+	public void setAlignmentRanges(IAlignmentRanges ranges) {
+
+	}
+
+	@Override
+	public IAlignmentRanges getAlignmentRanges() {
+
+		return this.ranges;
+	}
+
+	void applyShiftToPreviews() {
+
+		for(int index = 0; index < this.getAlignmentRanges().getAlignmentRanges().size(); index++) {
+			IAlignmentRange range = this.getAlignmentRanges().getAlignmentRanges().get(index);
+			Iterator<IDataInputEntry> entry = this.dataInputEntries.iterator();
+			IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));
+			// TODO Here the actual shifting has to be implemented now
+		}
 	}
 }

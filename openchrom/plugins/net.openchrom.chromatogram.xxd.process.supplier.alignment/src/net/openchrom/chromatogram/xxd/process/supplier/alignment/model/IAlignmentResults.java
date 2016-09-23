@@ -14,6 +14,8 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.chemclipse.model.implementation.Chromatogram;
+
 public interface IAlignmentResults {
 
 	List<IDataInputEntry> getDataInputEntries();
@@ -22,5 +24,9 @@ public interface IAlignmentResults {
 
 	void setRetentionTimeWindow(int retentionTimeWindow);
 
-	public Map<ISample, IAlignmentResult> getAlignmentResultMap();
+	Map<ISample, IAlignmentResult> getAlignmentResultMap();
+
+	void setAlignmentRanges(IAlignmentRanges ranges);
+
+	IAlignmentRanges getAlignmentRanges();
 }
