@@ -81,7 +81,22 @@ public class AlignmentResults implements IAlignmentResults {
 			IAlignmentRange range = this.getAlignmentRanges().getAlignmentRanges().get(index);
 			Iterator<IDataInputEntry> entry = this.dataInputEntries.iterator();
 			IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));
-			// TODO Here the actual shifting has to be implemented now
+			Chromatogram ticAfterAlignment = result.getTicAfterAlignment();
+			int shift = result.getShifts().get(index);
+			int noScansToShift = (range.getStopRetentionTime() - range.getStartRetentionTime()) / this.getRetentionTimeWindow();
+			int rangeStartScan = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
+			int rangeStopScan = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
+			if(shift < 0) {
+				if(ticAfterAlignment.getScanNumber(range.getStartRetentionTime()) - shift < 0) {
+					// shifting will 'fall out' of chromatogram in the beginning
+				} else {
+					// normal shift to the left
+				}
+			} else if(shift > 0) {
+				// TODO: look at the expression below again....
+				if(ticAfterAlignment.getScanNumber(range.getStopRetentionTime()) + shift > ticAfterAlignment.getScan(ticAfterAlignment.getNumberOfScans()).getRetentionTime()) {
+				}
+			}
 		}
 	}
 }
