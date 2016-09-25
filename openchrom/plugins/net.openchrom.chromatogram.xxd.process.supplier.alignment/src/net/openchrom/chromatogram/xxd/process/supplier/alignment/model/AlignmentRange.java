@@ -15,7 +15,6 @@ public class AlignmentRange implements IAlignmentRange {
 
 	private int startRetentionTime;
 	private int stopRetentionTime;
-	private int[] shifts;
 
 	public AlignmentRange(int startRetentionTime, int stopRetentionTime) throws Exception {
 		/*
@@ -39,6 +38,10 @@ public class AlignmentRange implements IAlignmentRange {
 	public int getStopRetentionTime() {
 
 		return stopRetentionTime;
+	}
+
+	public void addShift(int shift) {
+
 	}
 
 	@Override

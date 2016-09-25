@@ -75,7 +75,7 @@ public class AlignmentResults implements IAlignmentResults {
 		return this.ranges;
 	}
 
-	void applyShiftToPreviews() {
+	public void applyShiftToPreviews() {
 
 		for(int index = 0; index < this.getAlignmentRanges().getAlignmentRanges().size(); index++) {
 			IAlignmentRange range = this.getAlignmentRanges().getAlignmentRanges().get(index);
@@ -83,18 +83,28 @@ public class AlignmentResults implements IAlignmentResults {
 			IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));
 			Chromatogram ticAfterAlignment = result.getTicAfterAlignment();
 			int shift = result.getShifts().get(index);
-			int noScansToShift = (range.getStopRetentionTime() - range.getStartRetentionTime()) / this.getRetentionTimeWindow();
-			int rangeStartScan = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
-			int rangeStopScan = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
+			int nScansToShift = (range.getStopRetentionTime() - range.getStartRetentionTime()) / this.getRetentionTimeWindow();
+			int rangeStartScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
+			int rangeStopScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStopRetentionTime());
+			int totalStopScanNumber = result.getTicAfterAlignment().getScanNumber(result.getTicAfterAlignment().getStopRetentionTime());
 			if(shift < 0) {
-				if(ticAfterAlignment.getScanNumber(range.getStartRetentionTime()) - shift < 0) {
+				if(rangeStartScanNumber - shift < 0) {
 					// shifting will 'fall out' of chromatogram in the beginning
 				} else {
 					// normal shift to the left
 				}
 			} else if(shift > 0) {
-				// TODO: look at the expression below again....
-				if(ticAfterAlignment.getScanNumber(range.getStopRetentionTime()) + shift > ticAfterAlignment.getScan(ticAfterAlignment.getNumberOfScans()).getRetentionTime()) {
+				if(rangeStopScanNumber + shift > totalStopScanNumber) {
+					// shifting will 'fall out' of the chromatogram at the end
+				} else {
+					// normal shift to the right
+					for(int scanToShift = rangeStopScanNumber; scanToShift >= rangeStopScanNumber; scanToShift--) {
+						ticAfterAlignment.getScan(scanToShift + shift).adjustTotalSignal(ticAfterAlignment.getScan(scanToShift).getTotalSignal());
+					}
+					// copy the scan to the right of the shift range as many times as there are shifts to the left
+					for(int copyScanDestination = rangeStopScanNumber; copyScanDestination >= rangeStopScanNumber - shift; copyScanDestination--) {
+						ticAfterAlignment.getScan(copyScanDestination).adjustTotalSignal(ticAfterAlignment.getScan(rangeStopScanNumber + 1).getTotalSignal());
+					}
 				}
 			}
 		}

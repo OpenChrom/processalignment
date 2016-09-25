@@ -29,4 +29,6 @@ public interface IAlignmentResults {
 	void setAlignmentRanges(IAlignmentRanges ranges);
 
 	IAlignmentRanges getAlignmentRanges();
+
+	void applyShiftToPreviews();
 }

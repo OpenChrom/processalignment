@@ -174,10 +174,16 @@ public class AlignmentProcessor {
 			Iterator<IDataInputEntry> entry = dataInputEntries.listIterator();
 			int shiftIndex = 0;
 			while(entry.hasNext()) {
-				alignmentResults.getAlignmentResultMap().get(new Sample(entry.next().getName())).addShift(columnMaximumIndices[shiftIndex]);
+				IAlignmentResult alignmentResult = alignmentResults.getAlignmentResultMap().get(new Sample(entry.next().getName()));
+				Integer shift = columnMaximumIndices[shiftIndex];
+				// TODO something wrong with this => alignmentResult.addShift(shift);
+				/*
+				 * alignmentResults.getAlignmentResultMap().get(new Sample(entry.next().getName())).addShift(columnMaximumIndices[shiftIndex]);
+				 */
 				shiftIndex++;
 			}
 		}
+		alignmentResults.applyShiftToPreviews();
 		/*
 		 * compare user choice of retention time with lowest and highest of the set
 		 */
