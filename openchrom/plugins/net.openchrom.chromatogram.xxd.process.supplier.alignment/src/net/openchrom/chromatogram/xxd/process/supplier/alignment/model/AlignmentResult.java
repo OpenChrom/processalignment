@@ -11,6 +11,7 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
@@ -22,6 +23,7 @@ public class AlignmentResult implements IAlignmentResult {
 	private List<Integer> shifts;
 
 	public AlignmentResult() {
+		this.shifts = new ArrayList<Integer>();
 	}
 
 	public void setTicBeforeAlignment(Chromatogram ticChromatogram) {

@@ -68,8 +68,8 @@ public class AlignmentProcessor {
 		int retentionTimeWindow = settings.getRetentionTimeWindow();
 		int chromatogramType = settings.getChromatogramType();
 		// adjusting user input of processing selection to milliseconds
-		int lowerRetentionTimeSelection = settings.getAlignmentRangesList().getLowestStartRetentionTime() * 60000;
-		int upperRetentionTimeSelection = settings.getAlignmentRangesList().getHighestStopRetentionTime() * 60000;
+		// int lowerRetentionTimeSelection = settings.getAlignmentRangesList().getLowestStartRetentionTime() * 60000;
+		// int upperRetentionTimeSelection = settings.getAlignmentRangesList().getHighestStopRetentionTime() * 60000;
 		/*
 		 * Find lowest and highest Scans over the whole chromatogram set
 		 */
@@ -117,9 +117,9 @@ public class AlignmentProcessor {
 		 * Calculate two sets of standardized chromatograms
 		 */
 		List<Chromatogram> standardizedTICsBefore = null;
-		standardizedTICsBefore = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection);
+		standardizedTICsBefore = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
 		List<Chromatogram> standardizedTICsAfter = null;
-		standardizedTICsAfter = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection);
+		standardizedTICsAfter = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
 		/*
 		 * store standardized TIC chromatograms in results
 		 */
@@ -139,8 +139,8 @@ public class AlignmentProcessor {
 		while(range.hasNext()) {
 			// get current Range to calculate
 			IAlignmentRange currentRange = range.next();
-			lowerRetentionTimeSelection = currentRange.getStartRetentionTime();
-			upperRetentionTimeSelection = currentRange.getStopRetentionTime();
+			int lowerRetentionTimeSelection = currentRange.getStartRetentionTime() * 60000;
+			int upperRetentionTimeSelection = currentRange.getStopRetentionTime() * 60000;
 			/*
 			 * Calculate standardized chromatograms
 			 */
@@ -176,7 +176,7 @@ public class AlignmentProcessor {
 			while(entry.hasNext()) {
 				IAlignmentResult alignmentResult = alignmentResults.getAlignmentResultMap().get(new Sample(entry.next().getName()));
 				Integer shift = columnMaximumIndices[shiftIndex];
-				// TODO something wrong with this => alignmentResult.addShift(shift);
+				alignmentResult.addShift(shift);
 				/*
 				 * alignmentResults.getAlignmentResultMap().get(new Sample(entry.next().getName())).addShift(columnMaximumIndices[shiftIndex]);
 				 */
@@ -184,15 +184,6 @@ public class AlignmentProcessor {
 			}
 		}
 		alignmentResults.applyShiftToPreviews();
-		/*
-		 * compare user choice of retention time with lowest and highest of the set
-		 */
-		if(upperRetentionTimeSelection > highestRetentionTime) {
-			upperRetentionTimeSelection = highestRetentionTime;
-		}
-		if(lowerRetentionTimeSelection < lowestRetentionTime) {
-			lowerRetentionTimeSelection = lowestRetentionTime;
-		}
 		return alignmentResults;
 	}
 

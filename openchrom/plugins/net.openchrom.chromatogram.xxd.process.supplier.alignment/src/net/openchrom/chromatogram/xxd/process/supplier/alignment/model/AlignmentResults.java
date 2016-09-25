@@ -29,6 +29,7 @@ public class AlignmentResults implements IAlignmentResults {
 
 	public AlignmentResults() {
 		this(new ArrayList<IDataInputEntry>());
+		this.ranges = new AlignmentRanges();
 	}
 
 	public AlignmentResults(List<IDataInputEntry> dataInputEntries) {
@@ -67,6 +68,7 @@ public class AlignmentResults implements IAlignmentResults {
 	@Override
 	public void setAlignmentRanges(IAlignmentRanges ranges) {
 
+		this.ranges = ranges;
 	}
 
 	@Override
@@ -83,9 +85,8 @@ public class AlignmentResults implements IAlignmentResults {
 			IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));
 			Chromatogram ticAfterAlignment = result.getTicAfterAlignment();
 			int shift = result.getShifts().get(index);
-			int nScansToShift = (range.getStopRetentionTime() - range.getStartRetentionTime()) / this.getRetentionTimeWindow();
-			int rangeStartScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
-			int rangeStopScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStopRetentionTime());
+			int rangeStartScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime() * 60000);
+			int rangeStopScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStopRetentionTime() * 60000);
 			int totalStopScanNumber = result.getTicAfterAlignment().getScanNumber(result.getTicAfterAlignment().getStopRetentionTime());
 			if(shift < 0) {
 				if(rangeStartScanNumber - shift < 0) {
@@ -98,6 +99,7 @@ public class AlignmentResults implements IAlignmentResults {
 					// shifting will 'fall out' of the chromatogram at the end
 				} else {
 					// normal shift to the right
+					// TODO need to loop over each sample also
 					for(int scanToShift = rangeStopScanNumber; scanToShift >= rangeStopScanNumber; scanToShift--) {
 						ticAfterAlignment.getScan(scanToShift + shift).adjustTotalSignal(ticAfterAlignment.getScan(scanToShift).getTotalSignal());
 					}
