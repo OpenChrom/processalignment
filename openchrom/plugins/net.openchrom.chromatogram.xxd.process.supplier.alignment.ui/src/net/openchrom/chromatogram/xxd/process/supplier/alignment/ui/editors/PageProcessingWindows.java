@@ -7,13 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Dr. Philip Wenig - initial API and implementation
+ * Lorenz Gerber - initial API and implementation
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.chemclipse.swt.ui.support.Colors;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,11 +25,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-public class PageResults {
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.swt.ProcessingWindowTable;
+
+public class PageProcessingWindows {
 
 	private EditorAlignment editorAlignment;
+	private ProcessingWindowTable processingWindowTable;
 
-	public PageResults(EditorAlignment editorAlignment, TabFolder tabFolder) {
+	public PageProcessingWindows(EditorAlignment editorAlignment, TabFolder tabFolder) {
 		//
 		this.editorAlignment = editorAlignment;
 		initialize(tabFolder);
@@ -42,18 +46,23 @@ public class PageResults {
 
 		//
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("Processing Results");
+		tabItem.setText("Processing Windows");
 		//
 		Composite composite = new Composite(tabFolder, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		/*
-		 * Chromatogram Compare Views
+		 * Results Table
 		 */
-		Composite compositeChromatograms = new Composite(composite, SWT.NONE);
-		compositeChromatograms.setLayout(new GridLayout(1, true));
-		compositeChromatograms.setLayoutData(new GridData(GridData.FILL_BOTH));
-		compositeChromatograms.setBackground(Colors.DARK_CYAN);
+		processingWindowTable = new ProcessingWindowTable(composite, SWT.BORDER);
+		processingWindowTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+		processingWindowTable.getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+
+			}
+		});
 		/*
 		 * Button Bar
 		 */
@@ -65,7 +74,8 @@ public class PageResults {
 		gridDataButtons.minimumWidth = 150;
 		//
 		createPreviousButton(compositeButtons, gridDataButtons);
-		createSaveButton(compositeButtons, gridDataButtons);
+		createNextButton(compositeButtons, gridDataButtons);
+		createProcessButton(compositeButtons, gridDataButtons);
 		//
 		tabItem.setControl(composite);
 	}
@@ -81,24 +91,42 @@ public class PageResults {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				editorAlignment.showProcessingWindowsPage();
+				editorAlignment.showInputFilesPage();
 			}
 		});
 		return button;
 	}
 
-	private Button createSaveButton(Composite parent, GridData gridData) {
+	private Button createNextButton(Composite parent, GridData gridData) {
 
 		Button button = new Button(parent, SWT.PUSH);
-		button.setText("Process");
-		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SAVEALL, IApplicationImage.SIZE_16x16));
+		button.setText("Next");
+		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_NEXT, IApplicationImage.SIZE_16x16));
 		button.setLayoutData(gridData);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				System.out.println("Save the chromatograms");
+				editorAlignment.showResultsPage();
+			}
+		});
+		return button;
+	}
+
+	private Button createProcessButton(Composite parent, GridData gridData) {
+
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText("Process");
+		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_EXECUTE, IApplicationImage.SIZE_16x16));
+		button.setLayoutData(gridData);
+		button.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				editorAlignment.runAlignment();
+				editorAlignment.showResultsPage();
 			}
 		});
 		return button;
