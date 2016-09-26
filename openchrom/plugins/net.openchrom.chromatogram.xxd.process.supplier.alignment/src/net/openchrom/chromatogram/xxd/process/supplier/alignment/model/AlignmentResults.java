@@ -80,10 +80,8 @@ public class AlignmentResults implements IAlignmentResults {
 	public void applyShiftToPreviews() {
 
 		// iterating over the Ranges
-
 		for(int index = 0; index < this.getAlignmentRanges().size(); index++) {
 			IAlignmentRange range = this.getAlignmentRanges().get(index);
-
 			Iterator<IDataInputEntry> entry = this.dataInputEntries.iterator();
 			while(entry.hasNext()) {
 				IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));

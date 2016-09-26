@@ -19,7 +19,6 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmen
 
 public class AlignmentSettings implements IAlignmentSettings {
 
-
 	private static final Logger logger = Logger.getLogger(AlignmentSettings.class);
 	//
 	private static final int DEFAULT_RETENTION_TIME_WINDOW = 200;
