@@ -13,11 +13,9 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.preferences
 
 import org.eclipse.chemclipse.support.ui.preferences.fieldeditors.SpacerFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.preferences.PreferenceSupplier;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.Activator;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -36,7 +34,6 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public void createFieldEditors() {
 
 		addField(new SpacerFieldEditor(getFieldEditorParent()));
-		addField(new StringFieldEditor(PreferenceSupplier.P_ALIGNMENT_METHOD, "Alignment Method", getFieldEditorParent()));
 	}
 
 	/*

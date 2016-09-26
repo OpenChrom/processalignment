@@ -20,17 +20,11 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.Activator;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRange;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.SupplierProcessorAlignmentSettings;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.ISupplierProcessorAlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 
 public class PreferenceSupplier implements IPreferenceSupplier {
 
-	public static final String P_ALIGNMENT_METHOD = "alignmentMethod";
-	public static final String DEF_ALIGNMENT_METHOD = "linear";
-	public static final String P_RETENTION_TIME_WINDOW = "retentionTimeWindow";
-	public static final int DEF_RETENTION_TIME_WINDOW = 200;
-	//
 	private static IPreferenceSupplier preferenceSupplier;
 
 	public static IPreferenceSupplier INSTANCE() {
@@ -57,8 +51,6 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 	public Map<String, String> getDefaultValues() {
 
 		Map<String, String> defaultValues = new HashMap<String, String>();
-		defaultValues.put(P_ALIGNMENT_METHOD, DEF_ALIGNMENT_METHOD);
-		defaultValues.put(P_RETENTION_TIME_WINDOW, Integer.toString(DEF_RETENTION_TIME_WINDOW));
 		return defaultValues;
 	}
 
@@ -68,13 +60,8 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 		return getScopeContext().getNode(getPreferenceNode());
 	}
 
-	public static ISupplierProcessorAlignmentSettings getAlignmentProcessorSettings() {
+	public static IAlignmentSettings getAlignmentProcessorSettings() {
 
-		return new SupplierProcessorAlignmentSettings();
-	}
-
-	private static void setBasePeakSettings(ISupplierProcessorAlignmentSettings settings) {
-
-		IEclipsePreferences preferences = INSTANCE().getPreferences();
+		return new AlignmentSettings();
 	}
 }

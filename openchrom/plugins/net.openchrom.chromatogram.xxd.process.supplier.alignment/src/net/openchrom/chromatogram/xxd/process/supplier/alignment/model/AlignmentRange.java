@@ -40,10 +40,6 @@ public class AlignmentRange implements IAlignmentRange {
 		return stopRetentionTime;
 	}
 
-	public void addShift(int shift) {
-
-	}
-
 	@Override
 	public boolean equals(Object otherObject) {
 

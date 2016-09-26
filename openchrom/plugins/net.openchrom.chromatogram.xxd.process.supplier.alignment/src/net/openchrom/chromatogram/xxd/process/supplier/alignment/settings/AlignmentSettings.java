@@ -11,41 +11,50 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.settings;
 
+import org.eclipse.chemclipse.logging.core.Logger;
+
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRanges;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRanges;
 
-public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAlignmentSettings {
+public class AlignmentSettings implements IAlignmentSettings {
 
-	private static final int DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS = 200;
-	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS = 840000;
-	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_MILLISECONDS = 900000;
+
+	private static final Logger logger = Logger.getLogger(AlignmentSettings.class);
+	//
+	private static final int DEFAULT_RETENTION_TIME_WINDOW = 200;
+	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION = 0;
+	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION = 900000; // 15 minutes
 	private static final int DEFAULT_CHROMATOGRAM_TYPE = 0;
+	//
 	private int retentionTimeWindow;
-	private AlignmentRanges ranges = new AlignmentRanges();
+	private AlignmentRanges alignmentRanges = new AlignmentRanges();
 	private int chromatogramType;
 
-	public SupplierProcessorAlignmentSettings() {
-		this.retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS;
+	public AlignmentSettings() {
+		this.retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW;
 		this.chromatogramType = DEFAULT_CHROMATOGRAM_TYPE;
-		AlignmentRange range;
 		try {
-			range = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS, DEFAULT_UPPER_RETENTION_TIME_SELECTION_MILLISECONDS);
-			this.ranges.addAlignmentRange(range);
+			AlignmentRange alignmentRange = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION, DEFAULT_UPPER_RETENTION_TIME_SELECTION);
+			this.alignmentRanges.add(alignmentRange);
 		} catch(Exception e) {
+			logger.warn(e);
 		}
 	}
 
+	@Override
 	public int getRetentionTimeWindow() {
 
 		return retentionTimeWindow;
 	}
 
-	public IAlignmentRanges getAlignmentRangesList() {
+	@Override
+	public IAlignmentRanges getAlignmentRanges() {
 
-		return this.ranges;
+		return this.alignmentRanges;
 	}
 
+	@Override
 	public int getChromatogramType() {
 
 		return chromatogramType;

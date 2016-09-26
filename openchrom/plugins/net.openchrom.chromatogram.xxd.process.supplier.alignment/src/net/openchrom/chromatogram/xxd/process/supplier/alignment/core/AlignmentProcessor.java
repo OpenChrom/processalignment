@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.core.ChromatogramFilterShift;
 import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.settings.SupplierFilterShiftSettings;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
@@ -50,21 +51,21 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmen
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Sample;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.SupplierProcessorAlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
 
 public class AlignmentProcessor {
 
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
 	private static final int MAX_SHIFT = 20;
 
-	public IAlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, SupplierProcessorAlignmentSettings settings, IProgressMonitor monitor) {
+	public IAlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, AlignmentSettings settings, IProgressMonitor monitor) {
 
 		/*
 		 * Preparing evironment
 		 */
 		IAlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
 		alignmentResults.setRetentionTimeWindow(settings.getRetentionTimeWindow());
-		alignmentResults.setAlignmentRanges(settings.getAlignmentRangesList());
+		alignmentResults.setAlignmentRanges(settings.getAlignmentRanges());
 		int retentionTimeWindow = settings.getRetentionTimeWindow();
 		int chromatogramType = settings.getChromatogramType();
 		/*
@@ -132,7 +133,7 @@ public class AlignmentProcessor {
 		/*
 		 * Iterate over alignment Ranges
 		 */
-		Iterator<IAlignmentRange> range = settings.getAlignmentRangesList().getAlignmentRanges().iterator();
+		Iterator<IAlignmentRange> range = settings.getAlignmentRanges().iterator();
 		while(range.hasNext()) {
 			// get current Range to calculate
 			IAlignmentRange currentRange = range.next();
@@ -193,7 +194,7 @@ public class AlignmentProcessor {
 	 * @param monitor
 	 * @return
 	 */
-	AlignmentResults applyAlignment(AlignmentResults results, SupplierProcessorAlignmentSettings settings, IProgressMonitor monitor) {
+	AlignmentResults applyAlignment(AlignmentResults results, AlignmentSettings settings, IProgressMonitor monitor) {
 
 		int chromatogramType = settings.getChromatogramType();
 		IProcessingInfo processingInfo = new ProcessingInfo();

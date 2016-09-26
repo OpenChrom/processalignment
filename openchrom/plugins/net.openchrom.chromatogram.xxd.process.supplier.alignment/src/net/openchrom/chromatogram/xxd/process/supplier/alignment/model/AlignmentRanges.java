@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 loge.
+ * Copyright (c) 2016 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,71 +7,29 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * loge - initial API and implementation
+ * Dr. Lorenz Gerber - initial API and implementation
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 
-public class AlignmentRanges implements IAlignmentRanges {
-
-	private List<IAlignmentRange> ranges;
+public class AlignmentRanges extends ArrayList<IAlignmentRange> implements IAlignmentRanges {
 
 	/**
-	 * Initialize mass spectra and create a new internal mass spectra list.
+	 * Renew this UUID on class change.
 	 */
-	public AlignmentRanges() {
-		ranges = new ArrayList<IAlignmentRange>();
-	}
-
-	@Override
-	public void addAlignmentRange(IAlignmentRange range) {
-
-		if(range != null) {
-			ranges.add(range);
-		}
-	}
-
-	@Override
-	public void removeAlignmentRange(IAlignmentRange range) {
-
-		if(range != null) {
-			ranges.remove(range);
-		}
-	}
-
-	@Override
-	public IAlignmentRange getAlignmentRange(int i) {
-
-		IAlignmentRange range = null;
-		if(i > 0 && i <= ranges.size()) {
-			range = ranges.get(--i);
-		}
-		return range;
-	}
-
-	@Override
-	public List<IAlignmentRange> getAlignmentRanges() {
-
-		return ranges;
-	}
-
-	@Override
-	public int size() {
-
-		return ranges.size();
-	}
+	private static final long serialVersionUID = -6833457252061925168L;
 
 	@Override
 	public int getLowestStartRetentionTime() {
 
 		int lowestRetentionTime = 0;
-		for(IAlignmentRange range : ranges) {
-			if(range.getStartRetentionTime() < lowestRetentionTime) {
-				lowestRetentionTime = range.getStartRetentionTime();
+		Iterator<IAlignmentRange> iterator = this.iterator();
+		while(iterator.hasNext()) {
+			IAlignmentRange alignmentRange = iterator.next();
+			if(alignmentRange.getStartRetentionTime() < lowestRetentionTime) {
+				lowestRetentionTime = alignmentRange.getStartRetentionTime();
 			}
 		}
 		return lowestRetentionTime;
@@ -81,9 +39,11 @@ public class AlignmentRanges implements IAlignmentRanges {
 	public int getHighestStopRetentionTime() {
 
 		int highestRetentionTime = 0;
-		for(IAlignmentRange range : ranges) {
-			if(range.getStopRetentionTime() > highestRetentionTime) {
-				highestRetentionTime = range.getStopRetentionTime();
+		Iterator<IAlignmentRange> iterator = this.iterator();
+		while(iterator.hasNext()) {
+			IAlignmentRange alignmentRange = iterator.next();
+			if(alignmentRange.getStopRetentionTime() > highestRetentionTime) {
+				highestRetentionTime = alignmentRange.getStopRetentionTime();
 			}
 		}
 		return highestRetentionTime;
