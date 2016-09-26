@@ -85,8 +85,8 @@ public class AlignmentResults implements IAlignmentResults {
 			IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));
 			Chromatogram ticAfterAlignment = result.getTicAfterAlignment();
 			int shift = result.getShifts().get(index);
-			int rangeStartScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime() * 60000);
-			int rangeStopScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStopRetentionTime() * 60000);
+			int rangeStartScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
+			int rangeStopScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStopRetentionTime());
 			int totalStopScanNumber = result.getTicAfterAlignment().getScanNumber(result.getTicAfterAlignment().getStopRetentionTime());
 			if(shift < 0) {
 				if(rangeStartScanNumber - shift < 0) {

@@ -18,8 +18,8 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmen
 public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAlignmentSettings {
 
 	private static final int DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS = 200;
-	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES = 0;
-	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES = 15;
+	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS = 0;
+	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_MILLISECONDS = 900000;
 	private static final int DEFAULT_CHROMATOGRAM_TYPE = 0;
 	private int retentionTimeWindow;
 	private AlignmentRanges ranges = new AlignmentRanges();
@@ -30,7 +30,7 @@ public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAli
 		this.chromatogramType = DEFAULT_CHROMATOGRAM_TYPE;
 		AlignmentRange range;
 		try {
-			range = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES, DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES);
+			range = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS, DEFAULT_UPPER_RETENTION_TIME_SELECTION_MILLISECONDS);
 			this.ranges.addAlignmentRange(range);
 		} catch(Exception e) {
 		}

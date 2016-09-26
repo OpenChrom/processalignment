@@ -25,18 +25,10 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInpu
 public class AlignmentRunnable implements IRunnableWithProgress {
 
 	private List<IDataInputEntry> dataInputEntries;
-	private int retentionTimeWindow;
-	private int chromatogramType;
 	private IAlignmentResults alignmentResults;
-	private int lowerRetentionTimeSelection;
-	private int upperRetentionTimeSelection;
 
-	public AlignmentRunnable(List<IDataInputEntry> dataInputEntries, int retentionTimeWindow, int chromatogramType, int lowerRetentionTimeSelection, int upperRetentionTimeSelection) {
+	public AlignmentRunnable(List<IDataInputEntry> dataInputEntries) {
 		this.dataInputEntries = dataInputEntries;
-		this.retentionTimeWindow = retentionTimeWindow;
-		this.upperRetentionTimeSelection = upperRetentionTimeSelection;
-		this.lowerRetentionTimeSelection = lowerRetentionTimeSelection;
-		this.chromatogramType = chromatogramType;
 	}
 
 	@Override

@@ -67,9 +67,6 @@ public class AlignmentProcessor {
 		alignmentResults.setAlignmentRanges(settings.getAlignmentRangesList());
 		int retentionTimeWindow = settings.getRetentionTimeWindow();
 		int chromatogramType = settings.getChromatogramType();
-		// adjusting user input of processing selection to milliseconds
-		// int lowerRetentionTimeSelection = settings.getAlignmentRangesList().getLowestStartRetentionTime() * 60000;
-		// int upperRetentionTimeSelection = settings.getAlignmentRangesList().getHighestStopRetentionTime() * 60000;
 		/*
 		 * Find lowest and highest Scans over the whole chromatogram set
 		 */
@@ -139,8 +136,8 @@ public class AlignmentProcessor {
 		while(range.hasNext()) {
 			// get current Range to calculate
 			IAlignmentRange currentRange = range.next();
-			int lowerRetentionTimeSelection = currentRange.getStartRetentionTime() * 60000;
-			int upperRetentionTimeSelection = currentRange.getStopRetentionTime() * 60000;
+			int lowerRetentionTimeSelection = currentRange.getStartRetentionTime();
+			int upperRetentionTimeSelection = currentRange.getStopRetentionTime();
 			/*
 			 * Calculate standardized chromatograms
 			 */
