@@ -13,14 +13,15 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.chemclipse.swt.ui.support.Colors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -53,7 +54,18 @@ public class PageResults {
 		Composite compositeChromatograms = new Composite(composite, SWT.NONE);
 		compositeChromatograms.setLayout(new GridLayout(1, true));
 		compositeChromatograms.setLayoutData(new GridData(GridData.FILL_BOTH));
-		compositeChromatograms.setBackground(Colors.DARK_CYAN);
+		//
+		Composite compositeRawData = new Composite(compositeChromatograms, SWT.BORDER);
+		compositeRawData.setLayoutData(new GridData(GridData.FILL_BOTH));
+		compositeRawData.setLayout(new FillLayout());
+		Label label1 = new Label(compositeRawData, SWT.NONE);
+		label1.setText("Show the raw data.");
+		//
+		Composite compositeShiftedData = new Composite(compositeChromatograms, SWT.BORDER);
+		compositeShiftedData.setLayoutData(new GridData(GridData.FILL_BOTH));
+		compositeShiftedData.setLayout(new FillLayout());
+		Label label2 = new Label(compositeShiftedData, SWT.NONE);
+		label2.setText("Show the shifted data.");
 		/*
 		 * Button Bar
 		 */
