@@ -79,33 +79,52 @@ public class AlignmentResults implements IAlignmentResults {
 
 	public void applyShiftToPreviews() {
 
+		// iterating over the Ranges
+
 		for(int index = 0; index < this.getAlignmentRanges().size(); index++) {
 			IAlignmentRange range = this.getAlignmentRanges().get(index);
+
 			Iterator<IDataInputEntry> entry = this.dataInputEntries.iterator();
-			IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));
-			Chromatogram ticAfterAlignment = result.getTicAfterAlignment();
-			int shift = result.getShifts().get(index);
-			int rangeStartScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
-			int rangeStopScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStopRetentionTime());
-			int totalStopScanNumber = result.getTicAfterAlignment().getScanNumber(result.getTicAfterAlignment().getStopRetentionTime());
-			if(shift < 0) {
-				if(rangeStartScanNumber - shift < 0) {
-					// shifting will 'fall out' of chromatogram in the beginning
-				} else {
-					// normal shift to the left
-				}
-			} else if(shift > 0) {
-				if(rangeStopScanNumber + shift > totalStopScanNumber) {
-					// shifting will 'fall out' of the chromatogram at the end
-				} else {
-					// normal shift to the right
-					// TODO need to loop over each sample also
-					for(int scanToShift = rangeStopScanNumber; scanToShift >= rangeStopScanNumber; scanToShift--) {
-						ticAfterAlignment.getScan(scanToShift + shift).adjustTotalSignal(ticAfterAlignment.getScan(scanToShift).getTotalSignal());
+			while(entry.hasNext()) {
+				IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));
+				Chromatogram ticAfterAlignment = result.getTicAfterAlignment();
+				int shift = result.getShifts().get(index);
+				int rangeStartScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
+				int rangeStopScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStopRetentionTime());
+				int totalStopScanNumber = result.getTicAfterAlignment().getScanNumber(result.getTicAfterAlignment().getStopRetentionTime());
+				int totalStartScanNumber = result.getTicAfterAlignment().getScanNumber(result.getTicAfterAlignment().getStartRetentionTime());
+				if(shift < 0) {
+					/*
+					 * Left Shift
+					 */
+					// check if rangeStartScan is closer to totalStartScan than the actual shift
+					int scanToShift = rangeStartScanNumber;
+					if(rangeStartScanNumber - shift < totalStartScanNumber) {
+						scanToShift = totalStartScanNumber + shift;
 					}
-					// copy the scan to the right of the shift range as many times as there are shifts to the left
-					for(int copyScanDestination = rangeStopScanNumber; copyScanDestination >= rangeStopScanNumber - shift; copyScanDestination--) {
-						ticAfterAlignment.getScan(copyScanDestination).adjustTotalSignal(ticAfterAlignment.getScan(rangeStopScanNumber + 1).getTotalSignal());
+					while(scanToShift <= rangeStopScanNumber) {
+						ticAfterAlignment.getScan(scanToShift - shift).adjustTotalSignal(ticAfterAlignment.getScan(scanToShift).getTotalSignal());
+						scanToShift++;
+					}
+					// copy the rangeStopScan as many times as there are shifts to the left from the end
+					for(int copyScanDestination = rangeStopScanNumber - 1; copyScanDestination >= rangeStopScanNumber - shift; copyScanDestination--) {
+						ticAfterAlignment.getScan(copyScanDestination).adjustTotalSignal(ticAfterAlignment.getScan(rangeStopScanNumber).getTotalSignal());
+					}
+				} else if(shift > 0) {
+					/*
+					 * Right Shift
+					 */
+					int scanToShift = rangeStopScanNumber;
+					if(rangeStopScanNumber + shift > totalStopScanNumber) {
+						scanToShift = totalStopScanNumber - shift;
+					}
+					while(scanToShift >= rangeStartScanNumber) {
+						ticAfterAlignment.getScan(scanToShift + shift).adjustTotalSignal(ticAfterAlignment.getScan(scanToShift).getTotalSignal());
+						scanToShift--;
+					}
+					// copy the scan to the left of the shift range as many times as there are shifts to the right
+					for(int copyScanDestination = rangeStartScanNumber + 1; copyScanDestination <= rangeStartScanNumber + shift; copyScanDestination++) {
+						ticAfterAlignment.getScan(copyScanDestination).adjustTotalSignal(ticAfterAlignment.getScan(rangeStopScanNumber).getTotalSignal());
 					}
 				}
 			}
