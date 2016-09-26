@@ -18,7 +18,7 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmen
 public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAlignmentSettings {
 
 	private static final int DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS = 200;
-	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS = 0;
+	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS = 840000;
 	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_MILLISECONDS = 900000;
 	private static final int DEFAULT_CHROMATOGRAM_TYPE = 0;
 	private int retentionTimeWindow;
