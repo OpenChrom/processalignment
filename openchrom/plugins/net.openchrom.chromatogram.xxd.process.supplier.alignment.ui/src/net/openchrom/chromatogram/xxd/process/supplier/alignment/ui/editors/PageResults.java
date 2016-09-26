@@ -21,7 +21,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -110,7 +112,12 @@ public class PageResults {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				System.out.println("Save the chromatograms");
+				MessageBox messageBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
+				messageBox.setText("Shift chromatogram(s)?");
+				messageBox.setMessage("Adjust the selected chromatogram file(s)?");
+				if(messageBox.open() == SWT.OK) {
+					System.out.println("Save the chromatograms");
+				}
 			}
 		});
 		return button;
