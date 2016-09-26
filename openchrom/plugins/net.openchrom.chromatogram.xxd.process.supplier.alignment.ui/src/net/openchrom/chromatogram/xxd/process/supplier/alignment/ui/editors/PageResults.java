@@ -90,7 +90,7 @@ public class PageResults {
 	private Button createSaveButton(Composite parent, GridData gridData) {
 
 		Button button = new Button(parent, SWT.PUSH);
-		button.setText("Process");
+		button.setText("Save All");
 		button.setImage(ApplicationImageFactory.getInstance().getImage(IApplicationImage.IMAGE_SAVEALL, IApplicationImage.SIZE_16x16));
 		button.setLayoutData(gridData);
 		button.addSelectionListener(new SelectionAdapter() {

@@ -11,10 +11,10 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 
+import java.util.List;
+
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,12 +25,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.swt.ProcessingWindowTable;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRange;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.swt.AlignmentRangeEditorUI;
 
 public class PageProcessingWindows {
 
 	private EditorAlignment editorAlignment;
-	private ProcessingWindowTable processingWindowTable;
+	private AlignmentRangeEditorUI alignmentRangeEditorUI;
 
 	public PageProcessingWindows(EditorAlignment editorAlignment, TabFolder tabFolder) {
 		//
@@ -40,6 +41,11 @@ public class PageProcessingWindows {
 
 	public void update() {
 
+	}
+
+	public List<IAlignmentRange> getAlignmentRanges() {
+
+		return alignmentRangeEditorUI.getAlignmentRanges();
 	}
 
 	private void initialize(TabFolder tabFolder) {
@@ -54,15 +60,11 @@ public class PageProcessingWindows {
 		/*
 		 * Results Table
 		 */
-		processingWindowTable = new ProcessingWindowTable(composite, SWT.BORDER);
-		processingWindowTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		processingWindowTable.getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-
-			}
-		});
+		Composite compositeTable = new Composite(composite, SWT.NONE);
+		compositeTable.setLayout(new GridLayout(1, true));
+		compositeTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+		alignmentRangeEditorUI = new AlignmentRangeEditorUI(compositeTable, SWT.NONE);
+		alignmentRangeEditorUI.setLayoutData(new GridData(GridData.FILL_BOTH));
 		/*
 		 * Button Bar
 		 */

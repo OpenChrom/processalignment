@@ -13,6 +13,9 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
 public interface IAlignmentRange {
 
+	String[] TITLES = {"Start RT (min)", "Stop RT (min)"};
+	int[] BOUNDS = {160, 160};
+
 	int getStartRetentionTime();
 
 	int getStopRetentionTime();

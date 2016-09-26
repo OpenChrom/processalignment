@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -165,7 +166,12 @@ public class PageInputFiles {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				removeEntries(inputFilesTable.getSelectionIndices());
+				MessageBox messageBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
+				messageBox.setText("Remove chromatogram(s)?");
+				messageBox.setMessage("Would you like to remove the chromatogram(s)?");
+				if(messageBox.open() == SWT.OK) {
+					removeEntries(inputFilesTable.getSelectionIndices());
+				}
 			}
 		});
 		return button;
