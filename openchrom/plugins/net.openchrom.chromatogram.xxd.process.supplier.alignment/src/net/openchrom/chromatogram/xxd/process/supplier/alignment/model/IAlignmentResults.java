@@ -14,8 +14,6 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.chemclipse.model.implementation.Chromatogram;
-
 public interface IAlignmentResults {
 
 	List<IDataInputEntry> getDataInputEntries();

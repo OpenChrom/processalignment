@@ -15,7 +15,7 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Alignment
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRanges;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRanges;
 
-public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAlignmentSettings {
+public class AlignmentSettings implements IAlignmentSettings {
 
 	private static final int DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS = 200;
 	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS = 0;
@@ -25,13 +25,13 @@ public class SupplierProcessorAlignmentSettings implements ISupplierProcessorAli
 	private AlignmentRanges ranges = new AlignmentRanges();
 	private int chromatogramType;
 
-	public SupplierProcessorAlignmentSettings() {
+	public AlignmentSettings() {
 		this.retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS;
 		this.chromatogramType = DEFAULT_CHROMATOGRAM_TYPE;
-		AlignmentRange range;
+		AlignmentRange alignmentRange;
 		try {
-			range = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS, DEFAULT_UPPER_RETENTION_TIME_SELECTION_MILLISECONDS);
-			this.ranges.addAlignmentRange(range);
+			alignmentRange = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MILLISECONDS, DEFAULT_UPPER_RETENTION_TIME_SELECTION_MILLISECONDS);
+			this.ranges.add(alignmentRange);
 		} catch(Exception e) {
 		}
 	}

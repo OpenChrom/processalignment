@@ -136,7 +136,7 @@ public class PageSelectProcessingWindows {
 			public void widgetSelected(SelectionEvent event) {
 
 				IAlignmentResults alignmentResults = editorAlignment.getAlignmentResults();
-				//
+				System.out.println(alignmentResults.getRetentionTimeWindow());
 			}
 		});
 	}
