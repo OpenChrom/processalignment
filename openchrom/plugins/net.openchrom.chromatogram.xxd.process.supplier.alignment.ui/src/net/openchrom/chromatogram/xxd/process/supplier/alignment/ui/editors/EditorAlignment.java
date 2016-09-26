@@ -68,7 +68,7 @@ public class EditorAlignment {
 	 */
 	private PageOverview pageOverview;
 	private PageInputFiles pageInputFiles;
-	private PageSelectProcessingWindows pageSelectProcessingWindows;
+	private PageProcessingWindows pageProcessingWindows;
 	private PageResults pageResults;
 	private List<Object> pages;
 	private IAlignmentResults alignmentResults;
@@ -156,11 +156,44 @@ public class EditorAlignment {
 		return pageOverview.getChromatogramType();
 	}
 
+	public void showOverviewFilesPage() {
+
+		int pageIndex = 0;
+		for(int index = 0; index < pages.size(); index++) {
+			if(pages.get(index) == pageOverview) {
+				pageIndex = index;
+			}
+		}
+		tabFolder.setSelection(pageIndex);
+	}
+
 	public void showInputFilesPage() {
 
 		int pageIndex = 0;
 		for(int index = 0; index < pages.size(); index++) {
 			if(pages.get(index) == pageInputFiles) {
+				pageIndex = index;
+			}
+		}
+		tabFolder.setSelection(pageIndex);
+	}
+
+	public void showProcessingWindowsPage() {
+
+		int pageIndex = 0;
+		for(int index = 0; index < pages.size(); index++) {
+			if(pages.get(index) == pageProcessingWindows) {
+				pageIndex = index;
+			}
+		}
+		tabFolder.setSelection(pageIndex);
+	}
+
+	public void showResultsPage() {
+
+		int pageIndex = 0;
+		for(int index = 0; index < pages.size(); index++) {
+			if(pages.get(index) == pageResults) {
 				pageIndex = index;
 			}
 		}
@@ -177,9 +210,9 @@ public class EditorAlignment {
 		tabFolder = new TabFolder(parent, SWT.BOTTOM);
 		//
 		pages.add(pageOverview = new PageOverview(this, tabFolder, formToolkit));
-		pages.add(pageInputFiles = new PageInputFiles(this, tabFolder, formToolkit));
-		pages.add(pageSelectProcessingWindows = new PageSelectProcessingWindows(this, tabFolder, formToolkit));
-		pages.add(pageResults = new PageResults(this, tabFolder, formToolkit));
+		pages.add(pageInputFiles = new PageInputFiles(this, tabFolder));
+		pages.add(pageProcessingWindows = new PageProcessingWindows(this, tabFolder));
+		pages.add(pageResults = new PageResults(this, tabFolder));
 	}
 
 	private void reloadResults() {
@@ -189,7 +222,7 @@ public class EditorAlignment {
 
 	public void reloadProcessingWindows() {
 
-		pageSelectProcessingWindows.update();
+		pageProcessingWindows.update();
 	}
 
 	public IAlignmentResults getAlignmentResults() {

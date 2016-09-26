@@ -11,7 +11,6 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 
-import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
 import org.eclipse.swt.SWT;
@@ -26,7 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -38,16 +36,8 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class PageOverview {
 
-	private static final Logger logger = Logger.getLogger(PageOverview.class);
-	private static final int DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS = 200;
-	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES = 0;
-	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES = 15;
-	//
 	private EditorAlignment editorAlignment;
-	private Text retentionTimeWindowText;
 	private int chromatogramType;
-	private Text lowerRetentionTimeSelectionText;
-	private Text upperRetentionTimeSelectionText;
 
 	public PageOverview(EditorAlignment editorAlignment, TabFolder tabFolder, FormToolkit formToolkit) {
 		//
@@ -79,42 +69,9 @@ public class PageOverview {
 		tabItem.setControl(composite);
 	}
 
-	public int getRetentionTimeWindow() {
-
-		int retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS;
-		try {
-			retentionTimeWindow = Integer.parseInt(retentionTimeWindowText.getText().trim());
-		} catch(NumberFormatException e) {
-			logger.warn(e);
-		}
-		return retentionTimeWindow;
-	}
-
 	public int getChromatogramType() {
 
 		return chromatogramType;
-	}
-
-	public int getLowerRetentionTimeSelection() {
-
-		int lowerRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES;
-		try {
-			lowerRetentionTimeSelection = Integer.parseInt(lowerRetentionTimeSelectionText.getText().trim());
-		} catch(NumberFormatException e) {
-			logger.warn(e);
-		}
-		return lowerRetentionTimeSelection;
-	}
-
-	public int getUpperRetentionTimeSelection() {
-
-		int upperRetentionTimeSelection = DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES;
-		try {
-			upperRetentionTimeSelection = Integer.parseInt(upperRetentionTimeSelectionText.getText().trim());
-		} catch(NumberFormatException e) {
-			logger.warn(e);
-		}
-		return upperRetentionTimeSelection;
 	}
 
 	/**
@@ -148,48 +105,12 @@ public class PageOverview {
 		/*
 		 * Settings
 		 */
-		createRetentionTimeWindowText(client, formToolkit);
-		createLowerRetentionTimeSelectionText(client, formToolkit);
-		createUpperRetentionTimeSelectionText(client, formToolkit);
 		createChromatogramTypeButtons(client, formToolkit);
 		/*
 		 * Add the client to the section and paint flat borders.
 		 */
 		section.setClient(client);
 		formToolkit.paintBordersFor(client);
-	}
-
-	private void createRetentionTimeWindowText(Composite client, FormToolkit formToolkit) {
-
-		formToolkit.createLabel(client, "Retention Time Window (milliseconds)");
-		//
-		retentionTimeWindowText = formToolkit.createText(client, Integer.toString(DEFAULT_RETENTION_TIME_WINDOW_MILLISECONDS), SWT.NONE);
-		//
-		GridData gridData = new GridData();
-		gridData.widthHint = 300;
-		retentionTimeWindowText.setLayoutData(gridData);
-	}
-
-	private void createLowerRetentionTimeSelectionText(Composite client, FormToolkit formToolkit) {
-
-		formToolkit.createLabel(client, "Lower Retention Time Bound (minutes)");
-		//
-		lowerRetentionTimeSelectionText = formToolkit.createText(client, Integer.toString(DEFAULT_LOWER_RETENTION_TIME_SELECTION_MINUTES), SWT.NONE);
-		//
-		GridData gridData = new GridData();
-		gridData.widthHint = 300;
-		lowerRetentionTimeSelectionText.setLayoutData(gridData);
-	}
-
-	private void createUpperRetentionTimeSelectionText(Composite client, FormToolkit formToolkit) {
-
-		formToolkit.createLabel(client, "Upper Retention Time Bound (minutes)");
-		//
-		upperRetentionTimeSelectionText = formToolkit.createText(client, Integer.toString(DEFAULT_UPPER_RETENTION_TIME_SELECTION_MINUTES), SWT.NONE);
-		//
-		GridData gridData = new GridData();
-		gridData.widthHint = 300;
-		upperRetentionTimeSelectionText.setLayoutData(gridData);
 	}
 
 	private void createChromatogramTypeButtons(Composite client, FormToolkit formToolkit) {
