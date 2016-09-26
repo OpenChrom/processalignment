@@ -19,5 +19,5 @@ public interface IAlignmentSettings {
 
 	int getChromatogramType();
 
-	public IAlignmentRanges getAlignmentRangesList();
+	IAlignmentRanges getAlignmentRanges();
 }

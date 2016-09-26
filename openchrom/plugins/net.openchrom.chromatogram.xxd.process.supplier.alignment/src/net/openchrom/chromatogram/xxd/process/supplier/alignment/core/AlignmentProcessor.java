@@ -65,7 +65,7 @@ public class AlignmentProcessor {
 		 */
 		IAlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
 		alignmentResults.setRetentionTimeWindow(settings.getRetentionTimeWindow());
-		alignmentResults.setAlignmentRanges(settings.getAlignmentRangesList());
+		alignmentResults.setAlignmentRanges(settings.getAlignmentRanges());
 		int retentionTimeWindow = settings.getRetentionTimeWindow();
 		int chromatogramType = settings.getChromatogramType();
 		/*
@@ -133,7 +133,7 @@ public class AlignmentProcessor {
 		/*
 		 * Iterate over alignment Ranges
 		 */
-		Iterator<IAlignmentRange> range = settings.getAlignmentRangesList().iterator();
+		Iterator<IAlignmentRange> range = settings.getAlignmentRanges().iterator();
 		while(range.hasNext()) {
 			// get current Range to calculate
 			IAlignmentRange currentRange = range.next();

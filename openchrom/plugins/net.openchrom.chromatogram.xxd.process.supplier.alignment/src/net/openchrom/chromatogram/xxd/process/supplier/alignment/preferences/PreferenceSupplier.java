@@ -25,11 +25,6 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlign
 
 public class PreferenceSupplier implements IPreferenceSupplier {
 
-	public static final String P_ALIGNMENT_METHOD = "alignmentMethod";
-	public static final String DEF_ALIGNMENT_METHOD = "linear";
-	public static final String P_RETENTION_TIME_WINDOW = "retentionTimeWindow";
-	public static final int DEF_RETENTION_TIME_WINDOW = 200;
-	//
 	private static IPreferenceSupplier preferenceSupplier;
 
 	public static IPreferenceSupplier INSTANCE() {
@@ -56,8 +51,6 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 	public Map<String, String> getDefaultValues() {
 
 		Map<String, String> defaultValues = new HashMap<String, String>();
-		defaultValues.put(P_ALIGNMENT_METHOD, DEF_ALIGNMENT_METHOD);
-		defaultValues.put(P_RETENTION_TIME_WINDOW, Integer.toString(DEF_RETENTION_TIME_WINDOW));
 		return defaultValues;
 	}
 
