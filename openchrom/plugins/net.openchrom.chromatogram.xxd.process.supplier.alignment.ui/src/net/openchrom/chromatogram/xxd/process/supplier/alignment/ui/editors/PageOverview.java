@@ -97,11 +97,6 @@ public class PageOverview {
 		layout.marginWidth = 2;
 		layout.marginHeight = 2;
 		client.setLayout(layout);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		gridData.grabExcessHorizontalSpace = true;
-		Label label = formToolkit.createLabel(client, "Select the Alignment settings:");
-		label.setLayoutData(gridData);
 		/*
 		 * Settings
 		 */
