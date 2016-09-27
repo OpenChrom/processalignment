@@ -22,8 +22,10 @@ public class AlignmentSettings implements IAlignmentSettings {
 	private static final Logger logger = Logger.getLogger(AlignmentSettings.class);
 	//
 	private static final int DEFAULT_RETENTION_TIME_WINDOW = 200;
-	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION = 0;
-	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION = 900000; // 15 minutes
+	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_ONE = 0;
+	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_ONE = 450000; // 7 minutes
+	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_TWO = 450000;
+	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_TWO = 900000; // 15 minutes
 	private static final int DEFAULT_CHROMATOGRAM_TYPE = 0;
 	//
 	private int retentionTimeWindow;
@@ -34,8 +36,10 @@ public class AlignmentSettings implements IAlignmentSettings {
 		this.retentionTimeWindow = DEFAULT_RETENTION_TIME_WINDOW;
 		this.chromatogramType = DEFAULT_CHROMATOGRAM_TYPE;
 		try {
-			AlignmentRange alignmentRange = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION, DEFAULT_UPPER_RETENTION_TIME_SELECTION);
-			this.alignmentRanges.add(alignmentRange);
+			AlignmentRange alignmentRange_one = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_ONE, DEFAULT_UPPER_RETENTION_TIME_SELECTION_ONE);
+			this.alignmentRanges.add(alignmentRange_one);
+			AlignmentRange alignmentRange_two = new AlignmentRange(DEFAULT_LOWER_RETENTION_TIME_SELECTION_TWO, DEFAULT_UPPER_RETENTION_TIME_SELECTION_TWO);
+			this.alignmentRanges.add(alignmentRange_two);
 		} catch(Exception e) {
 			logger.warn(e);
 		}

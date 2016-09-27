@@ -52,22 +52,23 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmen
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Sample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 
 public class AlignmentProcessor {
 
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
 	private static final int MAX_SHIFT = 20;
 
-	public IAlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, AlignmentSettings settings, IProgressMonitor monitor) {
+	public IAlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, IAlignmentSettings alignmentSettings, IProgressMonitor monitor) {
 
 		/*
 		 * Preparing evironment
 		 */
 		IAlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
-		alignmentResults.setRetentionTimeWindow(settings.getRetentionTimeWindow());
-		alignmentResults.setAlignmentRanges(settings.getAlignmentRanges());
-		int retentionTimeWindow = settings.getRetentionTimeWindow();
-		int chromatogramType = settings.getChromatogramType();
+		alignmentResults.setRetentionTimeWindow(alignmentSettings.getRetentionTimeWindow());
+		alignmentResults.setAlignmentRanges(alignmentSettings.getAlignmentRanges());
+		int retentionTimeWindow = alignmentSettings.getRetentionTimeWindow();
+		int chromatogramType = alignmentSettings.getChromatogramType();
 		/*
 		 * Find lowest and highest Scans over the whole chromatogram set
 		 */
@@ -133,7 +134,7 @@ public class AlignmentProcessor {
 		/*
 		 * Iterate over alignment Ranges
 		 */
-		Iterator<IAlignmentRange> range = settings.getAlignmentRanges().iterator();
+		Iterator<IAlignmentRange> range = alignmentSettings.getAlignmentRanges().iterator();
 		while(range.hasNext()) {
 			// get current Range to calculate
 			IAlignmentRange currentRange = range.next();
@@ -261,7 +262,6 @@ public class AlignmentProcessor {
 		int numberOfRetentionTimePoints = totalDeltaRetentionTime / retentionTimeWindow + 1;
 		int deltaRetentionTime = totalDeltaRetentionTime / numberOfRetentionTimePoints;
 		int currentRetentionTime = lowestRetentionTime;
-		// TODO this does not work yet for ranges that don't start at zero
 		for(int i = 0; i < numberOfRetentionTimePoints; i++) {
 			Scan equiSpacedScan = new Scan(0);
 			equiSpacedScan.setRetentionTime(currentRetentionTime);

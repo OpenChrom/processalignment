@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRange;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
 
 public class AlignmentRangeEditorUI extends Composite {
 
@@ -85,7 +86,8 @@ public class AlignmentRangeEditorUI extends Composite {
 		Composite composite = new Composite(this, SWT.NONE);
 		composite.setLayout(new GridLayout(5, false));
 		//
-		alignmentRanges = new ArrayList<IAlignmentRange>(); // default list
+		// alignmentRanges = new ArrayList<IAlignmentRange>(); // default list
+		alignmentRanges = new AlignmentSettings().getAlignmentRanges();
 		//
 		createButtonField(composite);
 		createAddRangeField(composite);

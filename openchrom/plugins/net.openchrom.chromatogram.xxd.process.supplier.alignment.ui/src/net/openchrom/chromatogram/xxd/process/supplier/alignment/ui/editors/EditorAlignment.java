@@ -37,6 +37,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable.AlignmentRunnable;
 
 public class EditorAlignment {
@@ -134,7 +136,10 @@ public class EditorAlignment {
 		/*
 		 * Run the process.
 		 */
-		AlignmentRunnable runnable = new AlignmentRunnable(dataInputEntries);
+		IAlignmentSettings alignmentSettings = new AlignmentSettings();
+		alignmentSettings.getAlignmentRanges().clear();
+		alignmentSettings.getAlignmentRanges().addAll(pageProcessingWindows.getAlignmentRanges());
+		AlignmentRunnable runnable = new AlignmentRunnable(dataInputEntries, alignmentSettings);
 		ProgressMonitorDialog monitor = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 		try {
 			/*
