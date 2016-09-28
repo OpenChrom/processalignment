@@ -18,10 +18,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.core.AlignmentProcessor;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 
 public class AlignmentRunnable implements IRunnableWithProgress {
 

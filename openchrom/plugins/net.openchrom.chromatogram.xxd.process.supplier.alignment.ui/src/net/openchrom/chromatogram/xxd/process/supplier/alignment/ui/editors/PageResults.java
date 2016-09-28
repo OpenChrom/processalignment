@@ -11,8 +11,13 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 
+import java.util.List;
+
+import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
+import org.eclipse.chemclipse.swt.ui.components.chromatogram.MultipleChromatogramOffsetUI;
+import org.eclipse.chemclipse.swt.ui.support.AxisTitlesIntensityScale;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,7 +27,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -30,6 +34,9 @@ import org.eclipse.swt.widgets.TabItem;
 public class PageResults {
 
 	private EditorAlignment editorAlignment;
+	//
+	private MultipleChromatogramOffsetUI chromatogramOverlayRawData;
+	private MultipleChromatogramOffsetUI chromatogramOverlayShiftedData;
 
 	public PageResults(EditorAlignment editorAlignment, TabFolder tabFolder) {
 		//
@@ -39,6 +46,12 @@ public class PageResults {
 
 	public void update() {
 
+	}
+
+	public void setChromatogramData(List<IChromatogramSelection> chromatogramSelectionsRaw, List<IChromatogramSelection> chromatogramSelectionsShifted) {
+
+		chromatogramOverlayRawData.updateSelection(chromatogramSelectionsRaw, true);
+		chromatogramOverlayShiftedData.updateSelection(chromatogramSelectionsShifted, true);
 	}
 
 	private void initialize(TabFolder tabFolder) {
@@ -60,14 +73,12 @@ public class PageResults {
 		Composite compositeRawData = new Composite(compositeChromatograms, SWT.BORDER);
 		compositeRawData.setLayoutData(new GridData(GridData.FILL_BOTH));
 		compositeRawData.setLayout(new FillLayout());
-		Label label1 = new Label(compositeRawData, SWT.NONE);
-		label1.setText("Show the raw data.");
+		chromatogramOverlayRawData = new MultipleChromatogramOffsetUI(compositeRawData, SWT.NONE, new AxisTitlesIntensityScale());
 		//
 		Composite compositeShiftedData = new Composite(compositeChromatograms, SWT.BORDER);
 		compositeShiftedData.setLayoutData(new GridData(GridData.FILL_BOTH));
 		compositeShiftedData.setLayout(new FillLayout());
-		Label label2 = new Label(compositeShiftedData, SWT.NONE);
-		label2.setText("Show the shifted data.");
+		chromatogramOverlayShiftedData = new MultipleChromatogramOffsetUI(compositeShiftedData, SWT.NONE, new AxisTitlesIntensityScale());
 		/*
 		 * Button Bar
 		 */

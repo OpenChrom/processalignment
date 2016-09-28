@@ -14,12 +14,16 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.chemclipse.logging.core.Logger;
+import org.eclipse.chemclipse.model.selection.ChromatogramSelection;
+import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.support.events.IPerspectiveAndViewIds;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
@@ -35,8 +39,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.ISample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable.AlignmentRunnable;
@@ -146,6 +152,26 @@ public class EditorAlignment {
 			 * Calculate the results and show the score plot page.
 			 */
 			monitor.run(true, true, runnable);
+			//
+			List<IChromatogramSelection> chromatogramSelectionsRaw = new ArrayList<IChromatogramSelection>();
+			List<IChromatogramSelection> chromatogramSelectionsShifted = new ArrayList<IChromatogramSelection>();
+			//
+			IAlignmentResults aligmentResults = runnable.getAlignmentResults();
+			Map<ISample, IAlignmentResult> alignmentResultMap = aligmentResults.getAlignmentResultMap();
+			for(Entry<ISample, IAlignmentResult> entry : alignmentResultMap.entrySet()) {
+				IAlignmentResult alignmentResult = entry.getValue();
+				try {
+					chromatogramSelectionsRaw.add(new ChromatogramSelection(alignmentResult.getTicBeforeAlignment()));
+					chromatogramSelectionsShifted.add(new ChromatogramSelection(alignmentResult.getTicAfterAlignment()));
+				} catch(Exception e) {
+					logger.warn(e);
+				}
+			}
+			/*
+			 * Show the results.
+			 */
+			pageResults.setChromatogramData(chromatogramSelectionsRaw, chromatogramSelectionsShifted);
+			//
 			reloadResults();
 			reloadProcessingWindows();
 		} catch(InvocationTargetException e) {

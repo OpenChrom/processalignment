@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.chemclipse.model.implementation.Chromatogram;
+import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public class AlignmentResults implements IAlignmentResults {
 
@@ -85,7 +85,7 @@ public class AlignmentResults implements IAlignmentResults {
 			Iterator<IDataInputEntry> entry = this.dataInputEntries.iterator();
 			while(entry.hasNext()) {
 				IAlignmentResult result = this.alignmentResultMap.get(new Sample(entry.next().getName()));
-				Chromatogram ticAfterAlignment = result.getTicAfterAlignment();
+				IChromatogram ticAfterAlignment = result.getTicAfterAlignment();
 				int shift = result.getShifts().get(index);
 				int rangeStartScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStartRetentionTime());
 				int rangeStopScanNumber = result.getTicAfterAlignment().getScanNumber(range.getStopRetentionTime());

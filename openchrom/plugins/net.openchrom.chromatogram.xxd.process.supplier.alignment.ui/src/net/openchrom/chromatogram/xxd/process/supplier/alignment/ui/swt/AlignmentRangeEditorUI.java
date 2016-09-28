@@ -11,7 +11,6 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.swt;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.chemclipse.logging.core.Logger;
