@@ -22,13 +22,13 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmen
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 
-public class AlignmentRunnable implements IRunnableWithProgress {
+public class CalculateAlignmentRunnable implements IRunnableWithProgress {
 
 	private List<IDataInputEntry> dataInputEntries;
 	private IAlignmentResults alignmentResults;
 	private IAlignmentSettings alignmentSettings;
 
-	public AlignmentRunnable(List<IDataInputEntry> dataInputEntries, IAlignmentSettings alignmentSettings) {
+	public CalculateAlignmentRunnable(List<IDataInputEntry> dataInputEntries, IAlignmentSettings alignmentSettings) {
 		this.dataInputEntries = dataInputEntries;
 		this.alignmentSettings = alignmentSettings;
 	}

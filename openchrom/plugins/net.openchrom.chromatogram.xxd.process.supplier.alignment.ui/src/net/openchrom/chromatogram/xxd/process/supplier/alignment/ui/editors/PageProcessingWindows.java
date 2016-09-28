@@ -127,7 +127,7 @@ public class PageProcessingWindows {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				editorAlignment.runAlignment();
+				editorAlignment.calculateAlignment();
 				editorAlignment.showResultsPage();
 			}
 		});

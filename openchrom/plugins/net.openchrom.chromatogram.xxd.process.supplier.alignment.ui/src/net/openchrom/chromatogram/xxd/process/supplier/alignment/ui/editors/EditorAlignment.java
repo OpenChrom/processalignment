@@ -45,7 +45,7 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInpu
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.ISample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable.AlignmentRunnable;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable.CalculateAlignmentRunnable;
 
 public class EditorAlignment {
 
@@ -135,7 +135,7 @@ public class EditorAlignment {
 		System.out.println("Save results to chromatogram files.");
 	}
 
-	public void runAlignment() {
+	public void calculateAlignment() {
 
 		dirtyable.setDirty(true);
 		List<IDataInputEntry> dataInputEntries = pageInputFiles.getDataInputEntries();
@@ -145,7 +145,7 @@ public class EditorAlignment {
 		IAlignmentSettings alignmentSettings = new AlignmentSettings();
 		alignmentSettings.getAlignmentRanges().clear();
 		alignmentSettings.getAlignmentRanges().addAll(pageProcessingWindows.getAlignmentRanges());
-		AlignmentRunnable runnable = new AlignmentRunnable(dataInputEntries, alignmentSettings);
+		CalculateAlignmentRunnable runnable = new CalculateAlignmentRunnable(dataInputEntries, alignmentSettings);
 		ProgressMonitorDialog monitor = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 		try {
 			/*
