@@ -94,6 +94,7 @@ public class AlignmentRangeEditorUI extends Composite {
 		createTableField(composite);
 		//
 		enableButtonFields(ACTION_INITIALIZE);
+		alignmentRangeTableViewerUI.setInput(alignmentRanges);
 	}
 
 	private void createButtonField(Composite composite) {
@@ -139,7 +140,7 @@ public class AlignmentRangeEditorUI extends Composite {
 					MessageBox messageBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
 					messageBox.setText("Delete range(s)?");
 					messageBox.setMessage("Would you like to delete the range(s)?");
-					if(messageBox.open() == SWT.OK) {
+					if(messageBox.open() == SWT.YES) {
 						//
 						enableButtonFields(ACTION_DELETE);
 						TableItem[] tableItems = table.getSelection();
