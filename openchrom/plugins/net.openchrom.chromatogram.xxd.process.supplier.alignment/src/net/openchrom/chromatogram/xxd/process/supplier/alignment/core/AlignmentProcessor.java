@@ -57,7 +57,7 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlign
 public class AlignmentProcessor {
 
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
-	private static final int MAX_SHIFT = 20;
+	private static final int MAX_SHIFT = 5;
 
 	public IAlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, IAlignmentSettings alignmentSettings, IProgressMonitor monitor) {
 
@@ -291,15 +291,18 @@ public class AlignmentProcessor {
 		return sampleTics;
 	}
 
+	/*
+	 * this version is adapted to the reduced matrix size New Version, to be linked in
+	 * when the coresponding function for TargetTics is finished.
+	 */
 	private double[][] composeSampleTics2(List<Chromatogram> standardizedChromatograms) {
 
 		int numberOfSamples = standardizedChromatograms.size();
 		int numberOfScans = standardizedChromatograms.get(0).getNumberOfScans();
-		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
-		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
-			Iterator<IScan> scanIterator = standardizedChromatograms.get(currentSample).getScans().iterator();
-			for(int currentScan = 0; currentScan < numberOfScans; currentScan++) {
-				sampleTics[currentSample][currentScan + MAX_SHIFT] = scanIterator.next().getTotalSignal();
+		double[][] sampleTics = new double[numberOfSamples][numberOfScans - 2 * MAX_SHIFT];
+		for(int currentSample = 0; currentSample < numberOfSamples; currentSample++) {
+			for(int currentScan = 0; currentScan < numberOfScans - 2 * MAX_SHIFT; currentScan++) {
+				sampleTics[currentSample][currentScan] = standardizedChromatograms.get(currentSample).getScan(currentScan + MAX_SHIFT).getTotalSignal();
 			}
 		}
 		return sampleTics;
