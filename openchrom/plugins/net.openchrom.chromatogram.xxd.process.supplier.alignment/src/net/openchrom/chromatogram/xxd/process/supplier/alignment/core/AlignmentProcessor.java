@@ -277,7 +277,7 @@ public class AlignmentProcessor {
 	 * @param standardizedChromatograms
 	 * @return
 	 */
-	private double[][] composeSampleTics(List<Chromatogram> standardizedChromatograms) {
+	private double[][] composeSampleTics2(List<Chromatogram> standardizedChromatograms) {
 
 		int numberOfSamples = standardizedChromatograms.size();
 		int numberOfScans = standardizedChromatograms.get(0).getNumberOfScans();
@@ -295,7 +295,7 @@ public class AlignmentProcessor {
 	 * this version is adapted to the reduced matrix size New Version, to be linked in
 	 * when the coresponding function for TargetTics is finished.
 	 */
-	private double[][] composeSampleTics2(List<Chromatogram> standardizedChromatograms) {
+	private double[][] composeSampleTics(List<Chromatogram> standardizedChromatograms) {
 
 		int numberOfSamples = standardizedChromatograms.size();
 		int numberOfScans = standardizedChromatograms.get(0).getNumberOfScans();
@@ -349,10 +349,10 @@ public class AlignmentProcessor {
 	private double[][] composeTargetTics(double[] averageSample) {
 
 		int numberOfScans = averageSample.length;
-		double[][] targetTics = new double[2 * MAX_SHIFT + 1][numberOfScans + 2 * MAX_SHIFT + 1];
+		double[][] targetTics = new double[2 * MAX_SHIFT + 1][numberOfScans - 2 * MAX_SHIFT];
 		for(int shiftIndex = 0; shiftIndex < 2 * MAX_SHIFT + 1; shiftIndex++) {
-			for(int scanIndex = 0; scanIndex < numberOfScans; scanIndex++) {
-				targetTics[shiftIndex][shiftIndex + scanIndex] = averageSample[scanIndex];
+			for(int scanIndex = 0; scanIndex < numberOfScans - 2 * MAX_SHIFT; scanIndex++) {
+				targetTics[shiftIndex][scanIndex] = averageSample[scanIndex + shiftIndex];
 			}
 		}
 		return targetTics;
