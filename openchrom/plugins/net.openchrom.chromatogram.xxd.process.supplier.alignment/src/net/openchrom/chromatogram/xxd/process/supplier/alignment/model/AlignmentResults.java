@@ -92,6 +92,7 @@ public class AlignmentResults implements IAlignmentResults {
 				int totalStopScanNumber = result.getTicAfterAlignment().getScanNumber(result.getTicAfterAlignment().getStopRetentionTime());
 				int totalStartScanNumber = result.getTicAfterAlignment().getScanNumber(result.getTicAfterAlignment().getStartRetentionTime());
 				if(shift < 0) {
+					shift = Math.abs(shift);
 					/*
 					 * Left Shift
 					 */
@@ -109,6 +110,7 @@ public class AlignmentResults implements IAlignmentResults {
 						ticAfterAlignment.getScan(copyScanDestination).adjustTotalSignal(ticAfterAlignment.getScan(rangeStopScanNumber).getTotalSignal());
 					}
 				} else if(shift > 0) {
+					shift = Math.abs(shift);
 					/*
 					 * Right Shift
 					 */

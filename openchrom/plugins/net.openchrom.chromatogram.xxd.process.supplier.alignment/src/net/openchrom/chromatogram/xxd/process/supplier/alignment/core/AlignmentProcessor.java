@@ -57,7 +57,7 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlign
 public class AlignmentProcessor {
 
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
-	private static final int MAX_SHIFT = 5;
+	private static final int MAX_SHIFT = 10;
 
 	public IAlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, IAlignmentSettings alignmentSettings, IProgressMonitor monitor) {
 
@@ -409,8 +409,8 @@ public class AlignmentProcessor {
 			for(int shiftIndex = 0; shiftIndex < (2 * MAX_SHIFT + 1); shiftIndex++) {
 				if(matrix.get(shiftIndex, sampleIndex) > columnMaximum[sampleIndex]) {
 					columnMaximum[sampleIndex] = matrix.get(shiftIndex, sampleIndex);
-					if((shiftIndex + 1) / (MAX_SHIFT + 1) > 0) {
-						columnMaximumIndices[sampleIndex] = (shiftIndex % (MAX_SHIFT + 1));
+					if((shiftIndex) / (MAX_SHIFT) > 0) {
+						columnMaximumIndices[sampleIndex] = (shiftIndex % (MAX_SHIFT));
 					} else {
 						columnMaximumIndices[sampleIndex] = shiftIndex - MAX_SHIFT;
 					}

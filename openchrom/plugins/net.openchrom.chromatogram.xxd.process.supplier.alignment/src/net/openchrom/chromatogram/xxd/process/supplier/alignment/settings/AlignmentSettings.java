@@ -21,7 +21,7 @@ public class AlignmentSettings implements IAlignmentSettings {
 
 	private static final Logger logger = Logger.getLogger(AlignmentSettings.class);
 	//
-	private static final int DEFAULT_RETENTION_TIME_WINDOW = 200;
+	private static final int DEFAULT_RETENTION_TIME_WINDOW = 120;
 	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_ONE = 0;
 	private static final int DEFAULT_UPPER_RETENTION_TIME_SELECTION_ONE = 450000; // 7 minutes
 	private static final int DEFAULT_LOWER_RETENTION_TIME_SELECTION_TWO = 450000;
