@@ -193,7 +193,7 @@ public class AlignmentProcessor {
 	 * @param monitor
 	 * @return
 	 */
-	AlignmentResults applyAlignment(AlignmentResults results, AlignmentSettings settings, IProgressMonitor monitor) {
+	public void applyAlignment(List<IDataInputEntry> dataInputEntries, IAlignmentResults results, IAlignmentSettings settings, IProgressMonitor monitor) {
 
 		int chromatogramType = settings.getChromatogramType();
 		IProcessingInfo processingInfo = new ProcessingInfo();
@@ -201,12 +201,25 @@ public class AlignmentProcessor {
 		 * apply shift to files and export
 		 */
 		if(chromatogramType == 0) {
+			// Loop through each file
+				// Open file
+			
+			
+			
+				// Loop through each alignmentRange
+			
+					// make adjustment
+			
+					//write/export file back
+			
+			
+			
 			// exportMSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		} else {
 			// exportCSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		}
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
-		return results;
+
 	}
 
 	/**

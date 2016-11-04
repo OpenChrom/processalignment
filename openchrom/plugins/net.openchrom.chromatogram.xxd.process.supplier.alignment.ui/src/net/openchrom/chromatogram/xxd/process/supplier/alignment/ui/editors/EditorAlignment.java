@@ -39,12 +39,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.ISample;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable.ApplyAlignmentRunnable;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable.CalculateAlignmentRunnable;
 
 public class EditorAlignment {
@@ -181,6 +183,33 @@ public class EditorAlignment {
 			logger.warn(e);
 		}
 	}
+	
+	public void applyAlignment(){
+		
+		List<IDataInputEntry> dataInputEntries = pageInputFiles.getDataInputEntries();
+		IAlignmentSettings alignmentSettings = new AlignmentSettings();
+		IAlignmentResults alignmentResults = new AlignmentResults();
+		alignmentSettings.getAlignmentRanges().clear();
+		alignmentSettings.getAlignmentRanges().addAll(pageProcessingWindows.getAlignmentRanges());
+		ApplyAlignmentRunnable runnable = new ApplyAlignmentRunnable(dataInputEntries, alignmentSettings, alignmentResults);
+		ProgressMonitorDialog monitor = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+		try {
+			/*
+			 * Apply the results and save the files.
+			 */
+			monitor.run(true, true, runnable);
+			//
+			} catch(InvocationTargetException e) {
+				logger.warn(e);
+				logger.warn(e.getCause());
+				
+			} catch(InterruptedException e) {
+				logger.warn(e);
+				
+			
+			}
+	}
+	
 
 	public int getChromatogramType() {
 
