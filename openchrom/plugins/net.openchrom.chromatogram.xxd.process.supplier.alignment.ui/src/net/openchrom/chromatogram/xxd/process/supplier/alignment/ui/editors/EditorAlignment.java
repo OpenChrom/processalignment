@@ -183,9 +183,9 @@ public class EditorAlignment {
 			logger.warn(e);
 		}
 	}
-	
-	public void applyAlignment(){
-		
+
+	public void applyAlignment() {
+
 		List<IDataInputEntry> dataInputEntries = pageInputFiles.getDataInputEntries();
 		IAlignmentSettings alignmentSettings = new AlignmentSettings();
 		IAlignmentResults alignmentResults = new AlignmentResults();
@@ -199,17 +199,13 @@ public class EditorAlignment {
 			 */
 			monitor.run(true, true, runnable);
 			//
-			} catch(InvocationTargetException e) {
-				logger.warn(e);
-				logger.warn(e.getCause());
-				
-			} catch(InterruptedException e) {
-				logger.warn(e);
-				
-			
-			}
+		} catch(InvocationTargetException e) {
+			logger.warn(e);
+			logger.warn(e.getCause());
+		} catch(InterruptedException e) {
+			logger.warn(e);
+		}
 	}
-	
 
 	public int getChromatogramType() {
 

@@ -202,24 +202,15 @@ public class AlignmentProcessor {
 		 */
 		if(chromatogramType == 0) {
 			// Loop through each file
-				// Open file
-			
-			
-			
-				// Loop through each alignmentRange
-			
-					// make adjustment
-			
-					//write/export file back
-			
-			
-			
+			// Open file
+			// Loop through each alignmentRange
+			// make adjustment
+			// write/export file back
 			// exportMSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		} else {
 			// exportCSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
 		}
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
-
 	}
 
 	/**

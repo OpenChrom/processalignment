@@ -8,7 +8,7 @@
  * 
  * Contributors:
  * loge - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.internal.runnable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,8 +22,8 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmen
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 
-public class ApplyAlignmentRunnable implements IRunnableWithProgress{
-	
+public class ApplyAlignmentRunnable implements IRunnableWithProgress {
+
 	private List<IDataInputEntry> dataInputEntries;
 	private IAlignmentResults alignmentResults;
 	private IAlignmentSettings alignmentSettings;
@@ -40,9 +40,4 @@ public class ApplyAlignmentRunnable implements IRunnableWithProgress{
 		AlignmentProcessor alignmentProcessor = new AlignmentProcessor();
 		alignmentProcessor.applyAlignment(dataInputEntries, alignmentResults, alignmentSettings, monitor);
 	}
-	
-	
-	
-	
-	
 }
