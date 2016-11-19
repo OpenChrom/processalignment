@@ -45,6 +45,7 @@ import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.ejml.simple.SimpleMatrix;
 
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
@@ -59,12 +60,12 @@ public class AlignmentProcessor {
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
 	private static final int MAX_SHIFT = 10;
 
-	public IAlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, IAlignmentSettings alignmentSettings, IProgressMonitor monitor) {
+	public AlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, IAlignmentSettings alignmentSettings, IProgressMonitor monitor) {
 
 		/*
 		 * Preparing evironment
 		 */
-		IAlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
+		AlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
 		alignmentResults.setRetentionTimeWindow(alignmentSettings.getRetentionTimeWindow());
 		alignmentResults.setAlignmentRanges(alignmentSettings.getAlignmentRanges());
 		int retentionTimeWindow = alignmentSettings.getRetentionTimeWindow();
@@ -202,8 +203,14 @@ public class AlignmentProcessor {
 		 */
 		if(chromatogramType == 0) {
 			// Loop through each file
-			// Open file
-			// Loop through each alignmentRange
+			for(IDataInputEntry entry : dataInputEntries) {
+				// Open file
+				IChromatogramMSDImportConverterProcessingInfo importProcessingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
+				IChromatogram chromatogram = importProcessingInfo.getChromatogram();
+				// Loop through each alignmentRange
+				for(IAlignmentRange range : settings.getAlignmentRanges()) {
+				}
+			}
 			// make adjustment
 			// write/export file back
 			// exportMSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);

@@ -81,7 +81,7 @@ public class EditorAlignment {
 	private PageProcessingWindows pageProcessingWindows;
 	private PageResults pageResults;
 	private List<Object> pages;
-	private IAlignmentResults alignmentResults;
+	private AlignmentResults alignmentResults;
 
 	public EditorAlignment() {
 		//
@@ -158,8 +158,8 @@ public class EditorAlignment {
 			List<IChromatogramSelection> chromatogramSelectionsRaw = new ArrayList<IChromatogramSelection>();
 			List<IChromatogramSelection> chromatogramSelectionsShifted = new ArrayList<IChromatogramSelection>();
 			//
-			IAlignmentResults aligmentResults = runnable.getAlignmentResults();
-			Map<ISample, IAlignmentResult> alignmentResultMap = aligmentResults.getAlignmentResultMap();
+			alignmentResults = runnable.getAlignmentResults();
+			Map<ISample, IAlignmentResult> alignmentResultMap = alignmentResults.getAlignmentResultMap();
 			for(Entry<ISample, IAlignmentResult> entry : alignmentResultMap.entrySet()) {
 				IAlignmentResult alignmentResult = entry.getValue();
 				try {
@@ -188,10 +188,10 @@ public class EditorAlignment {
 
 		List<IDataInputEntry> dataInputEntries = pageInputFiles.getDataInputEntries();
 		IAlignmentSettings alignmentSettings = new AlignmentSettings();
-		IAlignmentResults alignmentResults = new AlignmentResults();
+		// IAlignmentResults alignmentResults = new AlignmentResults();
 		alignmentSettings.getAlignmentRanges().clear();
 		alignmentSettings.getAlignmentRanges().addAll(pageProcessingWindows.getAlignmentRanges());
-		ApplyAlignmentRunnable runnable = new ApplyAlignmentRunnable(dataInputEntries, alignmentSettings, alignmentResults);
+		ApplyAlignmentRunnable runnable = new ApplyAlignmentRunnable(dataInputEntries, alignmentSettings, this.alignmentResults);
 		ProgressMonitorDialog monitor = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 		try {
 			/*
@@ -281,7 +281,7 @@ public class EditorAlignment {
 		pageProcessingWindows.update();
 	}
 
-	public IAlignmentResults getAlignmentResults() {
+	public AlignmentResults getAlignmentResults() {
 
 		return alignmentResults;
 	}
