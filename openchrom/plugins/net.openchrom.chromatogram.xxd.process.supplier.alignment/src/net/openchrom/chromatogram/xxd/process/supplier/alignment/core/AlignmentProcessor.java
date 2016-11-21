@@ -208,7 +208,12 @@ public class AlignmentProcessor {
 				IChromatogramMSDImportConverterProcessingInfo importProcessingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
 				IChromatogram chromatogram = importProcessingInfo.getChromatogram();
 				// Loop through each alignmentRange
+				int rangeCounter = 0;
 				for(IAlignmentRange range : settings.getAlignmentRanges()) {
+					int startShift = range.getStartRetentionTime();
+					int endShift = range.getStopRetentionTime();
+					int shift = results.getAlignmentResultMap().get(new Sample(entry.getName())).getShifts().get(rangeCounter);
+					rangeCounter++;
 				}
 			}
 			// make adjustment
