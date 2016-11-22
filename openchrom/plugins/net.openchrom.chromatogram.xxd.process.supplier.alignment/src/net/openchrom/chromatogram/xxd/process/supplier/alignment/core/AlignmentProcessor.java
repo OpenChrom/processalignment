@@ -214,13 +214,29 @@ public class AlignmentProcessor {
 					int endShift = range.getStopRetentionTime();
 					int shift = results.getAlignmentResultMap().get(new Sample(entry.getName())).getShifts().get(rangeCounter);
 					rangeCounter++;
+					// make adjustment
+					if(shift < 0) {
+						chromatogram.removeScans(chromatogram.getScanNumber(startShift), chromatogram.getScanNumber(startShift + Math.abs(shift)));
+						int scanToShift = chromatogram.getScanNumber(startShift);
+						int lastShift = chromatogram.getScanNumber(endShift);
+						while(scanToShift < lastShift) {
+							chromatogram.getScan(scanToShift).setRetentionTime(chromatogram.getScan(scanToShift).getRetentionTime() + shift);
+							scanToShift++;
+						}
+					} else if(shift > 0) {
+						chromatogram.removeScans(chromatogram.getScanNumber(endShift - shift), chromatogram.getScanNumber(endShift));
+						int scanToShift = chromatogram.getScanNumber(endShift);
+						int lastShift = chromatogram.getScanNumber(startShift);
+						while(scanToShift > lastShift) {
+							chromatogram.getScan(scanToShift).setRetentionTime(chromatogram.getScan(scanToShift).getRetentionTime() + shift);
+							scanToShift--;
+						}
+					}
 				}
+				// write/export file back
+				ChromatogramConverterMSD.convert(new File(entry.getInputFile()), (IChromatogramMSD)chromatogram, chromatogram.getConverterId(), monitor);
 			}
-			// make adjustment
-			// write/export file back
-			// exportMSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
-		} else {
-			// exportCSD(inputFiles, columnMaximumIndices, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection, monitor);
+		} else if(chromatogramType == 1) {
 		}
 		processingInfo.addInfoMessage("Chromatogram Aligment", "Done");
 	}
@@ -286,30 +302,10 @@ public class AlignmentProcessor {
 	}
 
 	/**
-	 * Sample Matrix
+	 * composeSampleTics
 	 * 
-	 * @param numberOfSamples
-	 * @param numberOfScans
 	 * @param standardizedChromatograms
 	 * @return
-	 */
-	private double[][] composeSampleTics2(List<Chromatogram> standardizedChromatograms) {
-
-		int numberOfSamples = standardizedChromatograms.size();
-		int numberOfScans = standardizedChromatograms.get(0).getNumberOfScans();
-		double[][] sampleTics = new double[numberOfSamples][numberOfScans + 2 * MAX_SHIFT + 1];
-		for(int currentSample = 0; currentSample < standardizedChromatograms.size(); currentSample++) {
-			Iterator<IScan> scanIterator = standardizedChromatograms.get(currentSample).getScans().iterator();
-			for(int currentScan = 0; currentScan < numberOfScans; currentScan++) {
-				sampleTics[currentSample][currentScan + MAX_SHIFT] = scanIterator.next().getTotalSignal();
-			}
-		}
-		return sampleTics;
-	}
-
-	/*
-	 * this version is adapted to the reduced matrix size New Version, to be linked in
-	 * when the coresponding function for TargetTics is finished.
 	 */
 	private double[][] composeSampleTics(List<Chromatogram> standardizedChromatograms) {
 
@@ -434,61 +430,5 @@ public class AlignmentProcessor {
 			}
 		}
 		return columnMaximumIndices;
-	}
-
-	/**
-	 * exportMSD - export aligned files to MSD
-	 * 
-	 * @param inputFiles
-	 * @param columnMaximumIndices
-	 * @param retentionTimeWindow
-	 * @param monitor
-	 */
-	void exportMSD(List<File> inputFiles, int columnMaximumIndices[], int retentionTimeWindow, int lowerRetentionTimeSelection, int upperRetentionTimeSelection, IProgressMonitor monitor) {
-
-		int counter = 0;
-		for(File scanFile : inputFiles) {
-			IChromatogramMSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterMSD.convert(scanFile, monitor);
-			try {
-				ChromatogramSelection currentChromatogram = new ChromatogramSelection(processingInfo2.getChromatogram());
-				currentChromatogram.setStartRetentionTime(lowerRetentionTimeSelection);
-				currentChromatogram.setStopRetentionTime(upperRetentionTimeSelection);
-				ChromatogramFilterShift shifter = new ChromatogramFilterShift();
-				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(columnMaximumIndices[counter] * retentionTimeWindow, false);
-				shifter.applyFilter(currentChromatogram, settings, monitor);
-				ChromatogramConverterMSD.convert(scanFile, (IChromatogramMSD)currentChromatogram.getChromatogram(), currentChromatogram.getChromatogram().getConverterId(), monitor);
-			} catch(TypeCastException | ChromatogramIsNullException e) {
-				logger.warn(e);
-			}
-			counter++;
-		}
-	}
-
-	/**
-	 * exportCSD - export aligned files to CSD
-	 * 
-	 * @param inputFiles
-	 * @param columnMaximumIndices
-	 * @param retentionTimeWindow
-	 * @param monitor
-	 */
-	void exportCSD(List<File> inputFiles, int columnMaximumIndices[], int retentionTimeWindow, int lowerRetentionTimeSelection, int upperRetentionTimeSelection, IProgressMonitor monitor) {
-
-		int counter = 0;
-		for(File scanFile : inputFiles) {
-			IChromatogramCSDImportConverterProcessingInfo processingInfo2 = ChromatogramConverterCSD.convert(scanFile, monitor);
-			try {
-				ChromatogramSelection currentChromatogram = new ChromatogramSelection(processingInfo2.getChromatogram());
-				currentChromatogram.setStartRetentionTime(lowerRetentionTimeSelection);
-				currentChromatogram.setStopRetentionTime(upperRetentionTimeSelection);
-				ChromatogramFilterShift shifter = new ChromatogramFilterShift();
-				SupplierFilterShiftSettings settings = new SupplierFilterShiftSettings(columnMaximumIndices[counter] * retentionTimeWindow, true);
-				shifter.applyFilter(currentChromatogram, settings, monitor);
-				ChromatogramConverterCSD.convert(scanFile, (IChromatogramCSD)currentChromatogram.getChromatogram(), currentChromatogram.getChromatogram().getConverterId(), monitor);
-			} catch(TypeCastException | ChromatogramIsNullException e) {
-				logger.warn(e);
-			}
-			counter++;
-		}
 	}
 }
