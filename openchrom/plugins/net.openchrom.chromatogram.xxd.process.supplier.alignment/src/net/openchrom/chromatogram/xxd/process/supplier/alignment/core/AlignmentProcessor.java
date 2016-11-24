@@ -8,6 +8,7 @@
  * 
  * Contributors:
  * Dr. Philip Wenig - initial API and implementation
+ * Lorenz Gerber - main functionality
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.core;
 

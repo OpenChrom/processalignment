@@ -124,12 +124,14 @@ public class PageResults {
 			public void widgetSelected(SelectionEvent e) {
 
 				editorAlignment.applyAlignment();
-				MessageBox messageBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
-				messageBox.setText("Shift chromatogram(s)?");
-				messageBox.setMessage("Save the shifted chromatogram file(s)?");
-				if(messageBox.open() == SWT.OK) {
-					System.out.println("Save the chromatograms");
-				}
+				/*
+				 * MessageBox messageBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
+				 * messageBox.setText("Shift chromatogram(s)?");
+				 * messageBox.setMessage("Save the shifted chromatogram file(s)?");
+				 * if(messageBox.open() == SWT.OK) {
+				 * System.out.println("Save the chromatograms");
+				 * }
+				 */
 			}
 		});
 		return button;
