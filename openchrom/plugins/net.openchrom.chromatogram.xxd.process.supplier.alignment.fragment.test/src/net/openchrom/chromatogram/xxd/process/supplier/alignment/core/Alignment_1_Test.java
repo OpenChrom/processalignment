@@ -9,12 +9,14 @@
  * Contributors:
  * Lorenz Gerber - initial API and implementation
  *******************************************************************************/
-package net.openchrom.chromatogram.xxd.process.supplier.alignment.fragment.test;
+package net.openchrom.chromatogram.xxd.process.supplier.alignment.core;
 
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
 import org.eclipse.chemclipse.msd.model.core.IVendorMassSpectrum;
 import org.eclipse.chemclipse.msd.model.core.selection.ChromatogramSelectionMSD;
 import org.eclipse.chemclipse.msd.model.core.selection.IChromatogramSelectionMSD;
+
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.AlignmentChromatogramTestCase;
 
 public class Alignment_1_Test extends AlignmentChromatogramTestCase {
 
@@ -33,6 +35,11 @@ public class Alignment_1_Test extends AlignmentChromatogramTestCase {
 	protected void tearDown() throws Exception {
 
 		super.tearDown();
+	}
+
+	public void test_0() {
+
+		assertNotNull(chromatogramSelection);
 	}
 
 	public void testShiftBackward_1() {

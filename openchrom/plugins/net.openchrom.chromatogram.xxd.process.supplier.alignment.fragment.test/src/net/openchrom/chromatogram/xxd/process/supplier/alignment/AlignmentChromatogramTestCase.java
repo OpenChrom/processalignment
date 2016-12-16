@@ -9,7 +9,7 @@
  * Contributors:
  * Lorenz Gerber - initial API and implementation
  *******************************************************************************/
-package net.openchrom.chromatogram.xxd.process.supplier.alignment.fragment.test;
+package net.openchrom.chromatogram.xxd.process.supplier.alignment;
 
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
 import org.eclipse.chemclipse.msd.model.core.IVendorMassSpectrum;
