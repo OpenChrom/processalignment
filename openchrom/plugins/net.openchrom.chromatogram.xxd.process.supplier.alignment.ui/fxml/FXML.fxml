@@ -19,7 +19,7 @@ Lorenz Gerber - initial API and implementation
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.eclipse.chemclipse.chromatogram.xxd.process.supplier.pca.ui.parts.FXMLController">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.FXMLController">
     <stylesheets>
         <URL value="@css/fxml.css"/>
     </stylesheets>

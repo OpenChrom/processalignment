@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_9eODIFiNEeaVa6pBDMb1PQ">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_9eODIFiNEeaVa6pBDMb1PQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_KtRzsFi1EeaVa6pBDMb1PQ" featurename="commands" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="commands:Command" xmi:id="_Nyt6oFi1EeaVa6pBDMb1PQ" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.command.chromatogramalignment" commandName="Chromatogram Alignment"/>
   </fragments>
@@ -8,5 +8,17 @@
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_eGg5QFi1EeaVa6pBDMb1PQ" featurename="children" parentElementId="org.eclipse.chemclipse.ux.extension.ui.menu.process">
     <elements xsi:type="menu:HandledMenuItem" xmi:id="_h-2cwFi1EeaVa6pBDMb1PQ" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.handledmenuitem.chromatogramalignment" label="Chromatogram Alignment" iconURI="platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/chromatogram.gif" command="_Nyt6oFi1EeaVa6pBDMb1PQ"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_KgPMwMOeEeap5NCA36gIdw" featurename="sharedElements" parentElementId="org.eclipse.chemclipse.rcp.app.ui.trimmedwindow.main">
+    <elements xsi:type="basic:Part" xmi:id="_lufGwMOeEeap5NCA36gIdw" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.views" contributionURI="bundleclass://net.openchrom.chromatogram.xxd.process.supplier.alignment.ui/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.views.SamplePart" label="Sample View" iconURI="platform:/plugin/org.eclipse.chemclipse.rcp.ui.icons/icons/16x16/originDocument.gif"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="__Qs1YMOhEeap5NCA36gIdw" featurename="children" parentElementId="org.eclipse.chemclipse.rcp.app.ui.perspectivestack.main">
+    <elements xsi:type="advanced:Perspective" xmi:id="_HBkwsMOiEeap5NCA36gIdw" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.perspective.testperspective" label="Test perspective" iconURI="platform:/plugin/net.openchrom.enterprise.support.ui.icons/icons/16x16/chromident_chromatogramDatabase.gif">
+      <children xsi:type="basic:PartSashContainer" xmi:id="_oQIAQMOiEeap5NCA36gIdw" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.partsashcontainer.0">
+        <children xsi:type="basic:PartStack" xmi:id="_VgyMQMOiEeap5NCA36gIdw" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.partstack.0">
+          <children xsi:type="advanced:Placeholder" xmi:id="_XChr0MOiEeap5NCA36gIdw" elementId="net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.placeholder.0" ref="_lufGwMOeEeap5NCA36gIdw" closeable="true"/>
+        </children>
+      </children>
+    </elements>
   </fragments>
 </fragment:ModelFragments>
