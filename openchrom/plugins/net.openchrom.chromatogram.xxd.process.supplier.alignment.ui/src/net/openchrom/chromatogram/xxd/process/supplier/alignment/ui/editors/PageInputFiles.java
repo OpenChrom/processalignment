@@ -169,7 +169,7 @@ public class PageInputFiles {
 				MessageBox messageBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
 				messageBox.setText("Remove chromatogram(s)?");
 				messageBox.setMessage("Would you like to remove the chromatogram(s)?");
-				if(messageBox.open() == SWT.OK) {
+				if(messageBox.open() == SWT.YES) {
 					removeEntries(inputFilesTable.getSelectionIndices());
 				}
 			}
@@ -255,7 +255,7 @@ public class PageInputFiles {
 			return;
 		}
 		/*
-		 * Remove the entries from the table.
+		 * Remove the entries from the UI table.
 		 */
 		inputFilesTable.remove(indices);
 		/*
