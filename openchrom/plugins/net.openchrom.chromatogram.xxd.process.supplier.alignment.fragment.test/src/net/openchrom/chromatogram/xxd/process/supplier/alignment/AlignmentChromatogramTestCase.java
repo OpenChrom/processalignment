@@ -11,9 +11,13 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment;
 
+import org.eclipse.chemclipse.model.exceptions.AbundanceLimitExceededException;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
+import org.eclipse.chemclipse.msd.model.core.IIon;
 import org.eclipse.chemclipse.msd.model.core.IVendorMassSpectrum;
+import org.eclipse.chemclipse.msd.model.exceptions.IonLimitExceededException;
 import org.eclipse.chemclipse.msd.model.implementation.ChromatogramMSD;
+import org.eclipse.chemclipse.msd.model.implementation.Ion;
 import org.eclipse.chemclipse.msd.model.implementation.VendorMassSpectrum;
 
 import junit.framework.TestCase;
@@ -35,12 +39,18 @@ import junit.framework.TestCase;
 public class AlignmentChromatogramTestCase extends TestCase {
 
 	private IChromatogramMSD chromatogram;
+	private IChromatogramMSD chromatogram2;
+	private IChromatogramMSD chromatogram3;
+	private IChromatogramMSD chromatogram4;
 
 	@Override
 	protected void setUp() throws Exception {
 
 		super.setUp();
 		chromatogram = createChromatogram();
+		chromatogram2 = createChromatogramWithPeak(2);
+		chromatogram3 = createChromatogramWithPeak(3);
+		chromatogram4 = createChromatogramWithPeak(4);
 	}
 
 	@Override
@@ -61,6 +71,31 @@ public class AlignmentChromatogramTestCase extends TestCase {
 		for(int i = 1; i <= 10; i++) {
 			scan = new VendorMassSpectrum();
 			chromatogram.addScan(scan);
+		}
+		chromatogram.setScanDelay(1500);
+		chromatogram.setScanInterval(1000);
+		chromatogram.recalculateRetentionTimes();
+		return chromatogram;
+	}
+
+	private IChromatogramMSD createChromatogramWithPeak(int peakPosition) {
+
+		IChromatogramMSD chromatogram = new ChromatogramMSD();
+		IVendorMassSpectrum scan;
+		IIon ion;
+		for(int i = 1; i <= 10; i++) {
+			scan = new VendorMassSpectrum();
+			try {
+				ion = new Ion(100);
+				int abundance = (int)Math.pow(10000 * 2.7, (-(Math.pow((i - peakPosition), 2)) / (Math.pow(2 * 1, 2))));
+				ion.setAbundance(abundance);
+				scan.addIon(ion);
+				chromatogram.addScan(scan);
+			} catch(IonLimitExceededException e) {
+				System.out.println(e);
+			} catch(AbundanceLimitExceededException e) {
+				System.out.println(e);
+			}
 		}
 		chromatogram.setScanDelay(1500);
 		chromatogram.setScanInterval(1000);

@@ -64,7 +64,7 @@ public class AlignmentProcessor {
 	public AlignmentResults calculateAlignment(List<IDataInputEntry> dataInputEntries, IAlignmentSettings alignmentSettings, IProgressMonitor monitor) {
 
 		/*
-		 * Preparing evironment
+		 * Preparing environment
 		 */
 		AlignmentResults alignmentResults = new AlignmentResults(dataInputEntries);
 		alignmentResults.setRetentionTimeWindow(alignmentSettings.getRetentionTimeWindow());
@@ -81,37 +81,7 @@ public class AlignmentProcessor {
 		 * get TIC Data
 		 */
 		List<ITotalScanSignals> alignmentTicsList = new ArrayList<ITotalScanSignals>();
-		if(chromatogramType == 0) {
-			alignmentTicsList = new ArrayList<ITotalScanSignals>();
-			for(IDataInputEntry entry : dataInputEntries) {
-				IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
-				try {
-					IChromatogram chromatogram = processingInfo.getChromatogram();
-					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
-					IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(chromatogram);
-					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
-				} catch(TypeCastException e) {
-					logger.warn(e);
-				} catch(ChromatogramIsNullException e) {
-					logger.warn(e);
-				}
-			}
-		} else if(chromatogramType == 1) {
-			alignmentTicsList = new ArrayList<ITotalScanSignals>();
-			for(IDataInputEntry entry : dataInputEntries) {
-				IChromatogramCSDImportConverterProcessingInfo processingInfo = ChromatogramConverterCSD.convert(new File(entry.getInputFile()), monitor);
-				try {
-					IChromatogram chromatogram = processingInfo.getChromatogram();
-					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
-					IChromatogramSelectionCSD chromatogramSelection = new ChromatogramSelectionCSD(chromatogram);
-					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
-				} catch(TypeCastException e) {
-					logger.warn(e);
-				} catch(ChromatogramIsNullException e) {
-					logger.warn(e);
-				}
-			}
-		}
+		loadData(alignmentTicsList, dataInputEntries, chromatogramType, monitor);
 		highestRetentionTime = findHighestRetentionTime(alignmentTicsList);
 		lowestRetentionTime = findLowestRetentionTime(alignmentTicsList);
 		/*
@@ -431,5 +401,38 @@ public class AlignmentProcessor {
 			}
 		}
 		return columnMaximumIndices;
+	}
+
+	private void loadData(List<ITotalScanSignals> alignmentTicsList, List<IDataInputEntry> dataInputEntries, int chromatogramType, IProgressMonitor monitor) {
+
+		if(chromatogramType == 0) {
+			for(IDataInputEntry entry : dataInputEntries) {
+				IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
+				try {
+					IChromatogram chromatogram = processingInfo.getChromatogram();
+					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
+					IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(chromatogram);
+					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
+				} catch(TypeCastException e) {
+					logger.warn(e);
+				} catch(ChromatogramIsNullException e) {
+					logger.warn(e);
+				}
+			}
+		} else if(chromatogramType == 1) {
+			for(IDataInputEntry entry : dataInputEntries) {
+				IChromatogramCSDImportConverterProcessingInfo processingInfo = ChromatogramConverterCSD.convert(new File(entry.getInputFile()), monitor);
+				try {
+					IChromatogram chromatogram = processingInfo.getChromatogram();
+					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
+					IChromatogramSelectionCSD chromatogramSelection = new ChromatogramSelectionCSD(chromatogram);
+					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
+				} catch(TypeCastException e) {
+					logger.warn(e);
+				} catch(ChromatogramIsNullException e) {
+					logger.warn(e);
+				}
+			}
+		}
 	}
 }

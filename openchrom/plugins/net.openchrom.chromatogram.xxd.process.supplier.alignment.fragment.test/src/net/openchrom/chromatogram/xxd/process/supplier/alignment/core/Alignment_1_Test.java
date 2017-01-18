@@ -76,11 +76,11 @@ public class Alignment_1_Test extends AlignmentChromatogramTestCase {
 		IVendorMassSpectrum scan;
 		try {
 			assertEquals(10, chromatogram.getNumberOfScans());
-			assertEquals(500, chromatogram.getScanDelay());
+			assertEquals(1500, chromatogram.getScanDelay());
 			scan = chromatogram.getSupplierScan(1);
-			assertEquals(500, scan.getRetentionTime());
+			assertEquals(1500, scan.getRetentionTime());
 			scan = chromatogram.getSupplierScan(10);
-			assertEquals(9500, scan.getRetentionTime());
+			assertEquals(10500, scan.getRetentionTime());
 		} catch(Exception e) {
 			assertTrue("FilterException", false);
 		}
@@ -91,11 +91,11 @@ public class Alignment_1_Test extends AlignmentChromatogramTestCase {
 		IVendorMassSpectrum scan;
 		try {
 			assertEquals(10, chromatogram.getNumberOfScans());
-			assertEquals(1, chromatogram.getScanDelay());
+			assertEquals(1500, chromatogram.getScanDelay());
 			scan = chromatogram.getSupplierScan(1);
-			assertEquals(1, scan.getRetentionTime());
+			assertEquals(1500, scan.getRetentionTime());
 			scan = chromatogram.getSupplierScan(10);
-			assertEquals(9001, scan.getRetentionTime());
+			assertEquals(10500, scan.getRetentionTime());
 		} catch(Exception e) {
 			assertTrue("FilterException", false);
 		}
@@ -105,12 +105,12 @@ public class Alignment_1_Test extends AlignmentChromatogramTestCase {
 
 		IVendorMassSpectrum scan;
 		try {
-			assertEquals(9, chromatogram.getNumberOfScans());
-			assertEquals(1000, chromatogram.getScanDelay());
+			assertEquals(10, chromatogram.getNumberOfScans());
+			assertEquals(1500, chromatogram.getScanDelay());
 			scan = chromatogram.getSupplierScan(1);
-			assertEquals(1000, scan.getRetentionTime());
-			scan = chromatogram.getSupplierScan(9);
-			assertEquals(9000, scan.getRetentionTime());
+			assertEquals(1500, scan.getRetentionTime());
+			scan = chromatogram.getSupplierScan(10);
+			assertEquals(10500, scan.getRetentionTime());
 		} catch(Exception e) {
 			assertTrue("FilterException", false);
 		}
@@ -120,12 +120,12 @@ public class Alignment_1_Test extends AlignmentChromatogramTestCase {
 
 		IVendorMassSpectrum scan;
 		try {
-			assertEquals(9, chromatogram.getNumberOfScans());
-			assertEquals(500, chromatogram.getScanDelay());
+			assertEquals(10, chromatogram.getNumberOfScans());
+			assertEquals(1500, chromatogram.getScanDelay());
 			scan = chromatogram.getSupplierScan(1);
-			assertEquals(500, scan.getRetentionTime());
-			scan = chromatogram.getSupplierScan(9);
-			assertEquals(8500, scan.getRetentionTime());
+			assertEquals(1500, scan.getRetentionTime());
+			scan = chromatogram.getSupplierScan(10);
+			assertEquals(10500, scan.getRetentionTime());
 		} catch(Exception e) {
 			assertTrue("FilterException", false);
 		}
