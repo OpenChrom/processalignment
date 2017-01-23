@@ -146,9 +146,6 @@ public class AlignmentProcessor {
 				IAlignmentResult alignmentResult = alignmentResults.getAlignmentResultMap().get(new Sample(entry.next().getName()));
 				Integer shift = columnMaximumIndices[shiftIndex];
 				alignmentResult.addShift(shift);
-				/*
-				 * alignmentResults.getAlignmentResultMap().get(new Sample(entry.next().getName())).addShift(columnMaximumIndices[shiftIndex]);
-				 */
 				shiftIndex++;
 			}
 		}
@@ -383,7 +380,7 @@ public class AlignmentProcessor {
 	 * @param matrix
 	 * @return
 	 */
-	int[] calculateColumnMaximumIndices(SimpleMatrix matrix) {
+	private int[] calculateColumnMaximumIndices(SimpleMatrix matrix) {
 
 		int numberOfColumns = matrix.numCols();
 		int[] columnMaximumIndices = new int[numberOfColumns];

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment;
 
+import java.util.ArrayList;
+
 import org.eclipse.chemclipse.model.exceptions.AbundanceLimitExceededException;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
 import org.eclipse.chemclipse.msd.model.core.IIon;
@@ -39,18 +41,18 @@ import junit.framework.TestCase;
 public class AlignmentChromatogramTestCase extends TestCase {
 
 	private IChromatogramMSD chromatogram;
-	private IChromatogramMSD chromatogram2;
-	private IChromatogramMSD chromatogram3;
-	private IChromatogramMSD chromatogram4;
+	private ArrayList<IChromatogramMSD> chromatogramList;
 
 	@Override
 	protected void setUp() throws Exception {
 
 		super.setUp();
 		chromatogram = createChromatogram();
-		chromatogram2 = createChromatogramWithPeak(2);
-		chromatogram3 = createChromatogramWithPeak(3);
-		chromatogram4 = createChromatogramWithPeak(4);
+		chromatogramList = new ArrayList<IChromatogramMSD>();
+		chromatogramList.add(createChromatogramWithPeak(2));
+		chromatogramList.add(createChromatogramWithPeak(3));
+		chromatogramList.add(createChromatogramWithPeak(4));
+		
 	}
 
 	@Override
@@ -62,6 +64,10 @@ public class AlignmentChromatogramTestCase extends TestCase {
 	public IChromatogramMSD getChromatogram() {
 
 		return chromatogram;
+	}
+	
+	public IChromatogramMSD getChromatogram(int index){
+		return chromatogramList.get(index);
 	}
 
 	private IChromatogramMSD createChromatogram() {
@@ -87,7 +93,7 @@ public class AlignmentChromatogramTestCase extends TestCase {
 			scan = new VendorMassSpectrum();
 			try {
 				ion = new Ion(100);
-				int abundance = (int)Math.pow(10000 * 2.7, (-(Math.pow((i - peakPosition), 2)) / (Math.pow(2 * 1, 2))));
+				int abundance =  (int) (10000*Math.pow(2.7, -(Math.pow(i - peakPosition, 2) / (Math.pow(2 * 1, 2)))));
 				ion.setAbundance(abundance);
 				scan.addIon(ion);
 				chromatogram.addScan(scan);

@@ -11,6 +11,13 @@
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.eclipse.chemclipse.model.signals.ITotalScanSignalExtractor;
+import org.eclipse.chemclipse.model.signals.ITotalScanSignals;
+import org.eclipse.chemclipse.model.signals.TotalScanSignalExtractor;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
 import org.eclipse.chemclipse.msd.model.core.IVendorMassSpectrum;
 import org.eclipse.chemclipse.msd.model.core.selection.ChromatogramSelectionMSD;
@@ -40,6 +47,14 @@ public class Alignment_1_Test extends AlignmentChromatogramTestCase {
 	public void test_0() {
 
 		assertNotNull(chromatogramSelection);
+	}
+	
+	public void testloadChromatograms_1() {
+		ArrayList<ITotalScanSignals> alignmentTicsList = new ArrayList<ITotalScanSignals>();
+		ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(getChromatogram(0));
+		IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(getChromatogram(0));
+		alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
+		
 	}
 
 	public void testShiftBackward_1() {
