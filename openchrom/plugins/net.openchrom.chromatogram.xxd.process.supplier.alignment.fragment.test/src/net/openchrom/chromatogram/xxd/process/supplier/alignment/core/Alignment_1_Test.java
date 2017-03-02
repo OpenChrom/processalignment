@@ -48,13 +48,13 @@ public class Alignment_1_Test extends AlignmentChromatogramTestCase {
 
 		assertNotNull(chromatogramSelection);
 	}
-	
+
 	public void testloadChromatograms_1() {
+
 		ArrayList<ITotalScanSignals> alignmentTicsList = new ArrayList<ITotalScanSignals>();
 		ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(getChromatogram(0));
 		IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(getChromatogram(0));
 		alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
-		
 	}
 
 	public void testShiftBackward_1() {

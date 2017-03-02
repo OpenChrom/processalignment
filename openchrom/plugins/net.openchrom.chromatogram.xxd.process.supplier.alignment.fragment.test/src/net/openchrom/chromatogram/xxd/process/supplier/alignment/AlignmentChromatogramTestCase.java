@@ -52,7 +52,6 @@ public class AlignmentChromatogramTestCase extends TestCase {
 		chromatogramList.add(createChromatogramWithPeak(2));
 		chromatogramList.add(createChromatogramWithPeak(3));
 		chromatogramList.add(createChromatogramWithPeak(4));
-		
 	}
 
 	@Override
@@ -65,8 +64,9 @@ public class AlignmentChromatogramTestCase extends TestCase {
 
 		return chromatogram;
 	}
-	
-	public IChromatogramMSD getChromatogram(int index){
+
+	public IChromatogramMSD getChromatogram(int index) {
+
 		return chromatogramList.get(index);
 	}
 
@@ -93,7 +93,7 @@ public class AlignmentChromatogramTestCase extends TestCase {
 			scan = new VendorMassSpectrum();
 			try {
 				ion = new Ion(100);
-				int abundance =  (int) (10000*Math.pow(2.7, -(Math.pow(i - peakPosition, 2) / (Math.pow(2 * 1, 2)))));
+				int abundance = (int)(10000 * Math.pow(2.7, -(Math.pow(i - peakPosition, 2) / (Math.pow(2 * 1, 2)))));
 				ion.setAbundance(abundance);
 				scan.addIon(ion);
 				chromatogram.addScan(scan);
