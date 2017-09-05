@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Lablicate GmbH.
+ * Copyright (c) 2016, 2017 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,12 +20,11 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.Activator;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 
 public class PreferenceSupplier implements IPreferenceSupplier {
 
-	public static final String P_ALIGNMENT_METHOD = "alignmentMethod";
-	public static final String DEF_ALIGNMENT_METHOD = "linear";
-	//
 	private static IPreferenceSupplier preferenceSupplier;
 
 	public static IPreferenceSupplier INSTANCE() {
@@ -52,7 +51,6 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 	public Map<String, String> getDefaultValues() {
 
 		Map<String, String> defaultValues = new HashMap<String, String>();
-		defaultValues.put(P_ALIGNMENT_METHOD, DEF_ALIGNMENT_METHOD);
 		return defaultValues;
 	}
 
@@ -60,5 +58,10 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 	public IEclipsePreferences getPreferences() {
 
 		return getScopeContext().getNode(getPreferenceNode());
+	}
+
+	public static IAlignmentSettings getAlignmentProcessorSettings() {
+
+		return new AlignmentSettings();
 	}
 }

@@ -7,15 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Dr. Philip Wenig - initial API and implementation
+ * Dr. Lorenz Gerber - initial API and implementation
  *******************************************************************************/
-package net.openchrom.chromatogram.xxd.process.supplier.alignment.preferences;
+package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
-import org.eclipse.chemclipse.support.preferences.AbstractExtendedPreferenceInitializer;
+import java.util.List;
 
-public class PreferenceInitializer extends AbstractExtendedPreferenceInitializer {
+public interface IAlignmentRanges extends List<IAlignmentRange> {
 
-	public PreferenceInitializer() {
-		super(PreferenceSupplier.INSTANCE());
-	}
+	int getLowestStartRetentionTime();
+
+	int getHighestStopRetentionTime();
 }

@@ -9,13 +9,21 @@
  * Contributors:
  * Dr. Philip Wenig - initial API and implementation
  *******************************************************************************/
-package net.openchrom.chromatogram.xxd.process.supplier.alignment.preferences;
+package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 
-import org.eclipse.chemclipse.support.preferences.AbstractExtendedPreferenceInitializer;
+public interface IDataInputEntry {
 
-public class PreferenceInitializer extends AbstractExtendedPreferenceInitializer {
+	/**
+	 * Returns the path to the input file.
+	 * 
+	 * @return String
+	 */
+	String getInputFile();
 
-	public PreferenceInitializer() {
-		super(PreferenceSupplier.INSTANCE());
-	}
+	/**
+	 * Returns the name of the input file.
+	 * 
+	 * @return String
+	 */
+	String getName();
 }
