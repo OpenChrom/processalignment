@@ -17,20 +17,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.core.ChromatogramFilterShift;
-import org.eclipse.chemclipse.chromatogram.xxd.filter.supplier.rtshifter.settings.SupplierFilterShiftSettings;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.csd.converter.processing.chromatogram.IChromatogramCSDImportConverterProcessingInfo;
-import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.csd.model.core.selection.ChromatogramSelectionCSD;
 import org.eclipse.chemclipse.csd.model.core.selection.IChromatogramSelectionCSD;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.eclipse.chemclipse.model.core.IPeak;
 import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
 import org.eclipse.chemclipse.model.implementation.Scan;
-import org.eclipse.chemclipse.model.selection.ChromatogramSelection;
 import org.eclipse.chemclipse.model.signals.ITotalScanSignal;
 import org.eclipse.chemclipse.model.signals.ITotalScanSignalExtractor;
 import org.eclipse.chemclipse.model.signals.ITotalScanSignals;
@@ -46,14 +43,12 @@ import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.ejml.simple.SimpleMatrix;
 
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.AlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentRange;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResult;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IAlignmentResults;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.Sample;
-import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.AlignmentSettings;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlignmentSettings;
 
 public class AlignmentProcessor {
@@ -87,15 +82,15 @@ public class AlignmentProcessor {
 		/*
 		 * Calculate two sets of standardized chromatograms
 		 */
-		List<Chromatogram> standardizedTICsBefore = null;
+		List<IChromatogram<? extends IPeak>> standardizedTICsBefore = null;
 		standardizedTICsBefore = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
-		List<Chromatogram> standardizedTICsAfter = null;
+		List<IChromatogram<? extends IPeak>> standardizedTICsAfter = null;
 		standardizedTICsAfter = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
 		/*
 		 * store standardized TIC chromatograms in results
 		 */
-		Iterator<Chromatogram> chromatogramBeforeIterator = standardizedTICsBefore.iterator();
-		Iterator<Chromatogram> chromatogramAfterIterator = standardizedTICsAfter.iterator();
+		Iterator<IChromatogram<? extends IPeak>> chromatogramBeforeIterator = standardizedTICsBefore.iterator();
+		Iterator<IChromatogram<? extends IPeak>> chromatogramAfterIterator = standardizedTICsAfter.iterator();
 		Iterator<IDataInputEntry> entryIterator = dataInputEntries.iterator();
 		// Iterator<File> fileIterator = inputFiles.iterator();
 		while(chromatogramBeforeIterator.hasNext() && entryIterator.hasNext()) {
@@ -115,7 +110,7 @@ public class AlignmentProcessor {
 			/*
 			 * Calculate standardized chromatograms
 			 */
-			List<Chromatogram> standardizedChromatograms = null;
+			List<IChromatogram<? extends IPeak>> standardizedChromatograms = null;
 			standardizedChromatograms = standardizeChromatograms(alignmentTicsList, retentionTimeWindow, lowerRetentionTimeSelection, upperRetentionTimeSelection);
 			/*
 			 * Calculate sample TIC matrix
@@ -275,7 +270,7 @@ public class AlignmentProcessor {
 	 * @param standardizedChromatograms
 	 * @return
 	 */
-	private double[][] composeSampleTics(List<Chromatogram> standardizedChromatograms) {
+	private double[][] composeSampleTics(List<IChromatogram<? extends IPeak>> standardizedChromatograms) {
 
 		int numberOfSamples = standardizedChromatograms.size();
 		int numberOfScans = standardizedChromatograms.get(0).getNumberOfScans();
@@ -296,7 +291,7 @@ public class AlignmentProcessor {
 	 * @param standardizedChromatograms
 	 * @return
 	 */
-	private double[] calculateAverageSample(List<Chromatogram> standardizedChromatograms) {
+	private double[] calculateAverageSample(List<IChromatogram<? extends IPeak>> standardizedChromatograms) {
 
 		int numberOfSamples = standardizedChromatograms.size();
 		int numberOfScans = standardizedChromatograms.get(0).getNumberOfScans();
@@ -348,11 +343,12 @@ public class AlignmentProcessor {
 	 * @param monitor
 	 * @return
 	 */
-	private List<Chromatogram> standardizeChromatograms(List<ITotalScanSignals> totalScanSignals, int retentionTimeWindow, int lowestRetentionTime, int highestRetentionTime) {
+	@SuppressWarnings("unchecked")
+	private List<IChromatogram<? extends IPeak>> standardizeChromatograms(List<ITotalScanSignals> totalScanSignals, int retentionTimeWindow, int lowestRetentionTime, int highestRetentionTime) {
 
-		List<Chromatogram> standardizedChromatograms = new ArrayList<Chromatogram>();
+		List<IChromatogram<? extends IPeak>> standardizedChromatograms = new ArrayList<IChromatogram<? extends IPeak>>();
 		for(ITotalScanSignals tics : totalScanSignals) {
-			Chromatogram standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
+			IChromatogram<? extends IPeak> standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
 			Iterator<ITotalScanSignal> iterator = tics.getTotalScanSignals().iterator();
 			ITotalScanSignal currentScan = iterator.next();
 			float intensityBefore = 0;

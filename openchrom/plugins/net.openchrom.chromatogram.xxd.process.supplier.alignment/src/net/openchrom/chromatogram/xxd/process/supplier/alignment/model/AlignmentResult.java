@@ -14,43 +14,50 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.chemclipse.model.implementation.Chromatogram;
+import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.eclipse.chemclipse.model.core.IPeak;
 
 public class AlignmentResult implements IAlignmentResult {
 
-	private Chromatogram ticBeforeAlignment;
-	private Chromatogram ticAfterAlignment;
+	private IChromatogram<? extends IPeak> ticBeforeAlignment;
+	private IChromatogram<? extends IPeak> ticAfterAlignment;
 	private List<Integer> shifts;
 
 	public AlignmentResult() {
 		this.shifts = new ArrayList<Integer>();
 	}
 
-	public void setTicBeforeAlignment(Chromatogram ticChromatogram) {
+	@Override
+	public void setTicBeforeAlignment(IChromatogram<? extends IPeak> ticChromatogram) {
 
 		this.ticBeforeAlignment = ticChromatogram;
 	}
 
-	public Chromatogram getTicBeforeAlignment() {
+	@Override
+	public IChromatogram<? extends IPeak> getTicBeforeAlignment() {
 
 		return ticBeforeAlignment;
 	}
 
-	public void setTicAfterAlignment(Chromatogram ticChromatogram) {
+	@Override
+	public void setTicAfterAlignment(IChromatogram<? extends IPeak> ticChromatogram) {
 
 		this.ticAfterAlignment = ticChromatogram;
 	}
 
-	public Chromatogram getTicAfterAlignment() {
+	@Override
+	public IChromatogram<? extends IPeak> getTicAfterAlignment() {
 
 		return ticAfterAlignment;
 	}
 
+	@Override
 	public void addShift(Integer shift) {
 
 		this.shifts.add(shift);
 	}
 
+	@Override
 	public List<Integer> getShifts() {
 
 		return shifts;

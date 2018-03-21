@@ -14,17 +14,17 @@ package net.openchrom.chromatogram.xxd.process.supplier.alignment.model;
 import java.util.List;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
-import org.eclipse.chemclipse.model.implementation.Chromatogram;
+import org.eclipse.chemclipse.model.core.IPeak;
 
 public interface IAlignmentResult {
 
-	void setTicBeforeAlignment(Chromatogram ticChromatogram);
+	void setTicBeforeAlignment(IChromatogram<? extends IPeak> ticChromatogram);
 
-	IChromatogram getTicBeforeAlignment();
+	IChromatogram<? extends IPeak> getTicBeforeAlignment();
 
-	void setTicAfterAlignment(Chromatogram ticChromatogram);
+	void setTicAfterAlignment(IChromatogram<? extends IPeak> ticChromatogram);
 
-	IChromatogram getTicAfterAlignment();
+	IChromatogram<? extends IPeak> getTicAfterAlignment();
 
 	void addShift(Integer shift);
 
