@@ -16,8 +16,10 @@ import java.util.List;
 
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.chemclipse.support.ui.wizards.ChromatogramWizardElements;
 import org.eclipse.chemclipse.support.ui.wizards.IChromatogramWizardElements;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.wizards.InputEntriesWizard;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.wizards.InputWizardSettings;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.wizards.InputWizardSettings.DataType;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -36,12 +39,15 @@ import org.eclipse.swt.widgets.TableItem;
 
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.DataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.preferences.PreferenceSupplier;
 
 public class PageInputFiles {
 
 	private EditorAlignment editorAlignment;
 	private List<IDataInputEntry> dataInputEntries;
 	private Table inputFilesTable;
+	//
+	private Shell shell = Display.getDefault().getActiveShell();
 
 	public PageInputFiles(EditorAlignment editorAlignment, TabFolder tabFolder) {
 		//
@@ -106,20 +112,20 @@ public class PageInputFiles {
 
 				int chromatogramType = editorAlignment.getChromatogramType();
 				super.widgetSelected(e);
-				IChromatogramWizardElements chromatogramWizardElementsMSD = new ChromatogramWizardElements();
+				//
 				if(chromatogramType == 0) {
-					org.eclipse.chemclipse.ux.extension.msd.ui.wizards.ChromatogramInputEntriesWizard chromatogramInputWizard = new org.eclipse.chemclipse.ux.extension.msd.ui.wizards.ChromatogramInputEntriesWizard(chromatogramWizardElementsMSD);
-					WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), chromatogramInputWizard);
+					InputWizardSettings inputWizardSettings = new InputWizardSettings(DataType.MSD_CHROMATOGRAM);
+					inputWizardSettings.setTitle("MSD Import");
+					inputWizardSettings.setDescription("Select the chromatogram(s) to analyze.");
+					inputWizardSettings.setPathPreferences(PreferenceSupplier.INSTANCE().getPreferences(), PreferenceSupplier.P_FILTER_PATH_CHROMATOGRAM_MSD);
+					//
+					InputEntriesWizard inputWizard = new InputEntriesWizard(inputWizardSettings);
+					WizardDialog wizardDialog = new WizardDialog(shell, inputWizard);
 					wizardDialog.create();
-					int returnCode = wizardDialog.open();
-					/*
-					 * If OK
-					 */
-					if(returnCode == WizardDialog.OK) {
-						/*
-						 * Get the list of selected chromatograms.
-						 */
-						List<String> selectedChromatograms = chromatogramWizardElementsMSD.getSelectedChromatograms();
+					//
+					if(wizardDialog.open() == WizardDialog.OK) {
+						IChromatogramWizardElements chromatogramWizardElements = inputWizard.getChromatogramWizardElements();
+						List<String> selectedChromatograms = chromatogramWizardElements.getSelectedChromatograms();
 						if(selectedChromatograms.size() > 0) {
 							/*
 							 * If it contains at least 1 element, add it to the input files list.
@@ -129,18 +135,18 @@ public class PageInputFiles {
 						}
 					}
 				} else {
-					org.eclipse.chemclipse.ux.extension.csd.ui.wizards.ChromatogramInputEntriesWizard chromatogramInputWizard = new org.eclipse.chemclipse.ux.extension.csd.ui.wizards.ChromatogramInputEntriesWizard(chromatogramWizardElementsMSD);
-					WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), chromatogramInputWizard);
+					InputWizardSettings inputWizardSettings = new InputWizardSettings(DataType.CSD_CHROMATOGRAM);
+					inputWizardSettings.setTitle("CSD Import");
+					inputWizardSettings.setDescription("Select the chromatogram(s) to analyze.");
+					inputWizardSettings.setPathPreferences(PreferenceSupplier.INSTANCE().getPreferences(), PreferenceSupplier.P_FILTER_PATH_CHROMATOGRAM_CSD);
+					//
+					InputEntriesWizard inputWizard = new InputEntriesWizard(inputWizardSettings);
+					WizardDialog wizardDialog = new WizardDialog(shell, inputWizard);
 					wizardDialog.create();
-					int returnCode = wizardDialog.open();
-					/*
-					 * If OK
-					 */
-					if(returnCode == WizardDialog.OK) {
-						/*
-						 * Get the list of selected chromatograms.
-						 */
-						List<String> selectedChromatograms = chromatogramWizardElementsMSD.getSelectedChromatograms();
+					//
+					if(wizardDialog.open() == WizardDialog.OK) {
+						IChromatogramWizardElements chromatogramWizardElements = inputWizard.getChromatogramWizardElements();
+						List<String> selectedChromatograms = chromatogramWizardElements.getSelectedChromatograms();
 						if(selectedChromatograms.size() > 0) {
 							/*
 							 * If it contains at least 1 element, add it to the input files list.

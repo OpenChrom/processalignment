@@ -25,6 +25,12 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlign
 
 public class PreferenceSupplier implements IPreferenceSupplier {
 
+	public static final String P_FILTER_PATH_CHROMATOGRAM_MSD = "filterPathChromatogramMSD";
+	public static final String DEF_FILTER_PATH_CHROMATOGRAM_MSD = "";
+	public static final String P_FILTER_PATH_CHROMATOGRAM_CSD = "filterPathChromatogramCSD";
+	public static final String DEF_FILTER_PATH_CHROMATOGRAM_CSD = "";
+	public static final String P_FILTER_PATH_CHROMATOGRAM_WSD = "filterPathChromatogramWSD";
+	public static final String DEF_FILTER_PATH_CHROMATOGRAM_WSD = "";
 	private static IPreferenceSupplier preferenceSupplier;
 
 	public static IPreferenceSupplier INSTANCE() {
@@ -51,6 +57,11 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 	public Map<String, String> getDefaultValues() {
 
 		Map<String, String> defaultValues = new HashMap<String, String>();
+		//
+		defaultValues.put(P_FILTER_PATH_CHROMATOGRAM_MSD, DEF_FILTER_PATH_CHROMATOGRAM_MSD);
+		defaultValues.put(P_FILTER_PATH_CHROMATOGRAM_CSD, DEF_FILTER_PATH_CHROMATOGRAM_CSD);
+		defaultValues.put(P_FILTER_PATH_CHROMATOGRAM_WSD, DEF_FILTER_PATH_CHROMATOGRAM_WSD);
+		//
 		return defaultValues;
 	}
 

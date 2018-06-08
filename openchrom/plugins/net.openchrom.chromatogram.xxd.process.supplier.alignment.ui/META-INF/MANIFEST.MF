@@ -39,7 +39,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.chemclipse.chromatogram.csd.filter.supplier.zeroset;bundle-version="0.8.0",
  org.eclipse.chemclipse.csd.model;bundle-version="0.8.0",
  org.eclipse.chemclipse.csd.swt.ui;bundle-version="0.8.0",
- org.eclipse.e4.ui.di;bundle-version="1.1.0"
+ org.eclipse.e4.ui.di;bundle-version="1.1.0",
+ org.eclipse.chemclipse.ux.extension.xxd.ui;bundle-version="0.8.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.1.0",
