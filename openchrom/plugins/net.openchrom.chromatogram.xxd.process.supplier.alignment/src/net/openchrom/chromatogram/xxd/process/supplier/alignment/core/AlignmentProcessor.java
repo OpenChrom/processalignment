@@ -33,7 +33,6 @@ import org.eclipse.chemclipse.model.signals.ITotalScanSignalExtractor;
 import org.eclipse.chemclipse.model.signals.ITotalScanSignals;
 import org.eclipse.chemclipse.model.signals.TotalScanSignalExtractor;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
-import org.eclipse.chemclipse.msd.converter.processing.chromatogram.IChromatogramMSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
 import org.eclipse.chemclipse.msd.model.core.selection.ChromatogramSelectionMSD;
 import org.eclipse.chemclipse.msd.model.core.selection.IChromatogramSelectionMSD;
@@ -168,8 +167,8 @@ public class AlignmentProcessor {
 			// Loop through each file
 			for(IDataInputEntry entry : dataInputEntries) {
 				// Open file
-				IChromatogramMSDImportConverterProcessingInfo importProcessingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
-				IChromatogram chromatogram = importProcessingInfo.getChromatogram();
+				IProcessingInfo importProcessingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
+				IChromatogram chromatogram = importProcessingInfo.getProcessingResult(IChromatogramMSD.class);
 				// Loop through each alignmentRange
 				int rangeCounter = 0;
 				for(IAlignmentRange range : settings.getAlignmentRanges()) {
@@ -400,9 +399,9 @@ public class AlignmentProcessor {
 
 		if(chromatogramType == 0) {
 			for(IDataInputEntry entry : dataInputEntries) {
-				IChromatogramMSDImportConverterProcessingInfo processingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
+				IProcessingInfo processingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
 				try {
-					IChromatogram chromatogram = processingInfo.getChromatogram();
+					IChromatogram chromatogram = processingInfo.getProcessingResult(IChromatogramMSD.class);
 					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
 					IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(chromatogram);
 					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
