@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
-import org.eclipse.chemclipse.csd.converter.processing.chromatogram.IChromatogramCSDImportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.model.core.selection.ChromatogramSelectionCSD;
 import org.eclipse.chemclipse.csd.model.core.selection.IChromatogramSelectionCSD;
 import org.eclipse.chemclipse.logging.core.Logger;
@@ -413,9 +412,9 @@ public class AlignmentProcessor {
 			}
 		} else if(chromatogramType == 1) {
 			for(IDataInputEntry entry : dataInputEntries) {
-				IChromatogramCSDImportConverterProcessingInfo processingInfo = ChromatogramConverterCSD.convert(new File(entry.getInputFile()), monitor);
+				IProcessingInfo processingInfo = ChromatogramConverterCSD.convert(new File(entry.getInputFile()), monitor);
 				try {
-					IChromatogram chromatogram = processingInfo.getChromatogram();
+					IChromatogram chromatogram = processingInfo.getProcessingResult(IChromatogram.class);
 					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
 					IChromatogramSelectionCSD chromatogramSelection = new ChromatogramSelectionCSD(chromatogram);
 					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
