@@ -166,7 +166,7 @@ public class AlignmentProcessor {
 			// Loop through each file
 			for(IDataInputEntry entry : dataInputEntries) {
 				// Open file
-				IProcessingInfo importProcessingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
+				IProcessingInfo importProcessingInfo = ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), monitor);
 				IChromatogram chromatogram = importProcessingInfo.getProcessingResult(IChromatogramMSD.class);
 				// Loop through each alignmentRange
 				int rangeCounter = 0;
@@ -195,7 +195,7 @@ public class AlignmentProcessor {
 					}
 				}
 				// write/export file back
-				ChromatogramConverterMSD.convert(new File(entry.getInputFile()), (IChromatogramMSD)chromatogram, chromatogram.getConverterId(), monitor);
+				ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), (IChromatogramMSD)chromatogram, chromatogram.getConverterId(), monitor);
 			}
 		} else if(chromatogramType == 1) {
 		}
@@ -398,7 +398,7 @@ public class AlignmentProcessor {
 
 		if(chromatogramType == 0) {
 			for(IDataInputEntry entry : dataInputEntries) {
-				IProcessingInfo processingInfo = ChromatogramConverterMSD.convert(new File(entry.getInputFile()), monitor);
+				IProcessingInfo processingInfo = ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), monitor);
 				try {
 					IChromatogram chromatogram = processingInfo.getProcessingResult(IChromatogramMSD.class);
 					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
@@ -412,7 +412,7 @@ public class AlignmentProcessor {
 			}
 		} else if(chromatogramType == 1) {
 			for(IDataInputEntry entry : dataInputEntries) {
-				IProcessingInfo processingInfo = ChromatogramConverterCSD.convert(new File(entry.getInputFile()), monitor);
+				IProcessingInfo processingInfo = ChromatogramConverterCSD.getInstance().convert(new File(entry.getInputFile()), monitor);
 				try {
 					IChromatogram chromatogram = processingInfo.getProcessingResult(IChromatogram.class);
 					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
