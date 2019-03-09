@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Lablicate GmbH.
+ * Copyright (c) 2016, 2018, 2019 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Dr. Philip Wenig - initial API and implementation
  * Lorenz Gerber - main functionality
+ * Alexander Kerner - Generics
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.core;
 
@@ -18,13 +19,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
+import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.csd.model.core.selection.ChromatogramSelectionCSD;
 import org.eclipse.chemclipse.csd.model.core.selection.IChromatogramSelectionCSD;
 import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IPeak;
 import org.eclipse.chemclipse.model.core.IScan;
-import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.model.implementation.Chromatogram;
 import org.eclipse.chemclipse.model.implementation.Scan;
 import org.eclipse.chemclipse.model.signals.ITotalScanSignal;
@@ -37,7 +38,6 @@ import org.eclipse.chemclipse.msd.model.core.selection.ChromatogramSelectionMSD;
 import org.eclipse.chemclipse.msd.model.core.selection.IChromatogramSelectionMSD;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.ProcessingInfo;
-import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.ejml.simple.SimpleMatrix;
 
@@ -51,6 +51,7 @@ import net.openchrom.chromatogram.xxd.process.supplier.alignment.settings.IAlign
 
 public class AlignmentProcessor {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(AlignmentProcessor.class);
 	private static final int MAX_SHIFT = 10;
 
@@ -73,7 +74,7 @@ public class AlignmentProcessor {
 		/*
 		 * get TIC Data
 		 */
-		List<ITotalScanSignals> alignmentTicsList = new ArrayList<ITotalScanSignals>();
+		List<ITotalScanSignals> alignmentTicsList = new ArrayList<>();
 		loadData(alignmentTicsList, dataInputEntries, chromatogramType, monitor);
 		highestRetentionTime = findHighestRetentionTime(alignmentTicsList);
 		lowestRetentionTime = findLowestRetentionTime(alignmentTicsList);
@@ -147,9 +148,9 @@ public class AlignmentProcessor {
 	}
 
 	/**
-	 * 
+	 *
 	 * This is so far just a stub. This will be the function to be called for applying the actual alignment
-	 * 
+	 *
 	 * @param results
 	 * @param settings
 	 * @param monitor
@@ -166,8 +167,8 @@ public class AlignmentProcessor {
 			// Loop through each file
 			for(IDataInputEntry entry : dataInputEntries) {
 				// Open file
-				IProcessingInfo importProcessingInfo = ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), monitor);
-				IChromatogram chromatogram = importProcessingInfo.getProcessingResult(IChromatogramMSD.class);
+				IProcessingInfo<IChromatogramMSD> importProcessingInfo = ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), monitor);
+				IChromatogramMSD chromatogram = importProcessingInfo.getProcessingResult();
 				// Loop through each alignmentRange
 				int rangeCounter = 0;
 				for(IAlignmentRange range : settings.getAlignmentRanges()) {
@@ -195,7 +196,7 @@ public class AlignmentProcessor {
 					}
 				}
 				// write/export file back
-				ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), (IChromatogramMSD)chromatogram, chromatogram.getConverterId(), monitor);
+				ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), chromatogram, chromatogram.getConverterId(), monitor);
 			}
 		} else if(chromatogramType == 1) {
 		}
@@ -204,7 +205,7 @@ public class AlignmentProcessor {
 
 	/**
 	 * Find the highest retention time among a number of MSD input files
-	 * 
+	 *
 	 * @param inputFiles
 	 * @param monitor
 	 * @return
@@ -222,7 +223,7 @@ public class AlignmentProcessor {
 
 	/**
 	 * Find the lowest retention time among a number of MSD input files
-	 * 
+	 *
 	 * @param inputFiles
 	 * @param monitor
 	 * @return
@@ -240,7 +241,7 @@ public class AlignmentProcessor {
 
 	/**
 	 * Create equispaced template chromatogram
-	 * 
+	 *
 	 * @param retentionTimeWindow
 	 * @param lowestRetentionTime
 	 * @param highestRetentionTime
@@ -264,7 +265,7 @@ public class AlignmentProcessor {
 
 	/**
 	 * composeSampleTics
-	 * 
+	 *
 	 * @param standardizedChromatograms
 	 * @return
 	 */
@@ -283,7 +284,7 @@ public class AlignmentProcessor {
 
 	/**
 	 * calculateAverageSample
-	 * 
+	 *
 	 * @param numberOfScans
 	 * @param numberOfSamples
 	 * @param standardizedChromatograms
@@ -314,7 +315,7 @@ public class AlignmentProcessor {
 
 	/**
 	 * composeTargetTics
-	 * 
+	 *
 	 * @param numberOfScans
 	 * @param averageSample
 	 * @return
@@ -333,7 +334,7 @@ public class AlignmentProcessor {
 
 	/**
 	 * standardizeChromatograms
-	 * 
+	 *
 	 * @param totalScanSignals
 	 * @param retentionTimeWindow
 	 * @param lowestRetentionTime
@@ -344,7 +345,7 @@ public class AlignmentProcessor {
 	@SuppressWarnings("unchecked")
 	private List<IChromatogram<? extends IPeak>> standardizeChromatograms(List<ITotalScanSignals> totalScanSignals, int retentionTimeWindow, int lowestRetentionTime, int highestRetentionTime) {
 
-		List<IChromatogram<? extends IPeak>> standardizedChromatograms = new ArrayList<IChromatogram<? extends IPeak>>();
+		List<IChromatogram<? extends IPeak>> standardizedChromatograms = new ArrayList<>();
 		for(ITotalScanSignals tics : totalScanSignals) {
 			IChromatogram<? extends IPeak> standard = constructEquispacedChromatogram(retentionTimeWindow, lowestRetentionTime, highestRetentionTime);
 			Iterator<ITotalScanSignal> iterator = tics.getTotalScanSignals().iterator();
@@ -369,7 +370,7 @@ public class AlignmentProcessor {
 
 	/**
 	 * calculateColumnMaximumIndices
-	 * 
+	 *
 	 * @param numberOfColumns
 	 * @param matrix
 	 * @return
@@ -380,11 +381,11 @@ public class AlignmentProcessor {
 		int[] columnMaximumIndices = new int[numberOfColumns];
 		double[] columnMaximum = new double[numberOfColumns];
 		for(int sampleIndex = 0; sampleIndex < numberOfColumns; sampleIndex++) {
-			for(int shiftIndex = 0; shiftIndex < (2 * MAX_SHIFT + 1); shiftIndex++) {
+			for(int shiftIndex = 0; shiftIndex < 2 * MAX_SHIFT + 1; shiftIndex++) {
 				if(matrix.get(shiftIndex, sampleIndex) > columnMaximum[sampleIndex]) {
 					columnMaximum[sampleIndex] = matrix.get(shiftIndex, sampleIndex);
-					if((shiftIndex) / (MAX_SHIFT) > 0) {
-						columnMaximumIndices[sampleIndex] = (shiftIndex % (MAX_SHIFT));
+					if(shiftIndex / MAX_SHIFT > 0) {
+						columnMaximumIndices[sampleIndex] = shiftIndex % MAX_SHIFT;
 					} else {
 						columnMaximumIndices[sampleIndex] = shiftIndex - MAX_SHIFT;
 					}
@@ -398,31 +399,19 @@ public class AlignmentProcessor {
 
 		if(chromatogramType == 0) {
 			for(IDataInputEntry entry : dataInputEntries) {
-				IProcessingInfo processingInfo = ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), monitor);
-				try {
-					IChromatogram chromatogram = processingInfo.getProcessingResult(IChromatogramMSD.class);
-					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
-					IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(chromatogram);
-					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
-				} catch(TypeCastException e) {
-					logger.warn(e);
-				} catch(ChromatogramIsNullException e) {
-					logger.warn(e);
-				}
+				IProcessingInfo<IChromatogramMSD> processingInfo = ChromatogramConverterMSD.getInstance().convert(new File(entry.getInputFile()), monitor);
+				IChromatogramMSD chromatogram = processingInfo.getProcessingResult();
+				ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
+				IChromatogramSelectionMSD chromatogramSelection = new ChromatogramSelectionMSD(chromatogram);
+				alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
 			}
 		} else if(chromatogramType == 1) {
 			for(IDataInputEntry entry : dataInputEntries) {
-				IProcessingInfo processingInfo = ChromatogramConverterCSD.getInstance().convert(new File(entry.getInputFile()), monitor);
-				try {
-					IChromatogram chromatogram = processingInfo.getProcessingResult(IChromatogram.class);
-					ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
-					IChromatogramSelectionCSD chromatogramSelection = new ChromatogramSelectionCSD(chromatogram);
-					alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
-				} catch(TypeCastException e) {
-					logger.warn(e);
-				} catch(ChromatogramIsNullException e) {
-					logger.warn(e);
-				}
+				IProcessingInfo<IChromatogramCSD> processingInfo = ChromatogramConverterCSD.getInstance().convert(new File(entry.getInputFile()), monitor);
+				IChromatogramCSD chromatogram = processingInfo.getProcessingResult();
+				ITotalScanSignalExtractor totalIonSignalExtractor = new TotalScanSignalExtractor(chromatogram);
+				IChromatogramSelectionCSD chromatogramSelection = new ChromatogramSelectionCSD(chromatogram);
+				alignmentTicsList.add(totalIonSignalExtractor.getTotalScanSignals(chromatogramSelection));
 			}
 		}
 	}
