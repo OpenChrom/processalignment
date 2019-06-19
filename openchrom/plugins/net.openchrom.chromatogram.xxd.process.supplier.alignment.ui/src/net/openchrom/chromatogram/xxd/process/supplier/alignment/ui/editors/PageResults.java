@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Lablicate GmbH.
+ * Copyright (c) 2016, 2019 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -16,8 +16,7 @@ import java.util.List;
 import org.eclipse.chemclipse.model.selection.IChromatogramSelection;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.chemclipse.swt.ui.components.chromatogram.MultipleChromatogramOffsetUI;
-import org.eclipse.chemclipse.swt.ui.support.AxisTitlesIntensityScale;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.charts.ChromatogramChart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,17 +25,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 public class PageResults {
 
 	private EditorAlignment editorAlignment;
-	//
-	private MultipleChromatogramOffsetUI chromatogramOverlayRawData;
-	private MultipleChromatogramOffsetUI chromatogramOverlayShiftedData;
 
 	public PageResults(EditorAlignment editorAlignment, TabFolder tabFolder) {
 		//
@@ -50,8 +44,7 @@ public class PageResults {
 
 	public void setChromatogramData(List<IChromatogramSelection> chromatogramSelectionsRaw, List<IChromatogramSelection> chromatogramSelectionsShifted) {
 
-		chromatogramOverlayRawData.updateSelection(chromatogramSelectionsRaw, true);
-		chromatogramOverlayShiftedData.updateSelection(chromatogramSelectionsShifted, true);
+		// TODO
 	}
 
 	private void initialize(TabFolder tabFolder) {
@@ -73,12 +66,12 @@ public class PageResults {
 		Composite compositeRawData = new Composite(compositeChromatograms, SWT.BORDER);
 		compositeRawData.setLayoutData(new GridData(GridData.FILL_BOTH));
 		compositeRawData.setLayout(new FillLayout());
-		chromatogramOverlayRawData = new MultipleChromatogramOffsetUI(compositeRawData, SWT.NONE, new AxisTitlesIntensityScale());
+		ChromatogramChart chromatogramOverlayRaw = new ChromatogramChart(compositeRawData, SWT.NONE);
 		//
 		Composite compositeShiftedData = new Composite(compositeChromatograms, SWT.BORDER);
 		compositeShiftedData.setLayoutData(new GridData(GridData.FILL_BOTH));
 		compositeShiftedData.setLayout(new FillLayout());
-		chromatogramOverlayShiftedData = new MultipleChromatogramOffsetUI(compositeShiftedData, SWT.NONE, new AxisTitlesIntensityScale());
+		ChromatogramChart chromatogramOverlayShifted = new ChromatogramChart(compositeShiftedData, SWT.NONE);
 		/*
 		 * Button Bar
 		 */
