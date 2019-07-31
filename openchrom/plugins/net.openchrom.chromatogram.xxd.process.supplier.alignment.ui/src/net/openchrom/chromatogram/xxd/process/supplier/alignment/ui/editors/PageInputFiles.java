@@ -8,19 +8,21 @@
  * 
  * Contributors:
  * Dr. Philip Wenig - initial API and implementation
+ * Christoph Läubrich - adjust wizard API, fix shell access
  *******************************************************************************/
 package net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.editors;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.chemclipse.model.types.DataType;
 import org.eclipse.chemclipse.rcp.ui.icons.core.ApplicationImageFactory;
 import org.eclipse.chemclipse.rcp.ui.icons.core.IApplicationImage;
-import org.eclipse.chemclipse.support.ui.wizards.IChromatogramWizardElements;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.wizards.InputEntriesWizard;
 import org.eclipse.chemclipse.ux.extension.xxd.ui.wizards.InputWizardSettings;
-import org.eclipse.chemclipse.ux.extension.xxd.ui.wizards.InputWizardSettings.InputDataType;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,7 +32,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -40,14 +41,13 @@ import org.eclipse.swt.widgets.TableItem;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.DataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.model.IDataInputEntry;
 import net.openchrom.chromatogram.xxd.process.supplier.alignment.preferences.PreferenceSupplier;
+import net.openchrom.chromatogram.xxd.process.supplier.alignment.ui.Activator;
 
 public class PageInputFiles {
 
 	private EditorAlignment editorAlignment;
 	private List<IDataInputEntry> dataInputEntries;
 	private Table inputFilesTable;
-	//
-	private Shell shell = Display.getDefault().getActiveShell();
 
 	public PageInputFiles(EditorAlignment editorAlignment, TabFolder tabFolder) {
 		//
@@ -114,46 +114,22 @@ public class PageInputFiles {
 				super.widgetSelected(e);
 				//
 				if(chromatogramType == 0) {
-					InputWizardSettings inputWizardSettings = new InputWizardSettings(InputDataType.MSD_CHROMATOGRAM);
+					InputWizardSettings inputWizardSettings = InputWizardSettings.create(Activator.getDefault().getPreferenceStore(), PreferenceSupplier.P_FILTER_PATH_CHROMATOGRAM_MSD, DataType.MSD);
 					inputWizardSettings.setTitle("MSD Import");
 					inputWizardSettings.setDescription("Select the chromatogram(s) to analyze.");
-					inputWizardSettings.setPathPreferences(PreferenceSupplier.INSTANCE().getPreferences(), PreferenceSupplier.P_FILTER_PATH_CHROMATOGRAM_MSD);
-					//
-					InputEntriesWizard inputWizard = new InputEntriesWizard(inputWizardSettings);
-					WizardDialog wizardDialog = new WizardDialog(shell, inputWizard);
-					wizardDialog.create();
-					//
-					if(wizardDialog.open() == WizardDialog.OK) {
-						IChromatogramWizardElements chromatogramWizardElements = inputWizard.getChromatogramWizardElements();
-						List<String> selectedChromatograms = chromatogramWizardElements.getSelectedChromatograms();
-						if(selectedChromatograms.size() > 0) {
-							/*
-							 * If it contains at least 1 element, add it to the input files list.
-							 */
-							addEntries(selectedChromatograms);
-							reloadInputFilesTable();
-						}
+					Set<File> files = InputEntriesWizard.openWizard(button.getShell(), inputWizardSettings).keySet();
+					if(!files.isEmpty()) {
+						addEntries(files);
+						reloadInputFilesTable();
 					}
 				} else {
-					InputWizardSettings inputWizardSettings = new InputWizardSettings(InputDataType.CSD_CHROMATOGRAM);
+					InputWizardSettings inputWizardSettings = InputWizardSettings.create(Activator.getDefault().getPreferenceStore(), PreferenceSupplier.P_FILTER_PATH_CHROMATOGRAM_CSD, DataType.CSD);
 					inputWizardSettings.setTitle("CSD Import");
 					inputWizardSettings.setDescription("Select the chromatogram(s) to analyze.");
-					inputWizardSettings.setPathPreferences(PreferenceSupplier.INSTANCE().getPreferences(), PreferenceSupplier.P_FILTER_PATH_CHROMATOGRAM_CSD);
-					//
-					InputEntriesWizard inputWizard = new InputEntriesWizard(inputWizardSettings);
-					WizardDialog wizardDialog = new WizardDialog(shell, inputWizard);
-					wizardDialog.create();
-					//
-					if(wizardDialog.open() == WizardDialog.OK) {
-						IChromatogramWizardElements chromatogramWizardElements = inputWizard.getChromatogramWizardElements();
-						List<String> selectedChromatograms = chromatogramWizardElements.getSelectedChromatograms();
-						if(selectedChromatograms.size() > 0) {
-							/*
-							 * If it contains at least 1 element, add it to the input files list.
-							 */
-							addEntries(selectedChromatograms);
-							reloadInputFilesTable();
-						}
+					Set<File> files = InputEntriesWizard.openWizard(button.getShell(), inputWizardSettings).keySet();
+					if(!files.isEmpty()) {
+						addEntries(files);
+						reloadInputFilesTable();
 					}
 				}
 			}
@@ -278,11 +254,11 @@ public class PageInputFiles {
 		}
 	}
 
-	private void addEntries(List<String> selectedFiles) {
+	private void addEntries(Collection<File> selectedFiles) {
 
 		IDataInputEntry inputEntry;
-		for(String inputFile : selectedFiles) {
-			inputEntry = new DataInputEntry(inputFile);
+		for(File inputFile : selectedFiles) {
+			inputEntry = new DataInputEntry(inputFile.getAbsolutePath());
 			dataInputEntries.add(inputEntry);
 		}
 	}
