@@ -12,3 +12,5 @@ openchrom/features/net.openchrom.chromatogram.xxd.process.supplier.alignment.fea
 openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment.ui/target/
 openchrom/plugins/net.openchrom.chromatogram.xxd.process.supplier.alignment/target/
 openchrom/sites/net.openchrom.chromatogram.xxd.process.supplier.alignment.updateSite/target/
+bin/
+target/
